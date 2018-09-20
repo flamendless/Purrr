@@ -1,0 +1,10 @@
+*.md
+*.txt
+*.zip
+*.love
+*.code-workspace
+test
+ctags
+gitlog.txt
+!README.md
+!LICENSE.txt
