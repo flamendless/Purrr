@@ -1,0 +1,36 @@
+[submodule "modules/concord"]
+	path = modules/concord
+	url = git@github.com:Tjakka5/Concord.git
+[submodule "modules/inspect"]
+	path = modules/inspect
+	url = git@github.com:kikito/inspect.lua.git
+[submodule "modules/lily"]
+	path = modules/lily
+	url = git@github.com:MikuAuahDark/lily.git
+[submodule "modules/log"]
+	path = modules/log
+	url = git@github.com:rxi/log.lua.git
+[submodule "modules/flux"]
+	path = modules/flux
+	url = git@github.com:rxi/flux.git
+[submodule "modules/baton"]
+	path = modules/baton
+	url = git@github.com:tesselode/baton.git
+[submodule "modules/hump"]
+	path = modules/hump
+	url = git@github.com:vrld/hump.git
+[submodule "modules/lume"]
+	path = modules/lume
+	url = git@github.com:rxi/lume.git
+[submodule "modules/classic"]
+	path = modules/classic
+	url = git@github.com:rxi/classic.git
+[submodule "modules/debug-graph"]
+	path = modules/debug-graph
+	url = git@github.com:Mechazawa/Love-Debug-Graph.git
+[submodule "modules/scrale"]
+	path = modules/scrale
+	url = git@github.com:MartyMaro/scrale.git
+[submodule "modules/lurker"]
+	path = modules/lurker
+	url = git@github.com:rxi/lurker.git
