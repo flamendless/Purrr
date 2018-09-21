@@ -25,7 +25,8 @@ function LoadingBar:update(percent)
 		if not self.lerp then
 			self.lerp = true
 			self.percent = percent
-			flux.to(self, self.speed, { bar = self.percent/100 * self.w }):oncomplete(function() self.lerp = false end)
+			flux.to(self, self.speed, { bar = self.percent/100 * self.w })
+				:oncomplete(function() self.lerp = false end)
 		end
 	end
 	self.isDone = self.bar >= self.w

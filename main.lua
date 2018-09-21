@@ -11,6 +11,8 @@ end
 local log = require("modules.log.log")
 local lily = require("modules.lily.lily")
 local gamestate = require("modules.hump.gamestate")
+local timer = require("modules.hump.timer")
+local flux = require("modules.flux.flux")
 local scrale = require("modules.scrale.scrale")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
@@ -32,6 +34,8 @@ end
 
 function love.update(dt)
 	if __debug then debugging:update(dt) end
+	timer.update(dt)
+	flux.update(dt)
 	preload:update(dt)
 	if preload:getState() then return end
 	if gamestate.current() then gamestate.current():update(dt) end

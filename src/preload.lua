@@ -4,15 +4,26 @@ local lily = require("modules.lily.lily")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
 local gamestate = require("modules.hump.gamestate")
+local timer = require("modules.hump.timer")
 
 local resourceManager = require("src.resource_manager")
+local screen = require("src.screen")
+local colors = require("src.colors")
+local loading_bar = require("src.loading_bar")
 
 function Preload:init()
+	self.colors = {
+		bg = colors("flat", "black", "dark"),
+		bar = colors("flat", "white", "light"),
+	}
 	self.toLoad = {}
 	self.userdata = {}
 	self.n = 0
 	self.isActive = false
+	self.done_count = 0
 	self.current = gamestate.current()
+	local w = screen.x/1.5
+	self.bar = loading_bar(screen.x/2 - w/2, screen.y * 0.75, w, 32, 12)
 end
 
 function Preload:check(t_assets)
@@ -49,6 +60,7 @@ function Preload:add(kind, data)
 end
 
 function Preload:start()
+	self.done_count = 0
 	self.isActive = true
 	self.lily = lily.loadMulti(self.toLoad)
 		:setUserData(self.userdata)
@@ -68,11 +80,31 @@ function Preload:start()
 			self.n = 0
 			self.toLoad = {}
 			self.userdata = {}
-			self.isActive = false
+			self.done_count = self.done_count + 1
+			-- self.lily = nil
+			-- self.isActive = false
 		end)
 end
 
 function Preload:update(dt)
+	self:checkGamestate()
+	if self.isActive then
+		if self.lily then
+			local nLoaded = self.lily:getLoadedCount()
+			local nTotal = self.lily:getCount()
+			if nLoaded ~= 0 then
+				local percent = nLoaded/nTotal * 100
+				self.bar:update(percent)
+			end
+		end
+	end
+	if self.bar.isDone and self.done_count < 2 then
+		self.done_count = self.done_count + 1
+		self.isActive = false
+	end
+end
+
+function Preload:checkGamestate()
 	if not (self.current == gamestate.current()) then
 		log.trace("State is changed!")
 		self.current = gamestate.current()
@@ -85,7 +117,11 @@ function Preload:update(dt)
 end
 
 function Preload:draw()
-
+	if self.isActive then
+		self.colors.bg:setBG()
+		self.colors.bar:set()
+		self.bar:draw()
+	end
 end
 
 function Preload:getState()

@@ -6,5 +6,6 @@
 test
 ctags
 gitlog.txt
+build
 !README.md
 !LICENSE.txt
