@@ -7,6 +7,7 @@ local gamestate = require("modules.hump.gamestate")
 
 local screen = require("src.screen")
 local colors = require("src.colors")
+local preload = require("src.preload")
 
 local Debug = {
 	graphs = {},
@@ -21,15 +22,18 @@ function Debug:load()
 	self.graphs.fps = debugGraph:new('fps', 0, 0)
   self.graphs.mem = debugGraph:new('mem', 0, 30)
   self.graphs.state = debugGraph:new('custom', 0, 60)
+  self.graphs.preload = debugGraph:new('custom', 0, 90)
 	self.graphs.fps.font = self.font
 	self.graphs.mem.font = self.font
 	self.graphs.state.font = self.font
+	self.graphs.preload.font = self.font
 end
 
 function Debug:update(dt)
 	lurker.update(dt)
 	for k,v in pairs(self.graphs) do v:update(dt) end
-	self.graphs.state.label = gamestate.current().__id
+	self.graphs.state.label = ("Gamestate: %s"):format(gamestate.current().__id)
+	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
 end
 
 function Debug:draw()
