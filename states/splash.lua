@@ -8,6 +8,8 @@ local ecs = {
 
 local colors = require("src.colors")
 local preload = require("src.preload")
+local screen = require("src.screen")
+local transition = require("src.transition")
 
 function Splash:init()
 	self.assets = {
@@ -25,7 +27,6 @@ function Splash:init()
 end
 
 function Splash:enter(previous, ...)
-	-- preload:check(self.assets)
 	self.instance = ecs.instance()
 end
 

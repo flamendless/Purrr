@@ -13,21 +13,17 @@ local lily = require("modules.lily.lily")
 local gamestate = require("modules.hump.gamestate")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
-local scrale = require("modules.scrale.scrale")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
 local screen = require("src.screen")
 local preload = require("src.preload")
+local transition = require("src.transition")
 
 function love.load()
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:load() end
-	scrale.init({
-			fillHorizontally = false, fillVertically = false,
-			scaleFilter = __filter, scaleAnisotropy = 1,
-			blendMode = { "alpha", "premultiplied" }
-		})
+	transition:init()
 	preload:init()
 	gamestate.switch( require("states").splash )
 end
@@ -42,10 +38,17 @@ function love.update(dt)
 end
 
 function love.draw()
-	if __debug then debugging:draw() end
-	preload:draw()
-	if preload:getState() then return end
 	if gamestate.current() then gamestate.current():draw() end
+	preload:draw()
+	transition:draw()
+	if __debug then debugging:draw() end
+end
+
+function love.keypressed(key)
+	if gamestate.current() and gamestate.current().keypressed then
+		gamestate.current():keypressed(key)
+	end
+	if __debug then debugging:keypressed(key) end
 end
 
 function love.quit()

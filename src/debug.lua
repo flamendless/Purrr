@@ -8,6 +8,7 @@ local gamestate = require("modules.hump.gamestate")
 local screen = require("src.screen")
 local colors = require("src.colors")
 local preload = require("src.preload")
+local transition = require("src.transition")
 
 local Debug = {
 	graphs = {},
@@ -23,10 +24,12 @@ function Debug:load()
   self.graphs.mem = debugGraph:new('mem', 0, 30)
   self.graphs.state = debugGraph:new('custom', 0, 60)
   self.graphs.preload = debugGraph:new('custom', 0, 90)
+  self.graphs.transition = debugGraph:new('custom', 0, 120)
 	self.graphs.fps.font = self.font
 	self.graphs.mem.font = self.font
 	self.graphs.state.font = self.font
 	self.graphs.preload.font = self.font
+	self.graphs.transition.font = self.font
 end
 
 function Debug:update(dt)
@@ -34,6 +37,7 @@ function Debug:update(dt)
 	for k,v in pairs(self.graphs) do v:update(dt) end
 	self.graphs.state.label = ("Gamestate: %s"):format(gamestate.current().__id)
 	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
+	self.graphs.transition.label = ("Transition: %s"):format(tostring(transition:getState()))
 end
 
 function Debug:draw()
