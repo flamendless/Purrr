@@ -17,6 +17,16 @@ function ResourceManager:getImage(id)
 	return self.__assets.images[id]
 end
 
+function ResourceManager:getAll(kind)
+	assert(self.__assets[kind], ("%s Does not exist!"):format(kind))
+	local t = {}
+	for id, data in pairs(self.__assets[kind]) do
+		t[id] = data
+		self:addRef(id)
+	end
+	return t
+end
+
 function ResourceManager:getFont(id)
 	assert(self.__assets.fonts[id], ("Font %s does not exist!"):format(id))
 	self:addRef(id)
