@@ -10,6 +10,8 @@ local colors = require("src.colors")
 local preload = require("src.preload")
 local screen = require("src.screen")
 local transition = require("src.transition")
+local gamestate = require("src.gamestate")
+local resourceManager = require("src.resource_manager")
 
 function Splash:init()
 	self.assets = {
@@ -28,6 +30,9 @@ end
 
 function Splash:enter(previous, ...)
 	self.instance = ecs.instance()
+	self.images = {
+		flamendless = resourceManager:getImage("logo_flam"),
+	}
 end
 
 function Splash:update(dt)
@@ -37,6 +42,14 @@ end
 function Splash:draw()
 	self.colors.bg:setBG()
 	self.instance:emit("draw")
+	love.graphics.setColor(1,1,1,1)
+	love.graphics.draw(self.images.flamendless)
+end
+
+function Splash:keypressed(key)
+	if key == "space" then
+		gamestate:switch(self, "hi", "hello")
+	end
 end
 
 return Splash

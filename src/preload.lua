@@ -3,7 +3,6 @@ local Preload = {}
 local lily = require("modules.lily.lily")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
-local gamestate = require("modules.hump.gamestate")
 local timer = require("modules.hump.timer")
 
 local resourceManager = require("src.resource_manager")
@@ -20,10 +19,9 @@ function Preload:init()
 	self.userdata = {}
 	self.n = 0
 	self.isActive = false
-	self.done_count = 0
-	self.current = gamestate.current()
 	local w = screen.x/1.5
 	self.bar = loading_bar(screen.x/2 - w/2, screen.y * 0.75, w, 32, 12)
+	self.preloaderDone = true
 end
 
 function Preload:check(t_assets)
@@ -60,7 +58,7 @@ function Preload:add(kind, data)
 end
 
 function Preload:start()
-	self.done_count = 0
+	self.preloaderDone = false
 	self.isActive = true
 	self.lily = lily.loadMulti(self.toLoad)
 		:setUserData(self.userdata)
@@ -80,14 +78,11 @@ function Preload:start()
 			self.n = 0
 			self.toLoad = {}
 			self.userdata = {}
-			self.done_count = self.done_count + 1
-			-- self.lily = nil
-			-- self.isActive = false
+			self.preloaderDone = true
 		end)
 end
 
 function Preload:update(dt)
-	self:checkGamestate()
 	if self.isActive then
 		if self.lily then
 			local nLoaded = self.lily:getLoadedCount()
@@ -98,21 +93,8 @@ function Preload:update(dt)
 			end
 		end
 	end
-	if self.bar.isDone and self.done_count < 2 then
-		self.done_count = self.done_count + 1
+	if self.bar.isDone and self.preloaderDone then
 		self.isActive = false
-	end
-end
-
-function Preload:checkGamestate()
-	if not (self.current == gamestate.current()) then
-		log.trace("State is changed!")
-		self.current = gamestate.current()
-		log.trace("Checking for state's assets...")
-		if self.current.assets then
-			log.trace("Checking and validating...")
-			self:check(self.current.assets)
-		end
 	end
 end
 

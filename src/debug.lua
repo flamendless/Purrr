@@ -3,12 +3,12 @@ local lurker = require("modules.lurker.lurker")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
-local gamestate = require("modules.hump.gamestate")
 
 local screen = require("src.screen")
 local colors = require("src.colors")
 local preload = require("src.preload")
 local transition = require("src.transition")
+local gamestate = require("src.gamestate")
 
 local Debug = {
 	graphs = {},
@@ -35,7 +35,7 @@ end
 function Debug:update(dt)
 	lurker.update(dt)
 	for k,v in pairs(self.graphs) do v:update(dt) end
-	self.graphs.state.label = ("Gamestate: %s"):format(gamestate.current().__id)
+	self.graphs.state.label = ("Gamestate: %s"):format(gamestate:getCurrent().__id)
 	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
 	self.graphs.transition.label = ("Transition: %s"):format(tostring(transition:getState()))
 end

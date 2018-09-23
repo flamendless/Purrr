@@ -1,6 +1,6 @@
 local ResourceManager = {
 	__assets = { images = {}, fonts = {} },
-	__ref = {}
+	__ref = {},
 }
 
 function ResourceManager:add(kind, id, data)
@@ -13,14 +13,21 @@ end
 
 function ResourceManager:getImage(id)
 	assert(self.__assets.images[id], ("Image %s does not exist!"):format(id))
-	self.__ref.images[id] = self.__ref.images[id] + 1
+	self:addRef(id)
 	return self.__assets.images[id]
 end
 
 function ResourceManager:getFont(id)
 	assert(self.__assets.fonts[id], ("Font %s does not exist!"):format(id))
-	self.__ref.fonts[id] = self.__ref.fonts[id] + 1
+	self:addRef(id)
 	return self.__assets.images[id]
+end
+
+function ResourceManager:addRef(id)
+	if not self.__ref[id] then
+		self.__ref[id] = 0
+	end
+	self.__ref[id] = self.__ref[id] + 1
 end
 
 return ResourceManager
