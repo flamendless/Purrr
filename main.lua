@@ -14,6 +14,7 @@ local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
+local time = require("src.time")
 local gamestate = require("src.gamestate")
 local screen = require("src.screen")
 local preload = require("src.preload")
@@ -32,6 +33,7 @@ function love.update(dt)
 	if __debug then debugging:update(dt) end
 	timer.update(dt)
 	flux.update(dt)
+	time:update(dt)
 	preload:update(dt)
 	if preload:getState() then return end
 	gamestate:update(dt)
