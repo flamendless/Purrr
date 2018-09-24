@@ -60,6 +60,12 @@ function Gamestate:keypressed(key)
 	end
 end
 
+function Gamestate:mousepressed(mx, my, mb)
+	if self.__current.mousepressed and self.__current.isReady then
+		self.__current:mousepressed(mx, my, mb)
+	end
+end
+
 function Gamestate:getCurrent() return self.__current end
 
 return Gamestate

@@ -24,6 +24,7 @@ function love.load()
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:load() end
+	math.randomseed(os.time())
 	transition:init()
 	preload:init()
 	gamestate:start( require("states").splash )
@@ -50,6 +51,10 @@ end
 function love.keypressed(key)
 	gamestate:keypressed(key)
 	if __debug then debugging:keypressed(key) end
+end
+
+function love.mousepressed(mx, my, mb)
+	gamestate:mousepressed(mx, my, mb)
 end
 
 function love.quit()
