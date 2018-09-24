@@ -8,6 +8,7 @@ local Systems = {
 	renderer = req("renderer"),
 	transform = req("transform"),
 	tweenTo = req("tweenTo"),
+	glitchEffect = req("glitchEffect"),
 }
 
 return Systems

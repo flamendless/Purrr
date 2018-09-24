@@ -12,6 +12,7 @@ local Components = {
 	tween = req("tween"),
 	targetPos = req("targetPos"),
 	text = req("text"),
+	glitch = req("glitch"),
 }
 
 return Components
