@@ -60,6 +60,8 @@ local mt = {
 		if type(...) == "string" then
 			if ... == "flat" then
 				return Colors.flat(...)
+			elseif ... == "random" then
+				return Colors.random(...)
 			else
 				return Colors.str(...)
 			end
@@ -82,6 +84,12 @@ end
 
 function Colors.flat(_, str, variation, a)
 	local t = { unpack(flat_colors[str][variation]) }
+	t[4] = a or 1
+	return setmetatable(t, mt)
+end
+
+function Colors.random(_, a)
+	local t = { math.random(100)/100, math.random(100)/100, math.random(100)/100 }
 	t[4] = a or 1
 	return setmetatable(t, mt)
 end
