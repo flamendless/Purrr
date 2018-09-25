@@ -17,7 +17,7 @@ local Debug = {
 	font = love.graphics.newFont(12),
 	modes = {
 		graphs = true,
-		lines = false,
+		lines = true,
 	}
 }
 

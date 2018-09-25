@@ -9,6 +9,8 @@ local Systems = {
 	transform = req("transform"),
 	tweenTo = req("tweenTo"),
 	glitchEffect = req("glitchEffect"),
+	squareTransform = req("squareTransform"),
+	changeColor = req("changeColor"),
 }
 
 return Systems

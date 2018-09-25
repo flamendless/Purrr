@@ -1,27 +1,39 @@
 local Preload = {}
 
+local ecs = {
+	instance = require("modules.concord.lib.instance"),
+	entity = require("modules.concord.lib.entity"),
+}
+local S = require("ecs.systems")
+local C = require("ecs.components")
+
 local lily = require("modules.lily.lily")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
 local timer = require("modules.hump.timer")
+local flux = require("modules.flux.flux")
+local vec2 = require("modules.hump.vector")
 
 local resourceManager = require("src.resource_manager")
 local screen = require("src.screen")
 local colors = require("src.colors")
-local loading_bar = require("src.loading_bar")
 
 function Preload:init()
 	self.colors = {
 		bg = colors("flat", "black", "dark"),
-		bar = colors("flat", "white", "light"),
+		text = colors("flat", "white", "dark"),
+		circle = colors("flat", "red", "dark"),
+		rect = colors("flat", "blue", "dark"),
+		triangle = colors("flat", "green", "dark"),
 	}
+
+	self.font = love.graphics.newFont("assets/fonts/vera.ttf", 24)
 	self.toLoad = {}
 	self.userdata = {}
 	self.n = 0
 	self.isActive = false
-	local w = screen.x/1.5
-	self.bar = loading_bar(screen.x/2 - w/2, screen.y * 0.75, w, 32, 12)
-	self.preloaderDone = true
+	self.percent = 0
+	self:set()
 end
 
 function Preload:check(t_assets)
@@ -58,6 +70,7 @@ function Preload:add(kind, data)
 end
 
 function Preload:start()
+	self:addAnimation()
 	self.preloaderDone = false
 	self.isActive = true
 	self.lily = lily.loadMulti(self.toLoad)
@@ -73,41 +86,85 @@ function Preload:start()
 			end
 		end)
 		:onComplete(function()
-			log.trace("ASSETS:")
-			print(inspect(resourceManager.__assets))
-			self.n = 0
-			self.toLoad = {}
-			self.userdata = {}
-			self.preloaderDone = true
+			self:complete()
 		end)
 end
 
 function Preload:update(dt)
 	if self.isActive then
+		self.instance:emit("update", dt)
 		if self.lily then
 			local nLoaded = self.lily:getLoadedCount()
 			local nTotal = self.lily:getCount()
 			if nLoaded ~= 0 then
-				local percent = nLoaded/nTotal * 100
-				self.bar:update(percent)
+				self.percent = nLoaded/nTotal * 100
 			end
 		end
-	end
-	if self.bar.isDone and self.preloaderDone then
-		self.isActive = false
 	end
 end
 
 function Preload:draw()
 	if self.isActive then
 		self.colors.bg:setBG()
-		self.colors.bar:set()
-		self.bar:draw()
+		self.colors.text:set()
+		love.graphics.setFont(self.font)
+		love.graphics.printf(("LOADING %i%%"):format(self.percent), 0, screen.y/2 + 64, screen.x, "center")
+		self.instance:emit("draw")
 	end
 end
 
-function Preload:getState()
-	return self.isActive
+function Preload:set()
+	self.instance = ecs.instance()
+	self.systems = {
+		squareTransform = S.squareTransform(),
+		renderer = S.renderer(),
+		changeColor = S.changeColor(),
+		transform = S.transform(),
+	}
+
+	self.entities = {}
+	self.instance:addSystem(self.systems.transform)
+	self.instance:addSystem(self.systems.changeColor, "change", "change", false)
+	self.instance:addSystem(self.systems.squareTransform, "transformToNone", "transformToNone", false)
+	self.instance:addSystem(self.systems.renderer, "draw", "drawSquare", false)
 end
+
+function Preload:addAnimation()
+	local e = ecs.entity()
+		:give(C.colors, { self.colors.circle, self.colors.rect, self.colors.triangle })
+		:give(C.square, "fill", vec2(128, 128))
+		:give(C.pos, vec2(screen.x/2, screen.y/2))
+		:give(C.cornerRadius, 128)
+		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.shapeTransform, 1.5)
+		:give(C.changeColor, 1.5)
+		:apply()
+
+	self.entities.preloader = e
+	self.instance:addEntity(e)
+	self.instance:addEntity(e)
+	self.instance:enableSystem(self.systems.changeColor, "change")
+	self.instance:enableSystem(self.systems.squareTransform, "transformToNone")
+	self.instance:enableSystem(self.systems.renderer, "draw", "drawSquare")
+end
+
+function Preload:complete()
+	local dur = 2
+	log.trace("ASSETS:")
+	print(inspect(resourceManager.__assets))
+	flux.to(self.colors.text, 1, { [4] = 0 })
+	-- self.instance:emit("transformToNone", self.entities.preloader, dur)
+	timer.after(dur, function()
+		-- self.instance:disableSystem(self.systems.renderer, "draw", "drawSquare")
+		-- self.instance:disableSystem(self.systems.squareTransform, "transformToNone")
+		-- self.isActive = false
+		self.percent = 0
+		self.n = 0
+		self.toLoad = {}
+		self.userdata = {}
+	end)
+end
+
+function Preload:getState() return self.isActive end
 
 return Preload

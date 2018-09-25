@@ -9,6 +9,10 @@ local Renderer = System({
 		C.pos,
 		C.text,
 		"text"
+	}, {
+		C.pos,
+		C.square,
+		"square"
 	})
 
 function Renderer:drawText()
@@ -42,6 +46,19 @@ function Renderer:drawSprite()
 		else
 			love.graphics.draw(c_sprite.sprite, c_pos.x, c_pos.y)
 		end
+	end
+end
+
+function Renderer:drawSquare()
+	local e
+	for i = 1, self.square.size do
+		e = self.square:get(i)
+		local c_square = e[C.square]
+		local c_cornerRadius = e[C.cornerRadius]
+		local c_pos = e[C.pos].pos
+		local c_color = e[C.color]
+		if c_color then c_color.color:set() end
+		love.graphics.rectangle(c_square.mode, c_pos.x, c_pos.y, c_square.size.x, c_square.size.y, (c_cornerRadius and c_cornerRadius.size) or 0)
 	end
 end
 

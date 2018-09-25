@@ -15,6 +15,7 @@ function Transition:init()
 	self.duration = 0.75
 	self.max_scale = screen.y/self.overlay:getHeight() * 1.5
 	self.scale = self.max_scale
+	self.color = colors("flat", "black", "dark")
 end
 
 function Transition:start(next_state)
@@ -36,7 +37,7 @@ end
 function Transition:draw()
 	if not self.isActive then return end
 	love.graphics.setCanvas(self.canvas)
-	love.graphics.clear(0, 0, 0, 1)
+	love.graphics.clear(self.color)
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setBlendMode("multiply", "premultiplied")
 	love.graphics.draw(self.overlay, screen.x/2, screen.y/2, 0, self.scale, self.scale , self.overlay:getWidth()/2, self.overlay:getHeight()/2)

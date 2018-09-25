@@ -36,13 +36,11 @@ function love.update(dt)
 	flux.update(dt)
 	time:update(dt)
 	preload:update(dt)
-	if preload:getState() then return end
 	gamestate:update(dt)
 end
 
 function love.draw()
 	preload:draw()
-	if preload:getState() then return end
 	gamestate:draw()
 	transition:draw()
 	if __debug then debugging:draw() end

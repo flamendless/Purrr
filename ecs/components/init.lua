@@ -6,6 +6,7 @@ end
 
 local Components = {
 	color = req("color"),
+	colors = req("colors"),
 	sprite = req("sprite"),
 	pos = req("pos"),
 	transform = req("transform"),
@@ -13,6 +14,10 @@ local Components = {
 	targetPos = req("targetPos"),
 	text = req("text"),
 	glitch = req("glitch"),
+	square = req("square"),
+	cornerRadius = req("cornerRadius"),
+	shapeTransform = req("shapeTransform"),
+	changeColor = req("changeColor"),
 }
 
 return Components

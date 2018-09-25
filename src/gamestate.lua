@@ -32,6 +32,7 @@ function Gamestate:init()
 end
 
 function Gamestate:enter(previous, ...)
+	log.trace(("State %s Entered!"):format(self.__current.__id))
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
 end
