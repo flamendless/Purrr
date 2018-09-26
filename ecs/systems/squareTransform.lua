@@ -10,58 +10,68 @@ local SquareTransform = System({
 		C.shapeTransform,
 	})
 
-local dur = 1.75
+local dur = {
+	[1] = 0.75,
+	[2] = 1.5,
+	[3] = 1.5,
+}
+local current = 1
+local isCircle = true
 
 function SquareTransform:entityAdded(e)
 	local c_cornerRadius = e[C.cornerRadius].size
-	local c_shapeTransform = e[C.shapeTransform]
 	local c_square = e[C.square].size
-	dur = c_shapeTransform.dur
-	if c_cornerRadius >= c_square.x/2 then
-		self:toRect(e)
-	elseif c_cornerRadius <= 0 then
-		self:toCircle(e)
+	self:start(e)
+end
+
+function SquareTransform:start(e)
+	local c_cornerRadius = e[C.cornerRadius]
+	local c_square = e[C.square]
+	local c_pos = e[C.pos]
+	if current == 1 then --to none
+		flux.to(c_square.size, dur[current], { x = c_square.orig_size.x/4, y = c_square.orig_size.y/4 })
+			:ease("backin")
+			:onstart(function() self:getInstance():emit("change", e, dur[current]) end)
+			:onupdate(function() self:updateTransform(e) end)
+			:oncomplete(function()
+				if isCircle then
+					current = 2
+				else
+					current = 3
+				end
+				self:start(e)
+			end)
+
+	elseif current == 2 then --to rect
+		flux.to(c_cornerRadius, dur[current], { size = 0 })
+		flux.to(c_square.size, dur[current], { x = c_square.orig_size.x, y = c_square.orig_size.y })
+			:onstart(function() self:getInstance():emit("change", e, dur[current]) end)
+			:onupdate(function() self:updateTransform(e) end)
+			:oncomplete(function()
+				isCircle = false
+				current = 1
+				self:start(e)
+			end)
+
+	elseif current == 3 then --to circle
+		flux.to(c_square.size, dur[current], { x = c_square.orig_size.x, y = c_square.orig_size.y })
+		flux.to(c_cornerRadius, dur[current], { size = c_cornerRadius.orig_size })
+			:onstart(function() self:getInstance():emit("change", e, dur[current]) end)
+			:onupdate(function() self:updateTransform(e) end)
+			:oncomplete(function()
+				isCircle = true
+				current = 1
+				self:start(e)
+			end)
 	end
 end
 
-function SquareTransform:toRect(e)
-	local c_square = e[C.square]
-	local c_cornerRadius = e[C.cornerRadius]
-	local c_colors = e[C.colors].colors
-	local c_color = e[C.color]
-	flux.to(c_cornerRadius, dur, { size = 0 })
-		:onstart(function()
-			self:getInstance():emit("change", e, dur)
-		end)
-		:oncomplete(function()
-			self:toCircle(e)
-		end)
-end
-
-function SquareTransform:toCircle(e)
-	local c_square = e[C.square]
-	local c_cornerRadius = e[C.cornerRadius]
-	local c_colors = e[C.colors].colors
-	local c_color = e[C.color]
-	flux.to(c_cornerRadius, dur, { size = c_square.size.x/2 })
-		:onstart(function()
-			self:getInstance():emit("change", e, dur)
-		end)
-		:oncomplete(function()
-			self:toRect(e)
-		end)
-end
-
-function SquareTransform:transformToNone(e)
+function SquareTransform:updateTransform(e)
 	local c_square = e[C.square]
 	local c_cornerRadius = e[C.cornerRadius]
 	local c_pos = e[C.pos]
-	flux.to(c_cornerRadius, dur, { size = 0 })
-	flux.to(c_square.size, dur, { x = 0, y = 0 })
-		:onupdate(function()
-			c_pos.pos.x = c_pos.orig_pos.x - c_square.size.x/2
-			c_pos.pos.y = c_pos.orig_pos.y - c_square.size.y/2
-		end)
+	c_pos.pos.x = c_pos.orig_pos.x - c_square.size.x/2
+	c_pos.pos.y = c_pos.orig_pos.y - c_square.size.y/2
 end
 
 return SquareTransform

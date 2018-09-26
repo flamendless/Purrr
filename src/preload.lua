@@ -136,8 +136,8 @@ function Preload:addAnimation()
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.cornerRadius, 128)
 		:give(C.transform, 0, 1, 1, "center", "center")
-		:give(C.shapeTransform, 1.5)
-		:give(C.changeColor, 1.5)
+		:give(C.shapeTransform)
+		:give(C.changeColor)
 		:apply()
 
 	self.entities.preloader = e

@@ -58,7 +58,9 @@ function Renderer:drawSquare()
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color]
 		if c_color then c_color.color:set() end
-		love.graphics.rectangle(c_square.mode, c_pos.x, c_pos.y, c_square.size.x, c_square.size.y, (c_cornerRadius and c_cornerRadius.size) or 0)
+		if c_square.size.x > 0 then
+			love.graphics.rectangle(c_square.mode, c_pos.x, c_pos.y, c_square.size.x, c_square.size.y, (c_cornerRadius and c_cornerRadius.size) or 0)
+		end
 	end
 end
 
