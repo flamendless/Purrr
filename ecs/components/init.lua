@@ -22,6 +22,8 @@ local Components = {
 	points = req("points"),
 	debug = req("debug"),
 	spin = req("spin"),
+	fillMode = req("fillMode"),
+	ease = req("ease"),
 }
 
 return Components
