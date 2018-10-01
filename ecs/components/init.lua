@@ -14,10 +14,14 @@ local Components = {
 	targetPos = req("targetPos"),
 	text = req("text"),
 	glitch = req("glitch"),
-	square = req("square"),
+	rect = req("rect"),
 	cornerRadius = req("cornerRadius"),
 	shapeTransform = req("shapeTransform"),
 	changeColor = req("changeColor"),
+	circle = req("circle"),
+	points = req("points"),
+	debug = req("debug"),
+	spin = req("spin"),
 }
 
 return Components

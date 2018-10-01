@@ -31,3 +31,6 @@
 [submodule "modules/lurker"]
 	path = modules/lurker
 	url = git@github.com:rxi/lurker.git
+[submodule "modules/draft"]
+	path = modules/draft
+	url = git@github.com:pelevesque/draft.git

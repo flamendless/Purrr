@@ -3,6 +3,7 @@
 *.zip
 *.love
 *.code-workspace
+res
 test
 ctags
 gitlog.txt

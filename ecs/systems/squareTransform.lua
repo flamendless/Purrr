@@ -11,7 +11,7 @@ local SquareTransform = System({
 	})
 
 local dur = {
-	[1] = 0.75,
+	[1] = 1.5,
 	[2] = 1.5,
 	[3] = 1.5,
 }

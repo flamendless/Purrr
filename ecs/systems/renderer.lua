@@ -11,8 +11,15 @@ local Renderer = System({
 		"text"
 	}, {
 		C.pos,
-		C.square,
-		"square"
+		C.rect,
+		"rect"
+	}, {
+		C.pos,
+		C.circle,
+		"circle"
+	}, {
+		C.points,
+		"points",
 	})
 
 function Renderer:drawText()
@@ -49,17 +56,57 @@ function Renderer:drawSprite()
 	end
 end
 
-function Renderer:drawSquare()
+function Renderer:drawRect()
 	local e
-	for i = 1, self.square.size do
-		e = self.square:get(i)
-		local c_square = e[C.square]
+	for i = 1, self.rect.size do
+		e = self.rect:get(i)
+		local c_rect = e[C.rect]
 		local c_cornerRadius = e[C.cornerRadius]
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color]
 		if c_color then c_color.color:set() end
-		if c_square.size.x > 0 then
-			love.graphics.rectangle(c_square.mode, c_pos.x, c_pos.y, c_square.size.x, c_square.size.y, (c_cornerRadius and c_cornerRadius.size) or 0)
+		if c_rect.size.x > 0 then
+			love.graphics.rectangle(c_rect.mode, c_pos.x, c_pos.y, c_rect.size.x, c_rect.size.y, (c_cornerRadius and c_cornerRadius.size) or 0)
+		end
+	end
+end
+
+function Renderer:drawCircle()
+	local e
+	for i = 1, self.circle.size do
+		e = self.circle:get(i)
+		local c_circle = e[C.circle]
+		local c_pos = e[C.pos].pos
+		local c_color = e[C.color]
+		if c_color then c_color.color:set() end
+	end
+end
+
+function Renderer:drawPolygon()
+	local e
+	for i = 1, self.points.size do
+		e = self.points:get(i)
+		local c_points = e[C.points]
+		local c_pos = e[C.pos]
+		local c_transform = e[C.transform]
+		local c_color = e[C.color]
+		local c_debug = e[C.debug]
+		if c_color then c_color.color:set() end
+		if c_transform then
+			love.graphics.push()
+			if c_pos then love.graphics.translate(c_pos.pos.x, c_pos.pos.y) end
+			love.graphics.rotate(c_transform.rot)
+		end
+		if c_points.current then
+			love.graphics.polygon("line", c_points.current)
+		end
+		if c_debug and c_debug.state then
+			for i = 1, #c_points.points do
+				love.graphics.polygon("line", c_points.points[i])
+			end
+		end
+		if c_transform then
+			love.graphics.pop()
 		end
 	end
 end

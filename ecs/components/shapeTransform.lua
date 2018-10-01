@@ -1,7 +1,6 @@
 local Component = require("modules.concord.lib.component")
 
-local ShapeTransform = Component(function(e, dur)
-	e.dur = dur
+local ShapeTransform = Component(function(e)
 end)
 
 return ShapeTransform

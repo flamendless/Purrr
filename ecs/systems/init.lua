@@ -11,6 +11,8 @@ local Systems = {
 	glitchEffect = req("glitchEffect"),
 	squareTransform = req("squareTransform"),
 	changeColor = req("changeColor"),
+	shapeTransform = req("shapeTransform"),
+	spinner = req("spinner"),
 }
 
 return Systems
