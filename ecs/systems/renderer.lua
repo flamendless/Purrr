@@ -90,6 +90,8 @@ function Renderer:drawPolygon()
 		local c_pos = e[C.pos]
 		local c_transform = e[C.transform]
 		local c_color = e[C.color]
+		local c_fillMode = e[C.fillMode]
+		if c_fillMode then c_fillMode = c_fillMode.mode end
 		local c_debug = e[C.debug]
 		if c_color then c_color.color:set() end
 		if c_transform then
@@ -97,17 +99,12 @@ function Renderer:drawPolygon()
 			if c_pos then love.graphics.translate(c_pos.pos.x, c_pos.pos.y) end
 			love.graphics.rotate(c_transform.rot)
 		end
-		if c_points.current then
-			love.graphics.polygon("line", c_points.current)
-		end
+		if c_points.current then love.graphics.polygon(c_fillMode or "line", c_points.current) end
 		if c_debug and c_debug.state then
-			for i = 1, #c_points.points do
-				love.graphics.polygon("line", c_points.points[i])
-			end
+			love.graphics.setColor(1, 0, 0, 0.5)
+			for i = 1, #c_points.points do love.graphics.polygon("line", c_points.points[i]) end
 		end
-		if c_transform then
-			love.graphics.pop()
-		end
+		if c_transform then love.graphics.pop() end
 	end
 end
 

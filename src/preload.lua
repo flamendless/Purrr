@@ -132,26 +132,12 @@ function Preload:set()
 	self.instance:addSystem(self.systems.shapeTransform, "update")
 	self.instance:addSystem(self.systems.shapeTransform, "draw")
 	self.instance:addSystem(self.systems.spinner, "update")
-	-- self.instance:addSystem(self.systems.squareTransform, "transformToNone", "transformToNone", false)
 	self.instance:addSystem(self.systems.renderer, "draw", "drawPolygon")
-	-- self.instance:addSystem(self.systems.renderer, "draw", "drawCircle", false)
-	-- self.instance:addSystem(self.systems.renderer, "draw", "drawRect", false)
 end
 
 function Preload:addAnimation()
-	-- local e = ecs.entity()
-	-- 	:give(C.colors, { self.colors.circle, self.colors.rect, self.colors.triangle })
-	-- 	:give(C.square, "fill", vec2(128, 128))
-	-- 	:give(C.pos, vec2(screen.x/2, screen.y/2))
-	-- 	:give(C.cornerRadius, 128)
-	-- 	:give(C.transform, 0, 1, 1, "center", "center")
-	-- 	:give(C.shapeTransform)
-	-- 	:give(C.changeColor)
-	-- 	:apply()
-
 	local e = ecs.entity()
 		:give(C.colors, { self.colors.circle, self.colors.rect, self.colors.triangle })
-		:give(C.shapeTransform)
 		:give(C.points, 1, unpack({
 				[1] = draft:circle(0, 0, 256, 32, "line"),
 				[2] = draft:circle(0, 0, 128, 16, "line"),
@@ -160,6 +146,9 @@ function Preload:addAnimation()
 		:give(C.transform, 0, 1, 1, "center", "center")
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.changeColor)
+		:give(C.shapeTransform, 1.5)
+		:give(C.fillMode, "fill")
+		:give(C.ease, "backin")
 		:give(C.debug, __debug)
 		:apply()
 
@@ -172,7 +161,6 @@ function Preload:complete()
 	log.trace("ASSETS:")
 	print(inspect(resourceManager.__assets))
 	flux.to(self.colors.text, 1, { [4] = 0 })
-	-- self.instance:emit("transformToNone", self.entities.preloader, dur)
 	timer.after(dur, function()
 		-- self.isActive = false
 		self.percent = 0

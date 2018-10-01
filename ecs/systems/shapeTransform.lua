@@ -6,6 +6,7 @@ local draft = Draft()
 local inspect = require("modules.inspect.inspect")
 
 local dur = 1
+local ease = "quadin"
 local ShapeTransform = System({
 		C.shapeTransform,
 		C.points,
@@ -17,6 +18,15 @@ function ShapeTransform:init()
 	self.current = nil
 end
 
+function ShapeTransform:entityAdded(e)
+	local c_points = e[C.points]
+	dur = e[C.shapeTransform].dur/#c_points.points
+	if e:has(C.ease) then
+		ease = e[C.ease].ease
+	end
+	self:onStart(e)
+end
+
 function ShapeTransform:processPoints(current, after)
 	total = #current/2
 	done = 0
@@ -26,6 +36,7 @@ function ShapeTransform:processPoints(current, after)
 	for i = 1, #current, 2 do
 		if (i % d) == 1 then
 			flux.to(current, dur, { [i] = after[n], [i+1] = after[n+1] })
+				:ease(ease)
 				:oncomplete(function() done = done + 1 end)
 			n = n + 2
 		else
@@ -43,13 +54,10 @@ function ShapeTransform:processPoints(current, after)
 		local x2 = after[_prev[1]]
 		local y2 = after[_prev[2]]
 		flux.to(current, dur, { [excess[n][1]] = (x+x2)/2, [excess[n][2]] = (y+y2)/2 })
+			:ease(ease)
 			:oncomplete(function() done = done + 1 end)
 		n = n + 1
 	end
-end
-
-function ShapeTransform:entityAdded(e)
-	self:onStart(e)
 end
 
 function ShapeTransform:onStart(e)
@@ -63,7 +71,7 @@ function ShapeTransform:onStart(e)
 		self.current = e
 		self:getInstance():emit("change", e, dur)
 	else
-		e:give(C.spin, 64):apply()
+		e:give(C.spin, 128):apply()
 	end
 end
 

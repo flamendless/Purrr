@@ -18,11 +18,12 @@ local Debug = {
 	modes = {
 		graphs = true,
 		lines = true,
-	}
+	},
 }
 
 function Debug:load()
-	self.colors.line = colors(1, 0, 0, 1)
+	self.colors.line = colors(1, 0, 0, 0.5)
+	self.colors.graph = colors(1, 0, 0, 1)
 	log.trace("Load")
 	log.trace("Setting Graphs")
 	self.graphs.fps = debugGraph:new('fps', 0, 0)
@@ -46,11 +47,12 @@ function Debug:update(dt)
 	self.graphs.state.label = ("Gamestate: %s"):format(gamestate:getCurrent().__id)
 	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
 	self.graphs.transition.label = ("Transition: %s"):format(tostring(transition:getState()))
+	self.drawList = {}
 end
 
 function Debug:draw()
 	if self.modes.graphs then
-		love.graphics.setColor(1, 0, 0, 1)
+		self.colors.graph:set()
 		for k,v in pairs(self.graphs) do v:draw() end
 	end
 
