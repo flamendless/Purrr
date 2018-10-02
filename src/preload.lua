@@ -1,20 +1,11 @@
 local Preload = {}
 
-local ecs = {
-	instance = require("modules.concord.lib.instance"),
-	entity = require("modules.concord.lib.entity"),
-}
-local S = require("ecs.systems")
-local C = require("ecs.components")
-
 local lily = require("modules.lily.lily")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
-local Draft = require("modules.draft.draft")
-local draft = Draft()
 
 local resourceManager = require("src.resource_manager")
 local screen = require("src.screen")
@@ -24,9 +15,6 @@ function Preload:init()
 	self.colors = {
 		bg = colors("flat", "black", "dark"),
 		text = colors("flat", "white", "dark"),
-		circle = colors("flat", "red", "dark"),
-		rect = colors("flat", "blue", "dark"),
-		triangle = colors("flat", "green", "dark"),
 	}
 
 	self.font = love.graphics.newFont("assets/fonts/vera.ttf", 24)
@@ -35,7 +23,6 @@ function Preload:init()
 	self.n = 0
 	self.isActive = false
 	self.percent = 0
-	self:set()
 end
 
 function Preload:check(t_assets)
@@ -72,7 +59,6 @@ function Preload:add(kind, data)
 end
 
 function Preload:start()
-	self:addAnimation()
 	self.preloaderDone = false
 	self.isActive = true
 	self.lily = lily.loadMulti(self.toLoad)
@@ -94,7 +80,6 @@ end
 
 function Preload:update(dt)
 	if self.isActive then
-		self.instance:emit("update", dt)
 		if self.lily then
 			local nLoaded = self.lily:getLoadedCount()
 			local nTotal = self.lily:getCount()
@@ -110,50 +95,8 @@ function Preload:draw()
 		self.colors.bg:setBG()
 		self.colors.text:set()
 		love.graphics.setFont(self.font)
-		-- love.graphics.printf(("LOADING %i%%"):format(self.percent), 0, screen.y/2 + 128, screen.x, "center")
-		self.instance:emit("draw")
+		love.graphics.printf(("LOADING %i%%"):format(self.percent), 0, screen.y/2 + 128, screen.x, "center")
 	end
-end
-
-function Preload:set()
-	self.instance = ecs.instance()
-	self.systems = {
-		squareTransform = S.squareTransform(),
-		shapeTransform = S.shapeTransform(),
-		renderer = S.renderer(),
-		changeColor = S.changeColor(),
-		transform = S.transform(),
-		spinner = S.spinner(),
-	}
-
-	self.entities = {}
-	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.changeColor, "change")
-	self.instance:addSystem(self.systems.shapeTransform, "update")
-	self.instance:addSystem(self.systems.shapeTransform, "draw")
-	self.instance:addSystem(self.systems.spinner, "update")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawPolygon")
-end
-
-function Preload:addAnimation()
-	local e = ecs.entity()
-		:give(C.colors, { self.colors.circle, self.colors.rect, self.colors.triangle })
-		:give(C.points, 1, unpack({
-				[1] = draft:circle(0, 0, 256, 32, "line"),
-				[2] = draft:circle(0, 0, 128, 16, "line"),
-				[3] = draft:circle(0, 0, 64, 8, "line"),
-			}))
-		:give(C.transform, 0, 1, 1, "center", "center")
-		:give(C.pos, vec2(screen.x/2, screen.y/2))
-		:give(C.changeColor)
-		:give(C.shapeTransform, 1.5)
-		:give(C.fillMode, "fill")
-		:give(C.ease, "backin")
-		:give(C.debug, __debug)
-		:apply()
-
-	self.entities.preloader = e
-	self.instance:addEntity(e)
 end
 
 function Preload:complete()
@@ -162,7 +105,7 @@ function Preload:complete()
 	print(inspect(resourceManager.__assets))
 	flux.to(self.colors.text, 1, { [4] = 0 })
 	timer.after(dur, function()
-		-- self.isActive = false
+		self.isActive = false
 		self.percent = 0
 		self.n = 0
 		self.toLoad = {}

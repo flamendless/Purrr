@@ -6,7 +6,7 @@ OUTPUT_DIR = ${BUILD_DIR}/output
 NAME = test
 APK_NAME = ${NAME}.apk
 PACKAGE_NAME = com.${NAME}.flamendless
-TEST_APK_NAME = ${NAME}-unaligned.apk
+TEST_APK_NAME = ${OUTPUT_DIR}/${NAME}-unaligned.apk
 KS_FILE = ${BUILD_DIR}/am2018.keystore
 PASSWORD = flamendless
 

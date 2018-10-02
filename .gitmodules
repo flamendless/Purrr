@@ -31,6 +31,7 @@
 [submodule "modules/lurker"]
 	path = modules/lurker
 	url = git@github.com:rxi/lurker.git
+	ignore = dirty
 [submodule "modules/draft"]
 	path = modules/draft
 	url = git@github.com:pelevesque/draft.git
