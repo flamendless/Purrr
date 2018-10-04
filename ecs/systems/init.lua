@@ -10,6 +10,8 @@ local Systems = {
 	tweenTo = req("tweenTo"),
 	changeColor = req("changeColor"),
 	spinner = req("spinner"),
+	animation = req("animation"),
+	position = req("position"),
 }
 
 return Systems

@@ -3,10 +3,20 @@ local Gamestate = {
 	__previous,
 	__preloading,
 	__args = {},
+	__instances = {},
 }
 
 local log = require("modules.log.log")
 local preload = require("src.preload")
+
+function Gamestate:addInstance(id, instance)
+	instance:load()
+	self.__instances[id] = instance
+end
+
+function Gamestate:removeInstance(id)
+	self.__instances[id] = nil
+end
 
 function Gamestate:start(state)
 	self.__current = state
@@ -47,11 +57,17 @@ function Gamestate:update(dt)
 	if self.__current.update and self.__current.isReady then
 		self.__current:update(dt)
 	end
+	for k,v in pairs(self.__instances) do
+		v:update(dt)
+	end
 end
 
 function Gamestate:draw()
 	if self.__current.draw and self.__current.isReady then
 		self.__current:draw()
+	end
+	for k,v in pairs(self.__instances) do
+		v:draw()
 	end
 end
 

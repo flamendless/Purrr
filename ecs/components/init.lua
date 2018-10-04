@@ -16,6 +16,9 @@ local Components = {
 	rect = req("rect"),
 	circle = req("circle"),
 	debug = req("debug"),
+	anim = req("anim"),
+	parent = req("parent"),
+	offsetPos = req("offsetPos"),
 }
 
 return Components

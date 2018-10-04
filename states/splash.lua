@@ -26,15 +26,18 @@ local s1
 function Splash:init()
 	self.assets = {
 		images = {
-			{ id = "logo_flam", path = "assets/images/flamendless.png" },
+			{ id = "flamendless", path = "assets/anim/flamendless.png" },
+			{ id = "loading", path = "assets/anim/loading.png" },
+			{ id = "eyes", path = "assets/parts/eyes.png" },
+			{ id = "nose", path = "assets/parts/nose.png" },
 		},
 		fonts = {
 			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } }
 		}
 	}
 	self.colors = {
-		bg = colors("flat", "black", "dark"),
-		logo = colors("flat", "white", "dark"),
+		bg = colors("black"),
+		logo = colors("white"),
 	}
 end
 
@@ -45,16 +48,18 @@ function Splash:enter(previous, ...)
 	self.systems = {
 		renderer = S.renderer(),
 		transform = S.transform(),
-		glitchEffect = S.glitchEffect(),
+		animation = S.animation(),
 	}
 
 	self.entities = {}
 	self.entities.logo = ecs.entity()
-		:give(C.glitch, 2)
-		:give(C.color, self.colors.logo, 0)
-		:give(C.sprite, self.images.logo_flam)
+		:give(C.color, self.colors.logo)
+		:give(C.anim, "assets/anim/flamendless.json", self.images.flamendless, {
+				speed = 1.5,
+				stopOnLast = true,
+			})
 		:give(C.pos, vec2(screen.x/2, screen.y/2 + 64))
-		:give(C.transform, 0, 1, 1, "center", "bottom")
+		:give(C.transform, 0, 4, 4, "center", "bottom")
 		:apply()
 
 	self.entities.text = ecs.entity()
@@ -65,8 +70,12 @@ function Splash:enter(previous, ...)
 
 	self.instance:addEntity(self.entities.logo)
 	self.instance:addEntity(self.entities.text)
+
 	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.glitchEffect, "update")
+	self.instance:addSystem(self.systems.transform, "handleSprite")
+	self.instance:addSystem(self.systems.transform, "handleAnim")
+	self.instance:addSystem(self.systems.animation, "update")
+	self.instance:addSystem(self.systems.animation, "draw")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 

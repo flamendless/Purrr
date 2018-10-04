@@ -35,3 +35,6 @@
 [submodule "modules/draft"]
 	path = modules/draft
 	url = git@github.com:pelevesque/draft.git
+[submodule "modules/peachy"]
+	path = modules/peachy
+	url = git@github.com:flamendless/peachy.git

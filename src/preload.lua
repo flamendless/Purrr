@@ -6,16 +6,23 @@ local inspect = require("modules.inspect.inspect")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
+local lume = require("modules.lume.lume")
+local peachy = require("modules.peachy.peachy")
 
 local resourceManager = require("src.resource_manager")
 local screen = require("src.screen")
 local colors = require("src.colors")
+
+local dur = 2
+-- if __debug then dur = 0 end
 
 function Preload:init()
 	self.colors = {
 		bg = colors("flat", "black", "dark"),
 		text = colors("flat", "white", "dark"),
 	}
+	local gamestate = require("src.gamestate")
+	gamestate:addInstance("loading", require("ecs.instances.loading"))
 
 	self.font = love.graphics.newFont("assets/fonts/vera.ttf", 24)
 	self.toLoad = {}
@@ -100,7 +107,6 @@ function Preload:draw()
 end
 
 function Preload:complete()
-	local dur = 2
 	log.trace("ASSETS:")
 	print(inspect(resourceManager.__assets))
 	flux.to(self.colors.text, 1, { [4] = 0 })
@@ -110,6 +116,8 @@ function Preload:complete()
 		self.n = 0
 		self.toLoad = {}
 		self.userdata = {}
+		local gamestate = require("src.gamestate")
+		gamestate:removeInstance("loading")
 	end)
 end
 
