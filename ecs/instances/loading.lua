@@ -79,7 +79,6 @@ function Loading:load()
 	self.instance:addEntity(self.entities.nose)
 
 	self.instance:addSystem(self.systems.position)
-	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleAnim")
 	self.instance:addSystem(self.systems.patrol)

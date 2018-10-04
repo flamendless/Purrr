@@ -5,6 +5,7 @@ local lume = require("modules.lume.lume")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
 local vec2 = require("modules.hump.vector")
+local timer = require("modules.hump.timer")
 local ecs = {
 	instance = require("modules.concord.lib.instance"),
 	entity = require("modules.concord.lib.entity"),
@@ -21,7 +22,8 @@ local gamestate = require("src.gamestate")
 local resourceManager = require("src.resource_manager")
 
 local next_state = require("states.menu")
-local s1
+local delay = 1
+if __debug then delay = 0 end
 
 function Splash:init()
 	self.assets = {
@@ -32,12 +34,14 @@ function Splash:init()
 			{ id = "nose", path = "assets/parts/nose.png" },
 		},
 		fonts = {
-			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } }
+			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
+			{ id = "bmdelico", path = "assets/fonts/bmdelico.ttf", sizes = { 18, 24, 32, 42 } },
 		}
 	}
 	self.colors = {
 		bg = colors("black"),
 		logo = colors("white"),
+		text = colors("flat", "white", "light"),
 	}
 end
 
@@ -60,11 +64,20 @@ function Splash:enter(previous, ...)
 			})
 		:give(C.pos, vec2(screen.x/2, screen.y/2 + 64))
 		:give(C.transform, 0, 4, 4, "center", "bottom")
+		:give(C.anim_callback, {
+				onComplete = function()
+					flux.to(self.colors.logo, delay, { [4] = 0 })
+					flux.to(self.colors.text, delay, { [4] = 0 })
+					timer.after(delay, function()
+						transition:start(next_state)
+					end)
+				end
+			})
 		:apply()
 
 	self.entities.text = ecs.entity()
-		:give(C.color, self.colors.logo, 0)
-		:give(C.text, "flamendless", self.fonts.vera_32, "center", screen.x)
+		:give(C.color, self.colors.text)
+		:give(C.text, "flamendless", self.fonts.bmdelico_42, "center", screen.x)
 		:give(C.pos, vec2(0, screen.y/2 + 128))
 		:apply()
 
@@ -78,12 +91,6 @@ function Splash:enter(previous, ...)
 	self.instance:addSystem(self.systems.animation, "draw")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
-
-	--sequence
-	s1 = flux.to(self.colors.logo, 2, { [4] = 1 }):delay(0.25)
-		:oncomplete(function()
-			transition:start(next_state)
-		end)
 end
 
 function Splash:update(dt)
@@ -97,9 +104,6 @@ end
 
 function Splash:mousepressed(mx, my, mb)
 	transition:start(next_state)
-	if s1 then
-		s1:stop()
-	end
 end
 
 return Splash

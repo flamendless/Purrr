@@ -22,6 +22,7 @@ local Components = {
 	patrol = req("patrol"),
 	speed = req("speed"),
 	moveTo = req("moveTo"),
+	anim_callback = req("anim_callback"),
 }
 
 return Components

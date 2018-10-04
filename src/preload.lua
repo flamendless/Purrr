@@ -14,7 +14,7 @@ local screen = require("src.screen")
 local colors = require("src.colors")
 
 local dur = 2
--- if __debug then dur = 0 end
+if __debug then dur = 0 end
 
 function Preload:init()
 	self.colors = {
@@ -100,9 +100,9 @@ end
 function Preload:draw()
 	if self.isActive then
 		self.colors.bg:setBG()
-		self.colors.text:set()
-		love.graphics.setFont(self.font)
-		love.graphics.printf(("LOADING %i%%"):format(self.percent), 0, screen.y/2 + 128, screen.x, "center")
+		-- self.colors.text:set()
+		-- love.graphics.setFont(self.font)
+		-- love.graphics.printf(("LOADING %i%%"):format(self.percent), 0, screen.y/2 + 128, screen.x, "center")
 	end
 end
 

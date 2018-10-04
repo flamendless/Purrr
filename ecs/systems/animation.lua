@@ -9,11 +9,14 @@ local Animation = System({
 
 function Animation:entityAdded(e)
 	local c_anim = e[C.anim]
+	local c_callback = e[C.anim_callback]
 	c_anim.anim = peachy.new(c_anim.json, c_anim.sheet, c_anim.tag)
 	if c_anim.stopOnLast then
 		c_anim.anim:onLoop(function()
 			c_anim.anim:stop(true)
-			self:getInstance():emit("animComplete", e)
+			if c_callback and c_callback.callback.onComplete then
+				c_callback.callback.onComplete()
+			end
 		end)
 	end
 	if e:has(C.transform) then self:getInstance():emit("handleAnim", e) end

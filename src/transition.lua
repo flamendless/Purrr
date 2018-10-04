@@ -9,16 +9,24 @@ local gamestate = require("src.gamestate")
 
 function Transition:init()
 	self.isActive = false
-	self.overlay = love.graphics.newImage("assets/images/overlay.png")
-	self.overlay:setFilter(__filter, __filter)
+	self.overlays = {
+		love.graphics.newImage("assets/images/overlay.png"),
+		love.graphics.newImage("assets/images/overlay1.png"),
+		love.graphics.newImage("assets/images/overlay2.png"),
+		love.graphics.newImage("assets/images/overlay3.png"),
+	}
+	for k,v in pairs(self.overlays) do v:setFilter(__filter, __filter) end
+	self.current = self.overlays[1]
 	self.canvas = love.graphics.newCanvas()
 	self.duration = 0.75
-	self.max_scale = screen.y/self.overlay:getHeight() * 1.5
+	self.max_scale = screen.y/self.overlays[1]:getHeight() * 1.5
 	self.scale = self.max_scale
 	self.color = colors("flat", "black", "dark")
 end
 
 function Transition:start(next_state)
+	local r = math.random(1, #self.overlays)
+	self.current = self.overlays[r]
 	self.isActive = true
 	flux.to(self, self.duration, { scale = 0 })
 		:ease("backout")
@@ -40,7 +48,7 @@ function Transition:draw()
 	love.graphics.clear(self.color)
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setBlendMode("multiply", "premultiplied")
-	love.graphics.draw(self.overlay, screen.x/2, screen.y/2, 0, self.scale, self.scale , self.overlay:getWidth()/2, self.overlay:getHeight()/2)
+	love.graphics.draw(self.current, screen.x/2, screen.y/2, 0, self.scale, self.scale , self.current:getWidth()/2, self.current:getHeight()/2)
 	love.graphics.setBlendMode("alpha")
 	love.graphics.setCanvas()
 
