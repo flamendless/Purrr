@@ -19,6 +19,9 @@ local Components = {
 	anim = req("anim"),
 	parent = req("parent"),
 	offsetPos = req("offsetPos"),
+	patrol = req("patrol"),
+	speed = req("speed"),
+	moveTo = req("moveTo"),
 }
 
 return Components

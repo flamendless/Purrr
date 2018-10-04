@@ -38,7 +38,10 @@ function Loading:load()
 		transform = S.transform(),
 		animation = S.animation(),
 		position = S.position(),
+		patrol = S.patrol(),
+		moveTo = S.moveTo(),
 	}
+
 	self.entities = {}
 	self.entities.loading = ecs.entity()
 		:give(C.color, self.colors.loading)
@@ -52,7 +55,11 @@ function Loading:load()
 		:give(C.parent, self.entities.loading)
 		:give(C.color, self.colors.eyes)
 		:give(C.sprite, self.images.eyes)
-		:give(C.patrol)
+		:give(C.patrol, {
+				vec2(0, -8),
+				vec2(0, 8),
+			}, true)
+		:give(C.speed, vec2(0, 32))
 		:apply()
 	self.entities.nose = ecs.entity()
 		:give(C.pos, vec2())
@@ -60,6 +67,11 @@ function Loading:load()
 		:give(C.parent, self.entities.eyes)
 		:give(C.color, self.colors.nose)
 		:give(C.sprite, self.images.nose)
+		:give(C.patrol, {
+				vec2(0, -8),
+				vec2(0, 8),
+			}, true)
+		:give(C.speed, vec2(0, 32))
 		:apply()
 
 	self.instance:addEntity(self.entities.loading)
@@ -70,6 +82,10 @@ function Loading:load()
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleAnim")
+	self.instance:addSystem(self.systems.patrol)
+	self.instance:addSystem(self.systems.patrol, "startPatrol")
+	self.instance:addSystem(self.systems.moveTo)
+	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.animation, "update")
 	self.instance:addSystem(self.systems.animation, "draw")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")

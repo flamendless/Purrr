@@ -12,6 +12,8 @@ local Systems = {
 	spinner = req("spinner"),
 	animation = req("animation"),
 	position = req("position"),
+	patrol = req("patrol"),
+	moveTo = req("moveTo"),
 }
 
 return Systems
