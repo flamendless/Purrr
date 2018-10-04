@@ -1,5 +1,5 @@
 local ResourceManager = {
-	__assets = { images = {}, fonts = {} },
+	__assets = { images = {}, fonts = {}, ImageData = {} },
 	__ref = {},
 }
 

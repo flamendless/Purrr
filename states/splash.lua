@@ -26,6 +26,7 @@ local delay = 1
 if __debug then delay = 0 end
 
 function Splash:init()
+	self.exiting = false
 	self.assets = {
 		images = {
 			{ id = "flamendless", path = "assets/anim/flamendless.png" },
@@ -69,7 +70,10 @@ function Splash:enter(previous, ...)
 					flux.to(self.colors.logo, delay, { [4] = 0 })
 					flux.to(self.colors.text, delay, { [4] = 0 })
 					timer.after(delay, function()
-						transition:start(next_state)
+						if not self.exiting then
+							self.exiting = true
+							transition:start(next_state)
+						end
 					end)
 				end
 			})
@@ -103,7 +107,10 @@ function Splash:draw()
 end
 
 function Splash:mousepressed(mx, my, mb)
-	transition:start(next_state)
+	if not self.exiting then
+		self.exiting = true
+		transition:start(next_state)
+	end
 end
 
 return Splash

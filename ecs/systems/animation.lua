@@ -11,14 +11,14 @@ function Animation:entityAdded(e)
 	local c_anim = e[C.anim]
 	local c_callback = e[C.anim_callback]
 	c_anim.anim = peachy.new(c_anim.json, c_anim.sheet, c_anim.tag)
-	if c_anim.stopOnLast then
-		c_anim.anim:onLoop(function()
+	c_anim.anim:onLoop(function()
+		if c_anim.stopOnLast then
 			c_anim.anim:stop(true)
-			if c_callback and c_callback.callback.onComplete then
-				c_callback.callback.onComplete()
-			end
-		end)
-	end
+		end
+		if c_callback and c_callback.callback.onComplete then
+			c_callback.callback.onComplete()
+		end
+	end)
 	if e:has(C.transform) then self:getInstance():emit("handleAnim", e) end
 end
 

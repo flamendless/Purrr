@@ -21,13 +21,11 @@ function Preload:init()
 		bg = colors("flat", "black", "dark"),
 		text = colors("flat", "white", "dark"),
 	}
-	local gamestate = require("src.gamestate")
-	gamestate:addInstance("loading", require("ecs.instances.loading"))
 
 	self.font = love.graphics.newFont("assets/fonts/vera.ttf", 24)
 	self.toLoad = {}
 	self.userdata = {}
-	self.n = 0
+	self.n = 1
 	self.isActive = false
 	self.percent = 0
 end
@@ -50,6 +48,10 @@ function Preload:add(kind, data)
 		self.toLoad[self.n] = { "newImage", data.path }
 		self.userdata[self.n] = data.id
 		self.n = self.n + 1
+	elseif kind == "ImageData" then
+		self.toLoad[self.n] = { "newImageData", data.path }
+		self.userdata[self.n] = data.id
+		self.n = self.n + 1
 	elseif kind == "fonts" then
 		if #data.sizes > 1 then
 			for i = 1, #data.sizes do
@@ -66,13 +68,21 @@ function Preload:add(kind, data)
 end
 
 function Preload:start()
+	local gamestate = require("src.gamestate")
+	gamestate:addInstance("loading", require("ecs.instances.loading"))
 	self.preloaderDone = false
 	self.isActive = true
 	self.lily = lily.loadMulti(self.toLoad)
 		:setUserData(self.userdata)
 		:onLoaded(function(id, i, data)
 			if id then
-				local kind = string.lower(data:type() .. "s")
+				local kind
+				local data_type = string.lower(data:type() .. "s")
+				if data_type == "images" or data_type == "fonts" then
+					kind = data_type
+				else
+					kind = data:type()
+				end
 				if data.setFilter then
 					data:setFilter(__filter, __filter)
 				end
@@ -113,7 +123,7 @@ function Preload:complete()
 	timer.after(dur, function()
 		self.isActive = false
 		self.percent = 0
-		self.n = 0
+		self.n = 1
 		self.toLoad = {}
 		self.userdata = {}
 		local gamestate = require("src.gamestate")

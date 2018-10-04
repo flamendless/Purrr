@@ -88,33 +88,6 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "sourceSize": { "w": 64, "h": 64 },
     "duration": 200
-   },
-   {
-    "filename": "flamendless 10.ase",
-    "frame": { "x": 128, "y": 128, "w": 64, "h": 64 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
-    "sourceSize": { "w": 64, "h": 64 },
-    "duration": 200
-   },
-   {
-    "filename": "flamendless 11.ase",
-    "frame": { "x": 128, "y": 192, "w": 64, "h": 64 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
-    "sourceSize": { "w": 64, "h": 64 },
-    "duration": 200
-   },
-   {
-    "filename": "flamendless 12.ase",
-    "frame": { "x": 192, "y": 0, "w": 64, "h": 64 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 64 },
-    "sourceSize": { "w": 64, "h": 64 },
-    "duration": 200
    }
  ],
  "meta": {
@@ -125,7 +98,7 @@
   "size": { "w": 256, "h": 256 },
   "scale": "1",
   "frameTags": [
-   { "name": "default", "from": 0, "to": 12, "direction": "forward" }
+   { "name": "default", "from": 0, "to": 9, "direction": "forward" }
   ],
   "layers": [
    { "name": "Layer", "opacity": 255, "blendMode": "normal" }

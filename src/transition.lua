@@ -33,6 +33,7 @@ function Transition:start(next_state)
 		:oncomplete(function()
 				log.trace("State Changed!")
 				gamestate:switch(next_state)
+				self.current = self.overlays[1]
 		end)
 			:after(self, self.duration, { scale = self.max_scale })
 			:oncomplete(function()
