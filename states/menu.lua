@@ -39,11 +39,11 @@ function Menu:enter(previous, ...)
 	self.entities.test = ecs.entity()
 		:give(C.color, colors("white"))
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
-		:give(C.button, "test")
+		:give(C.button, "test", {
+				normal = self.images.test,
+				hovered = self.images.test2,
+			})
 		:give(C.transform, 0, 1, 1, "center", "center")
-		:give(C.sprite, self.images.test)
-		:give(C.hoveredSprite, self.images.test2)
-		:give(C.colliderBox, { "point" })
 		:apply()
 
 	self.instance:addEntity(self.entities.test)

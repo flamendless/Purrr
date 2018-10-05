@@ -1,8 +1,8 @@
 local Component = require("modules.concord.lib.component")
 
-local Button = Component(function(e, id, text)
+local Button = Component(function(e, id, args)
 	e.id = id
-	e.text = text
+	e.args = args
 	e.isHovered = false
 	e.isClicked = false
 end)
