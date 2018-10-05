@@ -1,4 +1,5 @@
 local System = require("modules.concord.lib.system")
+local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
 
@@ -16,6 +17,16 @@ function GUI:entityAdded(e)
 		end
 		if args.hovered then
 			e:give(C.hoveredSprite, args.hovered):apply()
+		end
+		if args.text then
+			local text = Entity()
+				:give(C.text, args.text, args.font, "center", args.normal:getWidth())
+				:give(C.color, args.textColor)
+				:give(C.pos, e[C.pos].pos:clone())
+				:give(C.offsetPos, vec2(args.normal:getWidth()/2, 0))
+				:give(C.follow, e)
+				:apply()
+			self:getInstance():addEntity(text)
 		end
 	end
 	e:give(C.colliderBox, { "point" }):apply()

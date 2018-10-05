@@ -35,18 +35,26 @@ function Renderer:entityAddedTo(e, pool)
 end
 
 function Renderer:drawText()
-	local e
-	for i = 1, self.text.size do
-		e = self.text:get(i)
+	for _,e in ipairs(self.text) do
 		local c_text = e[C.text]
 		local c_pos = e[C.pos].pos
+		local c_offset = e[C.offsetPos].offset
 		local c_color = e[C.color].color
 		if c_color then c_color:set() end
 		if c_text.font then love.graphics.setFont(c_text.font) end
+		local x = c_pos.x
+		local y = c_pos.y
+		if c_text.font then
+			y = y - c_text.font:getHeight("")/2
+		end
+		if c_offset then
+			x = x - c_offset.x
+			y = y - c_offset.y
+		end
 		if c_text.align then
-			love.graphics.printf(c_text.text, c_pos.x, c_pos.y, c_text.limit, c_text.align)
+			love.graphics.printf(c_text.text, x, y, c_text.limit, c_text.align)
 		else
-			love.graphics.print(c_text.text, c_pos.x, c_pos.y)
+			love.graphics.print(c_text.text, x, y)
 		end
 	end
 end
@@ -55,14 +63,14 @@ function Renderer:drawSprite()
 	for _,e in ipairs(self.sprite) do
 		local c_sprite = e[C.sprite]
 		local c_pos = e[C.pos].pos
-		local c_color = e[C.color].color
+		local c_color = e[C.color]
 		local c_transform = e[C.transform]
 		local c_hoveredSprite = e[C.hoveredSprite]
 		local sprite = c_sprite.sprite
 		if c_hoveredSprite and c_hoveredSprite.state then
 			sprite = c_hoveredSprite.sprite
 		end
-		if c_color then c_color:set() end
+		if c_color then c_color.color:set() end
 		if c_transform then
 			love.graphics.draw(sprite, c_pos.x, c_pos.y, c_transform.rot, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy)
 		else

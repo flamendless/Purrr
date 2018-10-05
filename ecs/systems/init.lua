@@ -16,6 +16,7 @@ local Systems = {
 	moveTo = req("moveTo"),
 	gui = req("gui"),
 	collision = req("collision"),
+	follow = req("follow"),
 }
 
 return Systems

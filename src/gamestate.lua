@@ -31,7 +31,7 @@ function Gamestate:switch(state, ...)
 end
 
 function Gamestate:init()
-	if self.__current.init then
+	if self.__current and self.__current.init then
 		self.__current:init()
 		if self.__current.assets then
 			log.trace("Preload started!")

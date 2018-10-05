@@ -59,7 +59,7 @@ function Collision:checkPoint(dt)
 			c_collider.isColliding = true
 		else
 			if c_collider.isColliding then
-				self:getInstance():emit("onExit", e)
+				self:getInstance():emit("onEnter", e)
 			end
 			c_collider.isColliding = false
 		end

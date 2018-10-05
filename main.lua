@@ -27,7 +27,8 @@ function love.load()
 	math.randomseed(os.time())
 	transition:init()
 	preload:init()
-	gamestate:start( require("states").splash )
+	-- gamestate:start( require("states").splash )
+	gamestate:start( require("states").menu )
 end
 
 function love.update(dt)

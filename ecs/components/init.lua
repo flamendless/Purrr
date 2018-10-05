@@ -27,6 +27,8 @@ local Components = {
 	button = req("button"),
 	colliderBox = req("colliderBox"),
 	hoveredSprite = req("hoveredSprite"),
+	sync = req("sync"),
+	follow = req("follow"),
 }
 
 return Components
