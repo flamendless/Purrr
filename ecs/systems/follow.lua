@@ -19,6 +19,7 @@ function Follow:update(dt)
 			c_pos.x = c_target.x
 			c_pos.y = c_target.y
 		end
+		self:getInstance():emit("updatePosition")
 	end
 end
 

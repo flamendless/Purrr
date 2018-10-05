@@ -44,6 +44,30 @@ function Collision:entityAddedTo(e, pool)
 	end
 end
 
+function Collision:updatePosition()
+	for _,e in ipairs(self.box) do
+		local c_colliderBox = e[C.colliderBox]
+		local c_pos = e[C.pos].pos
+		local c_sprite = e[C.sprite].sprite
+		local c_transform = e[C.transform]
+
+		local x = c_pos.x
+		local y = c_pos.y
+		local w = c_sprite:getWidth()
+		local h = c_sprite:getHeight()
+		if c_transform then
+			if c_transform.orig_ox == "center" then
+				x = x - w/2
+			end
+			if c_transform.orig_oy == "center" then
+				y = y - h/2
+			end
+		end
+		c_colliderBox.pos = vec2(x, y)
+		c_colliderBox.size = vec2(w, h)
+	end
+end
+
 function Collision:checkPoint(dt)
 	if not self.entities.point then return end
 	for _,e in ipairs(self.entities.point) do
@@ -59,7 +83,7 @@ function Collision:checkPoint(dt)
 			c_collider.isColliding = true
 		else
 			if c_collider.isColliding then
-				self:getInstance():emit("onEnter", e)
+				self:getInstance():emit("onExit", e)
 			end
 			c_collider.isColliding = false
 		end

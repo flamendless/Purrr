@@ -45,10 +45,22 @@ function GUI:update(dt)
 	end
 end
 
+function GUI:onClick()
+	for _,e in ipairs(self.pool) do
+		local c_button = e[C.button]
+		if c_button.isHovered and not c_button.isClicked and love.mouse.isDown(1) then
+			c_button.isClicked = true
+			print("CLICKED!")
+		end
+	end
+end
+
 function GUI:onEnter(e)
 end
 
 function GUI:onExit(e)
+	local c_button = e[C.button]
+	c_button.isClicked = false
 end
 
 return GUI

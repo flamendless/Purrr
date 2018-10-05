@@ -118,7 +118,6 @@ end
 
 function Preload:complete()
 	log.trace("ASSETS:")
-	print(inspect(resourceManager.__assets))
 	flux.to(self.colors.text, 1, { [4] = 0 })
 	timer.after(dur, function()
 		self.isActive = false
