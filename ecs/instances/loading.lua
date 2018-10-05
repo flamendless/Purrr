@@ -40,6 +40,7 @@ function Loading:load()
 		position = S.position(),
 		patrol = S.patrol(),
 		moveTo = S.moveTo(),
+		follow = S.follow(),
 	}
 
 	self.entities = {}
@@ -67,17 +68,15 @@ function Loading:load()
 		:give(C.parent, self.entities.eyes)
 		:give(C.color, self.colors.nose)
 		:give(C.sprite, self.images.nose)
-		:give(C.patrol, {
-				vec2(0, -8),
-				vec2(0, 8),
-			}, true)
-		:give(C.speed, vec2(0, 32))
+		:give(C.follow, self.entities.eyes)
+		:give(C.offsetPos, vec2(0, 12))
 		:apply()
 
 	self.instance:addEntity(self.entities.loading)
 	self.instance:addEntity(self.entities.eyes)
 	self.instance:addEntity(self.entities.nose)
 
+	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.position)
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleAnim")
