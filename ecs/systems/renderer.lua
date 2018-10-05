@@ -1,5 +1,6 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
+local patchy = require("modules.patchy.patchy")
 
 local Renderer = System({
 		C.sprite,
@@ -20,7 +21,18 @@ local Renderer = System({
 	}, {
 		C.points,
 		"points",
+	}, {
+		C.pos,
+		C.patch,
+		"patch"
 	})
+
+function Renderer:entityAddedTo(e, pool)
+	if pool.name == "patch" then
+		local c_patch = e[C.patch]
+		c_patch.patchy = patchy.load(c_patch.image)
+	end
+end
 
 function Renderer:drawText()
 	local e
@@ -40,18 +52,21 @@ function Renderer:drawText()
 end
 
 function Renderer:drawSprite()
-	local e
-	for i = 1, self.sprite.size do
-		e = self.sprite:get(i)
+	for _,e in ipairs(self.sprite) do
 		local c_sprite = e[C.sprite]
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color].color
 		local c_transform = e[C.transform]
+		local c_hoveredSprite = e[C.hoveredSprite]
+		local sprite = c_sprite.sprite
+		if c_hoveredSprite and c_hoveredSprite.state then
+			sprite = c_hoveredSprite.sprite
+		end
 		if c_color then c_color:set() end
 		if c_transform then
-			love.graphics.draw(c_sprite.sprite, c_pos.x, c_pos.y, c_transform.rot, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy)
+			love.graphics.draw(sprite, c_pos.x, c_pos.y, c_transform.rot, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy)
 		else
-			love.graphics.draw(c_sprite.sprite, c_pos.x, c_pos.y)
+			love.graphics.draw(sprite, c_pos.x, c_pos.y)
 		end
 	end
 end
@@ -100,6 +115,17 @@ function Renderer:drawPolygon()
 		end
 		love.graphics.polygon(c_fillMode or "line", c_points.points)
 		if c_transform then love.graphics.pop() end
+	end
+end
+
+function Renderer:draw9Patch()
+	for _,e in ipairs(self.patch) do
+		local c_pos = e[C.pos].pos
+		local c_transform = e[C.transform]
+		local c_patch = e[C.patch]
+		local c_color = e[C.color]
+		if c_color then c_color.color:set() end
+		c_patch.patchy:draw(c_pos.x, c_pos.y, c_patch.size.x, c_patch.size.y)
 	end
 end
 

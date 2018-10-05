@@ -23,6 +23,10 @@ local Components = {
 	speed = req("speed"),
 	moveTo = req("moveTo"),
 	anim_callback = req("anim_callback"),
+	patch = req("patch"),
+	button = req("button"),
+	colliderBox = req("colliderBox"),
+	hoveredSprite = req("hoveredSprite"),
 }
 
 return Components

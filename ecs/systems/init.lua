@@ -14,6 +14,8 @@ local Systems = {
 	position = req("position"),
 	patrol = req("patrol"),
 	moveTo = req("moveTo"),
+	gui = req("gui"),
+	collision = req("collision"),
 }
 
 return Systems

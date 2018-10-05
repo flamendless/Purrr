@@ -10,10 +10,15 @@ local S = require("ecs.systems")
 local C = require("ecs.components")
 
 local colors = require("src.colors")
+local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 
 function Menu:init()
 	self.assets = {
+		images = {
+			{ id = "test", path = "assets/gui/9patch_blue.png" },
+			{ id = "test2", path = "assets/gui/9patch_yellow.png" }
+		}
 	}
 	self.colors = {}
 end
@@ -21,24 +26,39 @@ end
 function Menu:enter(previous, ...)
 	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
+	self.imageData = resourceManager:getAll("ImageData")
 	self.fonts = resourceManager:getAll("fonts")
 	self.systems = {
 		renderer = S.renderer(),
+		transform = S.transform(),
+		gui = S.gui(),
+		collision = S.collision(),
 	}
+
 	self.entities = {}
 	self.entities.test = ecs.entity()
 		:give(C.color, colors("white"))
-		:give(C.pos, vec2(128, 64))
+		:give(C.pos, vec2(screen.x/2, screen.y/2))
+		:give(C.button, "test")
+		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.sprite, self.images.test)
+		:give(C.hoveredSprite, self.images.test2)
+		:give(C.colliderBox, { "point" })
 		:apply()
 
 	self.instance:addEntity(self.entities.test)
 
-	-- self.instance:addSystem(self.systems.transform)
-	-- self.instance:addSystem(self.systems.transform, "handleSprite")
+	self.instance:addSystem(self.systems.collision)
+	self.instance:addSystem(self.systems.collision, "update", "checkPoint")
+	self.instance:addSystem(self.systems.transform)
+	self.instance:addSystem(self.systems.transform, "handleSprite")
+	self.instance:addSystem(self.systems.gui, "update")
+	self.instance:addSystem(self.systems.gui, "onEnter")
+	self.instance:addSystem(self.systems.gui, "onExit")
 	-- self.instance:addSystem(self.systems.transform, "handleAnim")
 	-- self.instance:addSystem(self.systems.animation, "update")
 	-- self.instance:addSystem(self.systems.animation, "draw")
-	-- self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	-- self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 end
 
