@@ -16,12 +16,11 @@ local resourceManager = require("src.resource_manager")
 function Menu:init()
 	self.assets = {
 		images = {
-			{ id = "test", path = "assets/gui/9patch_blue.png" },
-			{ id = "test2", path = "assets/gui/9patch_yellow.png" }
+			{ id = "button", path = "assets/gui/button_yellow.png" },
+			{ id = "hovered_button", path = "assets/gui/button_yellow_hovered.png" },
 		},
 		fonts = {
-			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
-			{ id = "bmdelico", path = "assets/fonts/bmdelico.ttf", sizes = { 18, 24, 32, 42 } },
+			{ id = "button", path = "assets/fonts/upheavalpro.ttf", sizes = {28, 32, 36, 42}  }
 		}
 	}
 	self.colors = {
@@ -41,29 +40,34 @@ function Menu:enter(previous, ...)
 		collision = S.collision(),
 		tweenTo = S.tweenTo(),
 		follow = S.follow(),
+		patrol = S.patrol(),
+		moveTo = S.moveTo(),
 	}
 
 	local dur = 1
 	self.entities = {}
-	self.entities.test = ecs.entity()
+	self.entities.btn_play = ecs.entity()
 		:give(C.color, colors("white"))
 		:give(C.tween, dur, 0.5, "backout")
 		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
 		:give(C.targetPos, vec2(screen.x/2, screen.y/2))
-		:give(C.button, "test", {
+		:give(C.button, "play", {
 				text = "PLAY",
-				font = self.fonts.vera_32,
-				textColor = colors("red"),
-				normal = self.images.test,
-				hovered = self.images.test2,
+				font = self.fonts.button_42,
+				textColor = colors("flat", "white", "light"),
+				hoveredTextColor = colors("flat", "white", "dark"),
+				normal = self.images.button,
+				hovered = self.images.hovered_button
 			})
 		:give(C.transform, 0, 1, 1, "center", "center")
 		:apply()
-	-- self.entities.btn_play = ecs.entity()
-	-- 	:give()
 
-	self.instance:addEntity(self.entities.test)
+	self.instance:addEntity(self.entities.btn_play)
 
+	self.instance:addSystem(self.systems.moveTo)
+	self.instance:addSystem(self.systems.moveTo, "update")
+	self.instance:addSystem(self.systems.patrol)
+	self.instance:addSystem(self.systems.patrol, "startPatrol")
 	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.tweenTo)
 	self.instance:addSystem(self.systems.collision)

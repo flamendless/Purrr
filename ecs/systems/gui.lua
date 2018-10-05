@@ -8,15 +8,16 @@ local GUI = System({
 		C.pos,
 	})
 
+function GUI:init()
+	self.text = {}
+end
+
 function GUI:entityAdded(e)
 	local c_button = e[C.button]
 	if c_button.args then
 		local args = c_button.args
 		if args.normal then
 			e:give(C.sprite, args.normal):apply()
-		end
-		if args.hovered then
-			e:give(C.hoveredSprite, args.hovered):apply()
 		end
 		if args.text then
 			local text = Entity()
@@ -27,6 +28,7 @@ function GUI:entityAdded(e)
 				:give(C.follow, e)
 				:apply()
 			self:getInstance():addEntity(text)
+			self.text[c_button.id] = text
 		end
 	end
 	e:give(C.colliderBox, { "point" }):apply()
@@ -35,13 +37,9 @@ end
 function GUI:update(dt)
 	for _,e in ipairs(self.pool) do
 		local c_collider
-		local c_hoveredSprite = e[C.hoveredSprite]
 		local c_button = e[C.button]
 		if e:has(C.colliderBox) then c_collider = e[C.colliderBox] end
 		c_button.isHovered = c_collider.isColliding
-		if c_hoveredSprite then
-			c_hoveredSprite.state = c_button.isHovered
-		end
 	end
 end
 
@@ -56,11 +54,28 @@ function GUI:onClick()
 end
 
 function GUI:onEnter(e)
+	local c_button = e[C.button]
+	if c_button.args and c_button.args.hovered then
+		e:give(C.hoveredSprite, c_button.args.hovered)
+			:give(C.patrol, { vec2(0, -8), vec2(0, 8) }, true)
+			:give(C.speed, vec2(0, 32))
+			:apply()
+		if self.text[c_button.id] and c_button.args.hoveredTextColor then
+			self.text[c_button.id]:give(C.hoveredColor, c_button.args.hoveredTextColor):apply()
+		end
+	end
 end
 
 function GUI:onExit(e)
 	local c_button = e[C.button]
 	c_button.isClicked = false
+	e:remove(C.hoveredSprite)
+		:remove(C.patrol)
+		:remove(C.speed)
+		:apply()
+	if self.text[c_button.id] then
+		self.text[c_button.id]:remove(C.hoveredColor):apply()
+	end
 end
 
 return GUI

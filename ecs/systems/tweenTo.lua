@@ -18,6 +18,11 @@ function TweenTo:entityAdded(e)
 		})
 		:delay(c_tween.delay)
 		:ease(c_tween.ease)
+		:oncomplete(function()
+			e:remove(C.tween)
+				:remove(C.targetPos)
+				:apply()
+		end)
 end
 
 return TweenTo

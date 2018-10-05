@@ -29,6 +29,9 @@ local Components = {
 	hoveredSprite = req("hoveredSprite"),
 	sync = req("sync"),
 	follow = req("follow"),
+	textShadow = req("textShadow"),
+	hoveredColor = req("hoveredColor"),
+	float = req("float"),
 }
 
 return Components

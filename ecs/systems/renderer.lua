@@ -40,7 +40,9 @@ function Renderer:drawText()
 		local c_pos = e[C.pos].pos
 		local c_offset = e[C.offsetPos].offset
 		local c_color = e[C.color].color
+		local c_hoveredColor = e[C.hoveredColor]
 		if c_color then c_color:set() end
+		if c_hoveredColor then c_hoveredColor.color:set() end
 		if c_text.font then love.graphics.setFont(c_text.font) end
 		local x = c_pos.x
 		local y = c_pos.y
@@ -67,7 +69,7 @@ function Renderer:drawSprite()
 		local c_transform = e[C.transform]
 		local c_hoveredSprite = e[C.hoveredSprite]
 		local sprite = c_sprite.sprite
-		if c_hoveredSprite and c_hoveredSprite.state then
+		if c_hoveredSprite then
 			sprite = c_hoveredSprite.sprite
 		end
 		if c_color then c_color.color:set() end

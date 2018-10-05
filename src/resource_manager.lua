@@ -40,4 +40,14 @@ function ResourceManager:addRef(id)
 	self.__ref[id] = self.__ref[id] + 1
 end
 
+function ResourceManager:setFilter()
+	for k,v in pairs(self.__assets) do
+		if k == "images" or k == "fonts" then
+			for n,m in pairs(v) do
+				m:setFilter(__filter, __filter)
+			end
+		end
+	end
+end
+
 return ResourceManager

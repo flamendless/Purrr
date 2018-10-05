@@ -11,6 +11,7 @@ local Patrol = System({
 function Patrol:entityAdded(e)
 	local c_pos = e[C.pos].pos
 	local c_patrol = e[C.patrol]
+	c_patrol.backup_pos = c_pos:clone()
 	if c_patrol.isRelevant then
 		for i = 1, #c_patrol.path do
 			local p = c_patrol.path[i]
@@ -19,6 +20,12 @@ function Patrol:entityAdded(e)
 		end
 	end
 	self:startPatrol(e)
+end
+
+function Patrol:entityRemoved(e)
+	local c_pos = e[C.pos]
+	local c_patrol = e[C.patrol]
+	c_pos.pos = c_patrol.backup_pos:clone()
 end
 
 function Patrol:startPatrol(e)

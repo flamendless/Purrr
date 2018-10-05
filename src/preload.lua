@@ -83,9 +83,6 @@ function Preload:start()
 				else
 					kind = data:type()
 				end
-				if data.setFilter then
-					data:setFilter(__filter, __filter)
-				end
 				log.trace(("Loaded: %s - %s"):format(kind, id[i]))
 				resourceManager:add(kind, id[i], data)
 			end
@@ -117,6 +114,7 @@ function Preload:draw()
 end
 
 function Preload:complete()
+	resourceManager:setFilter()
 	log.trace("ASSETS:")
 	flux.to(self.colors.text, 1, { [4] = 0 })
 	timer.after(dur, function()
