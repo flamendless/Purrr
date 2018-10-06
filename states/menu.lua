@@ -8,8 +8,9 @@ local ecs = {
 	instance = require("modules.concord.lib.instance"),
 	entity = require("modules.concord.lib.entity"),
 }
-local S = require("ecs.systems")
+local E = require("ecs.entities")
 local C = require("ecs.components")
+local S = require("ecs.systems")
 
 local colors = require("src.colors")
 local screen = require("src.screen")
@@ -47,20 +48,16 @@ function Menu:enter(previous, ...)
 	}
 
 	self.entities = {}
-	self.entities.btn_play = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-		:give(C.button, "play", {
-				text = "PLAY",
-				font = self.fonts.button_42,
-				textColor = colors("flat", "white", "light"),
-				hoveredTextColor = colors("flat", "white", "dark"),
-				normal = self.images.button,
-				hovered = self.images.hovered_button
-			})
-		:give(C.maxScale, 1.25, 1.25)
-		:give(C.transform, 0, 1, 1, "center", "center")
-		:apply()
+	self.entities.btn_play = E.button(ecs.entity(), "play",
+		vec2(screen.x/2, screen.y * 1.5),
+		{
+			text = "PLAY",
+			font = self.fonts.button_42,
+			textColor = colors("flat", "white", "light"),
+			hoveredTextColor = colors("flat", "white", "dark"),
+			normal = self.images.button,
+			hovered = self.images.hovered_button
+		})
 
 	self.instance:addEntity(self.entities.btn_play)
 
