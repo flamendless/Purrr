@@ -41,3 +41,6 @@
 [submodule "modules/patchy"]
 	path = modules/patchy
 	url = git@github.com:Positive07/patchy.git
+[submodule "modules/coil"]
+	path = modules/coil
+	url = git@github.com:rxi/coil.git

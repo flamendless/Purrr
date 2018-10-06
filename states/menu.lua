@@ -1,6 +1,8 @@
 local BaseState = require("states.base_state")
 local Menu = BaseState("Menu")
 
+local coil = require("modules.coil.coil")
+local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
 local ecs = {
 	instance = require("modules.concord.lib.instance"),
@@ -44,13 +46,10 @@ function Menu:enter(previous, ...)
 		moveTo = S.moveTo(),
 	}
 
-	local dur = 1
 	self.entities = {}
 	self.entities.btn_play = ecs.entity()
 		:give(C.color, colors("white"))
-		:give(C.tween, dur, 0.5, "backout")
 		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-		:give(C.targetPos, vec2(screen.x/2, screen.y * 0.75))
 		:give(C.button, "play", {
 				text = "PLAY",
 				font = self.fonts.button_42,
@@ -61,9 +60,6 @@ function Menu:enter(previous, ...)
 			})
 		:give(C.maxScale, 1.25, 1.25)
 		:give(C.transform, 0, 1, 1, "center", "center")
-		:give(C.tween_onComplete, function()
-				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-			end)
 		:apply()
 
 	self.instance:addEntity(self.entities.btn_play)
@@ -86,6 +82,19 @@ function Menu:enter(previous, ...)
 	self.instance:addSystem(self.systems.gui, "onExit")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
+
+	self:start()
+end
+
+function Menu:start()
+	local dur = 1
+	coil.add(function()
+		flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.75 })
+			:ease("backout")
+			:oncomplete(function()
+				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+			end)
+	end)
 end
 
 function Menu:update(dt)
