@@ -1,5 +1,7 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
+local flux = require("modules.flux.flux")
+local lume = require("modules.lume.lume")
 
 local Transform = System({
 		C.transform,
@@ -48,6 +50,25 @@ function Transform:handleAnim(e)
 		elseif c_transform.oy == "bottom" then
 			c_transform.oy = c_anim.anim:getHeight()
 		end
+	end
+end
+
+function Transform:changeScale(e, sx, sy, dur)
+	local c_transform = e[C.transform]
+	local c_maxScale = e[C.maxScale]
+	if not c_transform.orig_sx then
+		c_transform.orig_sx = c_transform.sx
+	end
+	if not c_transform.orig_sy then
+		c_transform.orig_sy = c_transform.sy
+	end
+	flux.to(c_transform, dur or 0.25, {
+			sx = sx or c_transform.orig_sx,
+			sy = sy or c_transform.orig_sy,
+		})
+	if c_maxScale then
+		if c_maxScale.max_sx then c_transform.sx = lume.clamp(c_transform.sx, 0, c_maxScale.max_sx) end
+		if c_maxScale.max_sy then c_transform.sy = lume.clamp(c_transform.sy, 0, c_maxScale.max_sy) end
 	end
 end
 

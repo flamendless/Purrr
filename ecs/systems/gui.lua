@@ -2,6 +2,7 @@ local System = require("modules.concord.lib.system")
 local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
+local flux = require("modules.flux.flux")
 
 local GUI = System({
 		C.button,
@@ -55,19 +56,26 @@ end
 
 function GUI:onEnter(e)
 	local c_button = e[C.button]
+	local c_transform = e[C.transform]
 	if c_button.args and c_button.args.hovered then
 		e:give(C.hoveredSprite, c_button.args.hovered)
 			:give(C.patrol, { vec2(0, -8), vec2(0, 8) }, true)
 			:give(C.speed, vec2(0, 32))
 			:apply()
-		if self.text[c_button.id] and c_button.args.hoveredTextColor then
-			self.text[c_button.id]:give(C.hoveredColor, c_button.args.hoveredTextColor):apply()
+		if self.text[c_button.id] then
+			if c_button.args.hoveredTextColor then
+				self.text[c_button.id]:give(C.hoveredColor, c_button.args.hoveredTextColor):apply()
+			end
+			if c_transform then
+				self:getInstance():emit("changeScale", e, c_transform.sx + 0.25, c_transform.sy + 0.25, 0.25)
+			end
 		end
 	end
 end
 
 function GUI:onExit(e)
 	local c_button = e[C.button]
+	local c_transform = e[C.transform]
 	c_button.isClicked = false
 	e:remove(C.hoveredSprite)
 		:remove(C.patrol)
@@ -75,6 +83,9 @@ function GUI:onExit(e)
 		:apply()
 	if self.text[c_button.id] then
 		self.text[c_button.id]:remove(C.hoveredColor):apply()
+		if c_transform then
+			self:getInstance():emit("changeScale", e, nil, nil, 0.25)
+		end
 	end
 end
 

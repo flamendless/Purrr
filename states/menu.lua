@@ -50,7 +50,7 @@ function Menu:enter(previous, ...)
 		:give(C.color, colors("white"))
 		:give(C.tween, dur, 0.5, "backout")
 		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-		:give(C.targetPos, vec2(screen.x/2, screen.y/2))
+		:give(C.targetPos, vec2(screen.x/2, screen.y * 0.75))
 		:give(C.button, "play", {
 				text = "PLAY",
 				font = self.fonts.button_42,
@@ -59,7 +59,11 @@ function Menu:enter(previous, ...)
 				normal = self.images.button,
 				hovered = self.images.hovered_button
 			})
+		:give(C.maxScale, 1.25, 1.25)
 		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.tween_onComplete, function()
+				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+			end)
 		:apply()
 
 	self.instance:addEntity(self.entities.btn_play)
@@ -72,9 +76,10 @@ function Menu:enter(previous, ...)
 	self.instance:addSystem(self.systems.tweenTo)
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "updatePosition")
-	self.instance:addSystem(self.systems.collision, "update", "checkPoint")
+	self.instance:addSystem(self.systems.collision, "update", "checkPoint", false)
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleSprite")
+	self.instance:addSystem(self.systems.transform, "changeScale")
 	self.instance:addSystem(self.systems.gui, "update")
 	self.instance:addSystem(self.systems.gui, "update", "onClick")
 	self.instance:addSystem(self.systems.gui, "onEnter")

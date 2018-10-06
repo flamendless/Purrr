@@ -19,6 +19,11 @@ function TweenTo:entityAdded(e)
 		:delay(c_tween.delay)
 		:ease(c_tween.ease)
 		:oncomplete(function()
+			local c_onComplete = e[C.tween_onComplete]
+			if c_onComplete then
+				c_onComplete.fn()
+				e:remove(C.tween_onComplete):apply()
+			end
 			e:remove(C.tween)
 				:remove(C.targetPos)
 				:apply()

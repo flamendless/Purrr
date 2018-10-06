@@ -14,7 +14,7 @@ local screen = require("src.screen")
 local colors = require("src.colors")
 
 local dur = 2
-if __debug then dur = 0.75 end
+if __debug then dur = 0.25 end
 
 function Preload:init()
 	self.colors = {

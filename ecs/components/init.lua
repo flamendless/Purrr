@@ -32,6 +32,8 @@ local Components = {
 	textShadow = req("textShadow"),
 	hoveredColor = req("hoveredColor"),
 	float = req("float"),
+	tween_onComplete = req("tween_onComplete"),
+	maxScale = req("maxScale"),
 }
 
 return Components
