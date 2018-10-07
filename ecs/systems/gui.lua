@@ -21,12 +21,13 @@ function GUI:entityAdded(e)
 			e:give(C.sprite, args.normal):apply()
 		end
 		if args.text then
+			assert(args.font, "Font does not exist!")
 			local text = Entity()
 				:give(C.text, args.text, args.font, "center", args.normal:getWidth())
 				:give(C.color, args.textColor)
 				:give(C.pos, e[C.pos].pos:clone())
 				:give(C.offsetPos, vec2(args.normal:getWidth()/2, 0))
-				:give(C.follow, e)
+				:give(C.parent, e)
 				:apply()
 			self:getInstance():addEntity(text)
 			self.text[c_button.id] = text
@@ -48,8 +49,9 @@ function GUI:onClick()
 	for _,e in ipairs(self.pool) do
 		local c_button = e[C.button]
 		if c_button.isHovered and not c_button.isClicked and love.mouse.isDown(1) then
-			c_button.isClicked = true
-			print("CLICKED!")
+			if c_button.args and c_button.args.onClick then
+				c_button.args.onClick()
+			end
 		end
 	end
 end

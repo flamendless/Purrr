@@ -38,7 +38,7 @@ function Renderer:drawText()
 	for _,e in ipairs(self.text) do
 		local c_text = e[C.text]
 		local c_pos = e[C.pos].pos
-		local c_offset = e[C.offsetPos].offset
+		local c_offset = e[C.offsetPos]
 		local c_color = e[C.color].color
 		local c_hoveredColor = e[C.hoveredColor]
 		if c_color then c_color:set() end
@@ -50,6 +50,7 @@ function Renderer:drawText()
 			y = y - c_text.font:getHeight("")/2
 		end
 		if c_offset then
+			c_offset = e[C.offsetPos].offset
 			x = x - c_offset.x
 			y = y - c_offset.y
 		end

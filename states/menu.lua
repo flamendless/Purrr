@@ -12,6 +12,7 @@ local E = require("ecs.entities")
 local C = require("ecs.components")
 local S = require("ecs.systems")
 
+local event = require("src.event")
 local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
@@ -45,6 +46,7 @@ function Menu:enter(previous, ...)
 		follow = S.follow(),
 		patrol = S.patrol(),
 		moveTo = S.moveTo(),
+		position = S.position(),
 	}
 
 	self.entities = {}
@@ -56,11 +58,34 @@ function Menu:enter(previous, ...)
 			textColor = colors("flat", "white", "light"),
 			hoveredTextColor = colors("flat", "white", "dark"),
 			normal = self.images.button,
-			hovered = self.images.hovered_button
+			hovered = self.images.hovered_button,
+			onClick = function()
+
+			end
 		})
+		:apply()
+
+	self.entities.btn_quit = E.button(ecs.entity(), "quit",
+		vec2(screen.x/2, screen.y * 1.75),
+		{
+			text = "QUIT",
+			font = self.fonts.button_42,
+			textColor = colors("flat", "white", "light"),
+			hoveredTextColor = colors("flat", "white", "dark"),
+			normal = self.images.button,
+			hovered = self.images.hovered_button,
+			onClick = function()
+				event.showExitConfirmation()
+			end
+		})
+		:give(C.follow, self.entities.btn_play)
+		:give(C.offsetPos, vec2(0, 128))
+		:apply()
 
 	self.instance:addEntity(self.entities.btn_play)
+	self.instance:addEntity(self.entities.btn_quit)
 
+	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)
@@ -68,7 +93,8 @@ function Menu:enter(previous, ...)
 	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.tweenTo)
 	self.instance:addSystem(self.systems.collision)
-	self.instance:addSystem(self.systems.collision, "updatePosition")
+	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
+	self.instance:addSystem(self.systems.collision, "update", "updateSize")
 	self.instance:addSystem(self.systems.collision, "update", "checkPoint", false)
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleSprite")
@@ -79,6 +105,7 @@ function Menu:enter(previous, ...)
 	self.instance:addSystem(self.systems.gui, "onExit")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
+	self.instance:addSystem(self.systems.collision, "draw", "draw")
 
 	self:start()
 end
@@ -89,6 +116,7 @@ function Menu:start()
 		flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.75 })
 			:ease("backout")
 			:oncomplete(function()
+				self.entities.btn_quit:remove(C.follow):apply()
 				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 			end)
 	end)

@@ -53,8 +53,8 @@ function Collision:updatePosition()
 
 		local x = c_pos.x
 		local y = c_pos.y
-		local w = c_sprite:getWidth()
-		local h = c_sprite:getHeight()
+		local w = c_sprite:getWidth() * c_transform.sx
+		local h = c_sprite:getHeight() * c_transform.sy
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
@@ -64,6 +64,16 @@ function Collision:updatePosition()
 			end
 		end
 		c_colliderBox.pos = vec2(x, y)
+	end
+end
+
+function Collision:updateSize()
+	for _,e in ipairs(self.box) do
+		local c_colliderBox = e[C.colliderBox]
+		local c_sprite = e[C.sprite].sprite
+		local c_transform = e[C.transform]
+		local w = c_sprite:getWidth() * c_transform.sx
+		local h = c_sprite:getHeight() * c_transform.sy
 		c_colliderBox.size = vec2(w, h)
 	end
 end
@@ -87,6 +97,14 @@ function Collision:checkPoint(dt)
 			end
 			c_collider.isColliding = false
 		end
+	end
+end
+
+function Collision:draw()
+	for _,e in ipairs(self.box) do
+		local c_collider = e[C.colliderBox]
+		love.graphics.setColor(1, 0, 0, 1)
+		love.graphics.rectangle("line", c_collider.pos.x, c_collider.pos.y, c_collider.size.x, c_collider.size.y)
 	end
 end
 

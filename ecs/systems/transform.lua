@@ -56,12 +56,6 @@ end
 function Transform:changeScale(e, sx, sy, dur)
 	local c_transform = e[C.transform]
 	local c_maxScale = e[C.maxScale]
-	if not c_transform.orig_sx then
-		c_transform.orig_sx = c_transform.sx
-	end
-	if not c_transform.orig_sy then
-		c_transform.orig_sy = c_transform.sy
-	end
 	flux.to(c_transform, dur or 0.25, {
 			sx = sx or c_transform.orig_sx,
 			sy = sy or c_transform.orig_sy,
