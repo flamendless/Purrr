@@ -22,8 +22,12 @@ function Menu:init()
 		images = {
 			{ id = "button", path = "assets/gui/button_yellow.png" },
 			{ id = "hovered_button", path = "assets/gui/button_yellow_hovered.png" },
+			{ id = "window_red", path = "assets/gui/window_red.png" },
+			{ id = "window_green", path = "assets/gui/window_green.png" },
+			{ id = "window_blue", path = "assets/gui/window_blue.png" },
 		},
 		fonts = {
+			{ id = "title", path = "assets/fonts/upheavalpro.ttf", sizes = {28, 32, 36, 42}  },
 			{ id = "button", path = "assets/fonts/upheavalpro.ttf", sizes = {28, 32, 36, 42}  }
 		}
 	}
@@ -36,37 +40,41 @@ function Menu:enter(previous, ...)
 	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	self.fonts = resourceManager:getAll("fonts")
 	self.systems = {
 		renderer = S.renderer(),
 		transform = S.transform(),
 		gui = S.gui(),
 		collision = S.collision(),
 		tweenTo = S.tweenTo(),
-		follow = S.follow(),
 		patrol = S.patrol(),
+		follow = S.follow(),
 		moveTo = S.moveTo(),
 		position = S.position(),
 	}
 
 	self.entities = {}
-	self.entities.btn_play = E.button(ecs.entity(), "play",
-		vec2(screen.x/2, screen.y * 1.5),
-		{
-			text = "PLAY",
-			font = self.fonts.button_42,
-			textColor = colors("flat", "white", "light"),
-			hoveredTextColor = colors("flat", "white", "dark"),
-			normal = self.images.button,
-			hovered = self.images.hovered_button,
-			onClick = function()
+	self.entities.btn_play = ecs.entity()
+		:give(C.button, "play",
+			{
+				text = "PLAY",
+				font = self.fonts.button_42,
+				textColor = colors("flat", "white", "light"),
+				hoveredTextColor = colors("flat", "white", "dark"),
+				normal = self.images.button,
+				hovered = self.images.hovered_button,
+				onClick = function()
 
-			end
-		})
+				end
+			})
+		:give(C.color, colors("white"))
+		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
+		:give(C.maxScale, 1.25, 1.25)
+		:give(C.windowIndex, 1)
 		:apply()
 
-	self.entities.btn_quit = E.button(ecs.entity(), "quit",
-		vec2(screen.x/2, screen.y * 1.75),
+	self.entities.btn_quit = ecs.entity()
+		:give(C.button, "quit",
 		{
 			text = "QUIT",
 			font = self.fonts.button_42,
@@ -75,11 +83,16 @@ function Menu:enter(previous, ...)
 			normal = self.images.button,
 			hovered = self.images.hovered_button,
 			onClick = function()
-				event.showExitConfirmation()
+				event:showExitConfirmation()
 			end
 		})
+		:give(C.color, colors("white"))
+		:give(C.pos, vec2(screen.x/2, screen.y * 1.75))
+		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.maxScale, 1.25, 1.25)
 		:give(C.follow, self.entities.btn_play)
-		:give(C.offsetPos, vec2(0, 128))
+		:give(C.offsetPos, vec2(0, 96))
+		:give(C.windowIndex, 1)
 		:apply()
 
 	self.instance:addEntity(self.entities.btn_play)
@@ -88,9 +101,9 @@ function Menu:enter(previous, ...)
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
+	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.patrol)
 	self.instance:addSystem(self.systems.patrol, "startPatrol")
-	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.tweenTo)
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
@@ -129,6 +142,13 @@ end
 function Menu:draw()
 	self.colors.bg:setBG()
 	self.instance:emit("draw")
+	if not (__window == 1) then
+		event:drawCover()
+	end
+end
+
+function Menu:exit()
+	self.instance:clear()
 end
 
 return Menu

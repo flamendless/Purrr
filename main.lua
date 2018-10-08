@@ -1,6 +1,7 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
 __debug = true
 __filter = "nearest"
+__window = 1
 
 local debugging
 if __debug then
@@ -20,12 +21,14 @@ local gamestate = require("src.gamestate")
 local screen = require("src.screen")
 local preload = require("src.preload")
 local transition = require("src.transition")
+local event = require("src.event")
 
 function love.load()
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:load() end
 	math.randomseed(os.time())
+	event:init()
 	transition:init()
 	preload:init()
 	-- gamestate:start( require("states").splash )

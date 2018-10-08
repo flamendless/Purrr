@@ -51,8 +51,8 @@ function Renderer:drawText()
 		end
 		if c_offset then
 			c_offset = e[C.offsetPos].offset
-			x = x - c_offset.x
-			y = y - c_offset.y
+			x = x + c_offset.x
+			y = y + c_offset.y
 		end
 		if c_text.align then
 			love.graphics.printf(c_text.text, x, y, c_text.limit, c_text.align)

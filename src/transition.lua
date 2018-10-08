@@ -11,9 +11,6 @@ function Transition:init()
 	self.isActive = false
 	self.overlays = {
 		love.graphics.newImage("assets/images/overlay.png"),
-		love.graphics.newImage("assets/images/overlay1.png"),
-		love.graphics.newImage("assets/images/overlay2.png"),
-		love.graphics.newImage("assets/images/overlay3.png"),
 	}
 	for k,v in pairs(self.overlays) do v:setFilter(__filter, __filter) end
 	self.current = self.overlays[1]
@@ -25,8 +22,7 @@ function Transition:init()
 end
 
 function Transition:start(next_state)
-	local r = math.random(1, #self.overlays)
-	self.current = self.overlays[r]
+	self.current = self.overlays[1]
 	self.isActive = true
 	flux.to(self, self.duration, { scale = 0 })
 		:ease("backout")

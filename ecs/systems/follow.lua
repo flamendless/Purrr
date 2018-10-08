@@ -6,9 +6,6 @@ local Follow = System({
 		C.follow,
 	})
 
-function Follow:entityAdded(e)
-end
-
 function Follow:update(dt)
 	for _,e in ipairs(self.pool) do
 		local c_pos = e[C.pos].pos

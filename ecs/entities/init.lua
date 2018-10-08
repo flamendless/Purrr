@@ -5,7 +5,6 @@ local req = function(id)
 end
 
 local Entities = {
-	button = req("button"),
 }
 
 return Entities

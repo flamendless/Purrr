@@ -26,7 +26,7 @@ function GUI:entityAdded(e)
 				:give(C.text, args.text, args.font, "center", args.normal:getWidth())
 				:give(C.color, args.textColor)
 				:give(C.pos, e[C.pos].pos:clone())
-				:give(C.offsetPos, vec2(args.normal:getWidth()/2, 0))
+				:give(C.offsetPos, vec2(-args.normal:getWidth()/2, 0))
 				:give(C.parent, e)
 				:apply()
 			self:getInstance():addEntity(text)
@@ -48,7 +48,14 @@ end
 function GUI:onClick()
 	for _,e in ipairs(self.pool) do
 		local c_button = e[C.button]
+		local c_windowIndex = e[C.windowIndex]
+		if c_windowIndex then
+			if not (c_windowIndex.index == __window) then
+				return
+			end
+		end
 		if c_button.isHovered and not c_button.isClicked and love.mouse.isDown(1) then
+			c_button.isClicked = true
 			if c_button.args and c_button.args.onClick then
 				c_button.args.onClick()
 			end
@@ -68,9 +75,9 @@ function GUI:onEnter(e)
 			if c_button.args.hoveredTextColor then
 				self.text[c_button.id]:give(C.hoveredColor, c_button.args.hoveredTextColor):apply()
 			end
-			if c_transform then
-				self:getInstance():emit("changeScale", e, c_transform.sx + 0.25, c_transform.sy + 0.25, 0.25)
-			end
+		end
+		if c_transform then
+			self:getInstance():emit("changeScale", e, c_transform.sx + 0.25, c_transform.sy + 0.25, 0.25)
 		end
 	end
 end
@@ -85,9 +92,9 @@ function GUI:onExit(e)
 		:apply()
 	if self.text[c_button.id] then
 		self.text[c_button.id]:remove(C.hoveredColor):apply()
-		if c_transform then
-			self:getInstance():emit("changeScale", e, nil, nil, 0.25)
-		end
+	end
+	if c_transform then
+		self:getInstance():emit("changeScale", e, nil, nil, 0.25)
 	end
 end
 

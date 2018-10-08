@@ -11,6 +11,9 @@ local Transform = System({
 		C.transform,
 		C.anim,
 		"anim"
+	}, {
+		C.offset,
+		"offset"
 	})
 
 function Transform:entityAddedTo(e, pool)
@@ -18,6 +21,8 @@ function Transform:entityAddedTo(e, pool)
 		self:handleSprite(e)
 	elseif pool.name == "anim" then
 		self:handleAnim(e)
+	elseif pool.name == "offset" then
+		self:handleOffset(e)
 	end
 end
 

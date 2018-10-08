@@ -9,12 +9,16 @@ local Gamestate = {
 local log = require("modules.log.log")
 local preload = require("src.preload")
 
-function Gamestate:addInstance(id, instance)
-	instance:load()
+function Gamestate:addInstance(id, instance, ...)
+	instance.id = id
+	instance:load(...)
 	self.__instances[id] = instance
 end
 
 function Gamestate:removeInstance(id)
+	if self.__instances[id].exit then
+		self.__instances[id]:exit()
+	end
 	self.__instances[id] = nil
 end
 
@@ -58,7 +62,9 @@ function Gamestate:update(dt)
 		self.__current:update(dt)
 	end
 	for k,v in pairs(self.__instances) do
-		v:update(dt)
+		if v.update then
+			v:update(dt)
+		end
 	end
 end
 
@@ -67,7 +73,9 @@ function Gamestate:draw()
 		self.__current:draw()
 	end
 	for k,v in pairs(self.__instances) do
-		v:draw()
+		if v.draw then
+			v:draw()
+		end
 	end
 end
 
@@ -75,11 +83,21 @@ function Gamestate:keypressed(key)
 	if self.__current.keypressed and self.__current.isReady then
 		self.__current:keypressed(key)
 	end
+	for k,v in pairs(self.__instances) do
+		if v.keypressed then
+			v:keypressed(key)
+		end
+	end
 end
 
 function Gamestate:mousepressed(mx, my, mb)
 	if self.__current.mousepressed and self.__current.isReady then
 		self.__current:mousepressed(mx, my, mb)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.mousepressed then
+			v:mousepressed(mx, my, mb)
+		end
 	end
 end
 

@@ -27,13 +27,15 @@ local Components = {
 	button = req("button"),
 	colliderBox = req("colliderBox"),
 	hoveredSprite = req("hoveredSprite"),
-	sync = req("sync"),
 	follow = req("follow"),
 	textShadow = req("textShadow"),
 	hoveredColor = req("hoveredColor"),
 	float = req("float"),
 	tween_onComplete = req("tween_onComplete"),
 	maxScale = req("maxScale"),
+	windowIndex = req("windowIndex"),
+	attachToWindow = req("attachToWindow"),
+	window = req("window"),
 }
 
 return Components
