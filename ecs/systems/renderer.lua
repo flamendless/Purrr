@@ -1,6 +1,5 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
-local patchy = require("modules.patchy.patchy")
 
 local Renderer = System({
 		C.sprite,
@@ -21,10 +20,6 @@ local Renderer = System({
 	}, {
 		C.points,
 		"points",
-	}, {
-		C.pos,
-		C.patch,
-		"patch"
 	})
 
 function Renderer:entityAddedTo(e, pool)
@@ -126,17 +121,6 @@ function Renderer:drawPolygon()
 		end
 		love.graphics.polygon(c_fillMode or "line", c_points.points)
 		if c_transform then love.graphics.pop() end
-	end
-end
-
-function Renderer:draw9Patch()
-	for _,e in ipairs(self.patch) do
-		local c_pos = e[C.pos].pos
-		local c_transform = e[C.transform]
-		local c_patch = e[C.patch]
-		local c_color = e[C.color]
-		if c_color then c_color.color:set() end
-		c_patch.patchy:draw(c_pos.x, c_pos.y, c_patch.size.x, c_patch.size.y)
 	end
 end
 
