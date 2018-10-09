@@ -3,6 +3,7 @@ local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
+local log = require("modules.log.log")
 
 local GUI = System({
 		C.button,
@@ -34,6 +35,7 @@ function GUI:entityAdded(e)
 		end
 	end
 	e:give(C.colliderBox, { "point" }):apply()
+	log.trace(("GUI ADDED: %s"):format(c_button.id))
 end
 
 function GUI:update(dt)

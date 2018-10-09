@@ -27,8 +27,7 @@ function Menu:init()
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
 		},
 		fonts = {
-			{ id = "title", path = "assets/fonts/upheavalpro.ttf", sizes = {28, 32, 36, 42}  },
-			{ id = "button", path = "assets/fonts/upheavalpro.ttf", sizes = {28, 32, 36, 42}  }
+			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
 		}
 	}
 	self.colors = {
@@ -41,15 +40,14 @@ function Menu:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
 	self.systems = {
+		collision = S.collision(),
+		follow = S.follow(),
+		gui = S.gui(),
+		moveTo = S.moveTo(),
+		patrol = S.patrol(),
+		position = S.position(),
 		renderer = S.renderer(),
 		transform = S.transform(),
-		gui = S.gui(),
-		collision = S.collision(),
-		tweenTo = S.tweenTo(),
-		patrol = S.patrol(),
-		follow = S.follow(),
-		moveTo = S.moveTo(),
-		position = S.position(),
 	}
 
 	self.entities = {}
@@ -57,7 +55,7 @@ function Menu:enter(previous, ...)
 		:give(C.button, "play",
 			{
 				text = "PLAY",
-				font = self.fonts.button_42,
+				font = self.fonts.upheaval_42,
 				textColor = colors("flat", "white", "light"),
 				hoveredTextColor = colors("flat", "white", "dark"),
 				normal = self.images.button,
@@ -77,7 +75,7 @@ function Menu:enter(previous, ...)
 		:give(C.button, "quit",
 		{
 			text = "QUIT",
-			font = self.fonts.button_42,
+			font = self.fonts.upheaval_42,
 			textColor = colors("flat", "white", "light"),
 			hoveredTextColor = colors("flat", "white", "dark"),
 			normal = self.images.button,
@@ -104,7 +102,6 @@ function Menu:enter(previous, ...)
 	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.patrol)
 	self.instance:addSystem(self.systems.patrol, "startPatrol")
-	self.instance:addSystem(self.systems.tweenTo)
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
 	self.instance:addSystem(self.systems.collision, "update", "updateSize")
