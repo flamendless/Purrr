@@ -43,7 +43,9 @@ function GUI:update(dt)
 		local c_collider
 		local c_button = e[C.button]
 		if e:has(C.colliderBox) then c_collider = e[C.colliderBox] end
-		c_button.isHovered = c_collider.isColliding
+		if c_collider then
+			c_button.isHovered = c_collider.isColliding
+		end
 	end
 end
 

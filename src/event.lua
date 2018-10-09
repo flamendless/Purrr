@@ -7,16 +7,6 @@ local screen = require("src.screen")
 local lume = require("modules.lume.lume")
 local inspect = require("modules.inspect.inspect")
 
-function Event:_showExitConfirmation()
-	local title = "Confirmation"
-	local message = "Are you sure you want to quit the game?"
-	local buttons = {"OK", "No!", escapebutton = 2}
-	local pressedbutton = love.window.showMessageBox(title, message, buttons)
-	if pressedbutton == 1 then
-		love.event.quit()
-	end
-end
-
 function Event:init()
 	self.colors = {
 		cover = colors("flat", "black", "dark", 0.8)
@@ -24,6 +14,45 @@ function Event:init()
 end
 
 function Event:showExitConfirmation()
+	self:checkAssets()
+	local spr_window = lume.randomchoice(self.gui)
+	local window = require("ecs.instances.window")
+	gamestate:addInstance( "window", window,
+		{
+			spr_window = spr_window,
+			str_title = "CONFIRMATION",
+			font_title = self.fonts.title,
+			str_content = "Are you sure you want to quit?",
+			font_content = self.fonts.content,
+			button1 = {
+				id = "Accept",
+				text = "Accept",
+				font = self.fonts.button,
+				normal = self.images.normal,
+				hovered = self.images.hovered,
+				onClick = function()
+					love.event.quit()
+				end
+			},
+			button2 = {
+				id = "Cancel",
+				text = "Cancel",
+				font = self.fonts.button,
+				normal = self.images.normal,
+				hovered = self.images.hovered,
+				onClick = function()
+					window:close()
+				end
+			}
+		})
+end
+
+function Event:drawCover()
+	self.colors.cover:set()
+	love.graphics.rectangle("fill", 0, 0, screen.x, screen.y)
+end
+
+function Event:checkAssets()
 	if not self.gui then
 		self.gui = {
 			[1] = resourceManager:getImage("window_red"),
@@ -45,34 +74,6 @@ function Event:showExitConfirmation()
 		}
 	end
 
-	local spr_window = lume.randomchoice(self.gui)
-	gamestate:addInstance( "window", require("ecs.instances.window"),
-		{
-			spr_window = spr_window,
-			str_title = "CONFIRMATION",
-			font_title = self.fonts.title,
-			str_content = "Are you sure you want to quit?",
-			font_content = self.fonts.content,
-			button1 = {
-				id = "Accept",
-				text = "Accept",
-				font = self.fonts.button,
-				normal = self.images.normal,
-				hovered = self.images.hovered,
-			},
-			button2 = {
-				id = "Cancel",
-				text = "Cancel",
-				font = self.fonts.button,
-				normal = self.images.normal,
-				hovered = self.images.hovered,
-			}
-		})
-end
-
-function Event:drawCover()
-	self.colors.cover:set()
-	love.graphics.rectangle("fill", 0, 0, screen.x, screen.y)
 end
 
 return Event

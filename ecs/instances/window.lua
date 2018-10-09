@@ -141,8 +141,6 @@ function Window:start()
 	flux.to(self.entities.main_window[C.pos].pos, dur, { x = screen.x/2, y = screen.y/2 })
 		:ease("backout")
 		:oncomplete(function()
-			self.entities.btn1:remove(C.follow):apply()
-			self.entities.btn2:remove(C.follow):apply()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 		end)
 end
@@ -157,12 +155,19 @@ end
 
 function Window:keypressed(key)
 	if key == "escape" then
-		flux.to(self.entities.main_window[C.pos].pos, dur, { x = screen.x/2, y = -screen.y })
-			:ease("backin")
-			:oncomplete(function()
-				gamestate:removeInstance(self.id)
-			end)
+		self:close()
 	end
+end
+
+function Window:close()
+	for k,v in pairs(self.entities) do
+		v:remove(C.colliderBox):apply()
+	end
+	flux.to(self.entities.main_window[C.pos].pos, dur, { x = screen.x/2, y = -screen.y })
+		:ease("backin")
+		:oncomplete(function()
+			gamestate:removeInstance(self.id)
+		end)
 end
 
 function Window:exit()
