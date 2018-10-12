@@ -16,7 +16,7 @@ function Gamestate:addInstance(id, instance, ...)
 end
 
 function Gamestate:removeInstance(id)
-	if self.__instances[id].exit then
+	if self.__instances[id] and self.__instances[id].exit then
 		self.__instances[id]:exit()
 	end
 	self.__instances[id] = nil

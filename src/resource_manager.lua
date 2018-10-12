@@ -1,14 +1,24 @@
 local ResourceManager = {
 	__assets = { images = {}, fonts = {}, ImageData = {} },
+	__font_cache = {},
 	__ref = {},
 }
 
 function ResourceManager:add(kind, id, data)
+	if kind == "fonts" then
+		local index = id:match("^.*()_")
+		local str = id:sub(1, index-1)
+		self.__font_cache[str] = true
+	end
 	self.__assets[kind][id] = data
 end
 
 function ResourceManager:check(kind, id)
-	return self.__assets[kind][id]
+	if kind == "fonts" then
+		return self.__font_cache[id]
+	else
+		return self.__assets[kind][id]
+	end
 end
 
 function ResourceManager:getImage(id)

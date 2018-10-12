@@ -16,17 +16,11 @@ local Loading = {}
 function Loading:load()
 	self.colors = {
 		loading = colors("random-flat"),
-		eyes = colors("random-flat"),
-		nose = colors("random-flat")
 	}
 	self.images = {}
 	if not resourceManager:check("images", "loading") then
-		self.images.loading = love.graphics.newImage("assets/anim/loading.png")
-		self.images.eyes = love.graphics.newImage("assets/parts/eyes.png")
-		self.images.nose = love.graphics.newImage("assets/parts/nose.png")
-		resourceManager:add("images", "loading", self.images.loading)
-		resourceManager:add("images", "eyes", self.images.eyes)
-		resourceManager:add("images", "nose", self.images.nose)
+		self.images.cat = love.graphics.newImage("assets/anim/cat_swing.png")
+		resourceManager:add("images", "cat", self.images.cat)
 		for k,v in pairs(self.images) do v:setFilter("nearest", "nearest") end
 	else
 		self.images = resourceManager:getAll("images")
@@ -46,37 +40,12 @@ function Loading:load()
 	self.entities = {}
 	self.entities.loading = ecs.entity()
 		:give(C.color, self.colors.loading)
-		:give(C.anim, "assets/anim/loading.json", self.images.loading)
+		:give(C.anim, "assets/anim/cat_swing.json", self.images.cat)
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.transform, 0, 3, 3, "center", "center")
 		:apply()
 
-	self.entities.eyes = ecs.entity()
-		:give(C.pos, vec2())
-		:give(C.parent, self.entities.loading, true)
-		:give(C.color, self.colors.eyes)
-		:give(C.transform, 0, 2, 2, "center", "center")
-		:give(C.sprite, self.images.eyes)
-		:give(C.patrol, {
-				vec2(0, -8),
-				vec2(0, 8),
-			}, true)
-		:give(C.speed, vec2(0, 32))
-		:apply()
-
-	self.entities.nose = ecs.entity()
-		:give(C.pos, vec2())
-		:give(C.transform, 0, 2, 2, "center", "center")
-		:give(C.parent, self.entities.eyes, true)
-		:give(C.color, self.colors.nose)
-		:give(C.sprite, self.images.nose)
-		:give(C.follow, self.entities.eyes)
-		:give(C.offsetPos, vec2(0, 12))
-		:apply()
-
 	self.instance:addEntity(self.entities.loading)
-	self.instance:addEntity(self.entities.eyes)
-	self.instance:addEntity(self.entities.nose)
 
 	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.position)

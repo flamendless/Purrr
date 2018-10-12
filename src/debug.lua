@@ -18,6 +18,7 @@ local Debug = {
 	modes = {
 		graphs = true,
 		lines = true,
+		collisions = true,
 	},
 }
 
@@ -78,6 +79,8 @@ function Debug:keypressed(key)
 		self.modes.graphs = not self.modes.graphs
 	elseif key == "l" then
 		self.modes.lines = not self.modes.lines
+	elseif key == "c" then
+		self.modes.collisions = not self.modes.collisions
 	end
 end
 

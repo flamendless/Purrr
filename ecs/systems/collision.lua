@@ -1,6 +1,7 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
+local debugging = require("src.debug")
 
 local Collision = System({
 		C.colliderBox,
@@ -103,6 +104,7 @@ function Collision:checkPoint(dt)
 end
 
 function Collision:draw()
+	if not debugging.modes.collisions then return end
 	for _,e in ipairs(self.box) do
 		local c_collider = e[C.colliderBox]
 		love.graphics.setColor(1, 0, 0, 1)

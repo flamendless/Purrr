@@ -11,22 +11,26 @@ local E = require("ecs.entities")
 local C = require("ecs.components")
 local S = require("ecs.systems")
 
+local data = require("src.data")
 local transition = require("src.transition")
 local event = require("src.event")
 local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
+local gamestate = require("src.gamestate")
 
-local next_state = require("states.lobby")
+local next_state
 local bg = {}
 
 function Menu:init()
 	self.assets = {
 		images = {
-			{ id = "cat", path = "assets/images/cat.png" },
 			{ id = "title", path = "assets/images/title.png" },
 			{ id = "bg_space", path = "assets/images/title_space.png" },
-			{ id = "bg_island", path = "assets/images/title_island.png" },
+			{ id = "button_play", path = "assets/gui/button_play.png" },
+			{ id = "button_play_hovered", path = "assets/gui/button_play_hovered.png" },
+			{ id = "button_quit", path = "assets/gui/button_quit.png" },
+			{ id = "button_quit_hovered", path = "assets/gui/button_quit_hovered.png" },
 			{ id = "button", path = "assets/gui/button_yellow.png" },
 			{ id = "hovered_button", path = "assets/gui/button_yellow_hovered.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
@@ -61,65 +65,47 @@ function Menu:enter(previous, ...)
 	self.entities.btn_play = ecs.entity()
 		:give(C.button, "play",
 			{
-				text = "PLAY",
-				font = self.fonts.upheaval_42,
-				textColor = colors("flat", "white", "light"),
-				hoveredTextColor = colors("flat", "white", "dark"),
-				normal = self.images.button,
-				hovered = self.images.hovered_button,
+				normal = self.images.button_play,
+				hovered = self.images.button_play_hovered,
 				onClick = function()
-					transition:start(next_state)
+					gamestate:switch(next_state)
 				end
 			})
 		:give(C.color, colors("white"))
-		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.transform, 0, 3, 3, "center", "center")
 		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-		:give(C.maxScale, 1.25, 1.25)
+		:give(C.maxScale, 2.5, 2.5)
 		:give(C.windowIndex, 1)
 		:apply()
 
 	self.entities.btn_quit = ecs.entity()
 		:give(C.button, "quit",
 		{
-			text = "QUIT",
-			font = self.fonts.upheaval_42,
-			textColor = colors("flat", "white", "light"),
-			hoveredTextColor = colors("flat", "white", "dark"),
-			normal = self.images.button,
-			hovered = self.images.hovered_button,
+			normal = self.images.button_quit,
+			hovered = self.images.button_quit_hovered,
 			onClick = function()
 				event:showExitConfirmation()
 			end
 		})
 		:give(C.color, colors("white"))
 		:give(C.pos, vec2(screen.x/2, screen.y * 1.75))
-		:give(C.transform, 0, 1, 1, "center", "center")
+		:give(C.transform, 0, 1.5, 1.5, "center", "center")
 		:give(C.maxScale, 1.25, 1.25)
 		:give(C.follow, self.entities.btn_play)
-		:give(C.offsetPos, vec2(0, 96))
+		:give(C.offsetPos, vec2(0, 172))
 		:give(C.windowIndex, 1)
 		:apply()
 
 	self.entities.title = ecs.entity()
 		:give(C.color, colors("white"))
 		:give(C.sprite, self.images.title)
-		-- :give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.pos, vec2(screen.x/2, -screen.y/2))
-		:give(C.transform, 0, 3, 3, "center", "center")
-		:apply()
-
-	self.entities.cat = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.sprite, self.images.cat)
-		-- :give(C.pos, vec2(screen.x/2, screen.y * 0.3))
-		:give(C.pos, vec2(screen.x/2, -screen.y * 0.3))
-		:give(C.transform, 0, 3, 3, "center", "center")
+		:give(C.transform, 0, 1, 1, "center", "center")
 		:apply()
 
 	self.instance:addEntity(self.entities.btn_play)
 	self.instance:addEntity(self.entities.btn_quit)
 	self.instance:addEntity(self.entities.title)
-	self.instance:addEntity(self.entities.cat)
 
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
@@ -147,14 +133,19 @@ end
 
 function Menu:start()
 	local dur = 1
-	flux.to(self.entities.title[C.pos].pos, dur, { y = screen.y/2 }):ease("backout")
-	flux.to(self.entities.cat[C.pos].pos, dur, { y = screen.y * 0.3 }):ease("backout")
-	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.75 })
+	flux.to(self.entities.title[C.pos].pos, dur, { y = screen.y * 0.25 }):ease("backout")
+	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.65 })
 		:ease("backout")
 		:oncomplete(function()
 			self.entities.btn_quit:remove(C.follow):apply()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 		end)
+
+	if data.new_game then
+		next_state = require("states.intro")
+	else
+		next_state = require("states.lobby")
+	end
 	bg.image = self.images.bg_space
 	bg.sx = screen.x/bg.image:getWidth()
 	bg.sy = screen.y/bg.image:getHeight()

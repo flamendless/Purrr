@@ -35,11 +35,15 @@ function Preload:check(t_assets)
 		for i, v in pairs(t) do
 			if not resourceManager:check(kind, v.id) then
 				self:add(kind, v)
+			else
+				log.trace(("%s - already loaded!"):format(v.id))
 			end
 		end
 	end
-	if self.n > 0 then
+	if self.n > 1 then
 		self:start()
+	else
+		self:complete()
 	end
 end
 
