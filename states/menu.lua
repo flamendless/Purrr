@@ -1,7 +1,6 @@
 local BaseState = require("states.base_state")
 local Menu = BaseState("Menu")
 
-local coil = require("modules.coil.coil")
 local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
 local ecs = {
@@ -18,9 +17,16 @@ local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 
+local next_state = require("states.lobby")
+local bg = {}
+
 function Menu:init()
 	self.assets = {
 		images = {
+			{ id = "cat", path = "assets/images/cat.png" },
+			{ id = "title", path = "assets/images/title.png" },
+			{ id = "bg_space", path = "assets/images/title_space.png" },
+			{ id = "bg_island", path = "assets/images/title_island.png" },
 			{ id = "button", path = "assets/gui/button_yellow.png" },
 			{ id = "hovered_button", path = "assets/gui/button_yellow_hovered.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
@@ -62,7 +68,7 @@ function Menu:enter(previous, ...)
 				normal = self.images.button,
 				hovered = self.images.hovered_button,
 				onClick = function()
-					transition:start( require("states").menu )
+					transition:start(next_state)
 				end
 			})
 		:give(C.color, colors("white"))
@@ -94,8 +100,26 @@ function Menu:enter(previous, ...)
 		:give(C.windowIndex, 1)
 		:apply()
 
+	self.entities.title = ecs.entity()
+		:give(C.color, colors("white"))
+		:give(C.sprite, self.images.title)
+		-- :give(C.pos, vec2(screen.x/2, screen.y/2))
+		:give(C.pos, vec2(screen.x/2, -screen.y/2))
+		:give(C.transform, 0, 3, 3, "center", "center")
+		:apply()
+
+	self.entities.cat = ecs.entity()
+		:give(C.color, colors("white"))
+		:give(C.sprite, self.images.cat)
+		-- :give(C.pos, vec2(screen.x/2, screen.y * 0.3))
+		:give(C.pos, vec2(screen.x/2, -screen.y * 0.3))
+		:give(C.transform, 0, 3, 3, "center", "center")
+		:apply()
+
 	self.instance:addEntity(self.entities.btn_play)
 	self.instance:addEntity(self.entities.btn_quit)
+	self.instance:addEntity(self.entities.title)
+	self.instance:addEntity(self.entities.cat)
 
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
@@ -123,14 +147,17 @@ end
 
 function Menu:start()
 	local dur = 1
-	coil.add(function()
-		flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.75 })
-			:ease("backout")
-			:oncomplete(function()
-				self.entities.btn_quit:remove(C.follow):apply()
-				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-			end)
-	end)
+	flux.to(self.entities.title[C.pos].pos, dur, { y = screen.y/2 }):ease("backout")
+	flux.to(self.entities.cat[C.pos].pos, dur, { y = screen.y * 0.3 }):ease("backout")
+	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.75 })
+		:ease("backout")
+		:oncomplete(function()
+			self.entities.btn_quit:remove(C.follow):apply()
+			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+		end)
+	bg.image = self.images.bg_space
+	bg.sx = screen.x/bg.image:getWidth()
+	bg.sy = screen.y/bg.image:getHeight()
 end
 
 function Menu:update(dt)
@@ -139,6 +166,8 @@ end
 
 function Menu:draw()
 	self.colors.bg:setBG()
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
 	if not (__window == 1) then
 		event:drawCover()

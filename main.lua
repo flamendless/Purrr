@@ -54,12 +54,12 @@ end
 
 function love.keypressed(key)
 	gamestate:keypressed(key)
-	if __debug then debugging:keypressed(key) end
+	if __debug and debugging.keypressed then debugging:keypressed(key) end
 end
 
 function love.keyreleased(key)
 	gamestate:keyreleased(key)
-	if __debug then debugging:keyreleased(key) end
+	if __debug and debugging.keyreleased then debugging:keyreleased(key) end
 end
 
 function love.mousepressed(mx, my, mb)
