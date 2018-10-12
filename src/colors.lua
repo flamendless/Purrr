@@ -115,6 +115,7 @@ end
 
 function Colors:set() love.graphics.setColor(unpack(self)) end
 function Colors:setBG() love.graphics.setBackgroundColor(unpack(self)) end
+function Colors:clone() return { unpack(self) } end
 
 setmetatable(Colors, mt)
 
