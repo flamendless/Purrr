@@ -28,8 +28,12 @@ function Transition:start(next_state)
 		:ease("backout")
 		:oncomplete(function()
 				log.trace("State Changed!")
-				gamestate:switch(next_state)
-				self.current = self.overlays[1]
+				if type(next_state) == "function" then
+					next_state()
+				else
+					gamestate:switch(next_state)
+					self.current = self.overlays[1]
+				end
 		end)
 			:after(self, self.duration, { scale = self.max_scale })
 			:oncomplete(function()

@@ -1,5 +1,6 @@
 local Event = {}
 
+local transition = require("src.transition")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local colors = require("src.colors")
@@ -31,7 +32,10 @@ function Event:showExitConfirmation()
 				normal = self.images.normal,
 				hovered = self.images.hovered,
 				onClick = function()
-					love.event.quit()
+					transition.color = { 0, 0, 0, 1 }
+					transition:start(function()
+						love.event.quit()
+					end)
 				end
 			},
 			button2 = {

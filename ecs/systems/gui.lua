@@ -23,10 +23,11 @@ function GUI:entityAdded(e)
 		end
 		if args.text then
 			assert(args.font, "Font does not exist!")
+			local pos = e[C.pos].pos:clone()
 			local text = Entity()
 				:give(C.text, args.text, args.font, "center", args.normal:getWidth())
 				:give(C.color, args.textColor)
-				:give(C.pos, e[C.pos].pos:clone())
+				:give(C.pos, pos)
 				:give(C.offsetPos, vec2(-args.normal:getWidth()/2, 0))
 				:give(C.parent, e)
 				:apply()

@@ -12,6 +12,7 @@ local E = require("ecs.entities")
 local C = require("ecs.components")
 local S = require("ecs.systems")
 
+local transition = require("src.transition")
 local event = require("src.event")
 local colors = require("src.colors")
 local screen = require("src.screen")
@@ -61,7 +62,7 @@ function Menu:enter(previous, ...)
 				normal = self.images.button,
 				hovered = self.images.hovered_button,
 				onClick = function()
-
+					transition:start( require("states").menu )
 				end
 			})
 		:give(C.color, colors("white"))

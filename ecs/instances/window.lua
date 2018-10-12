@@ -53,9 +53,11 @@ function Window:load(args)
 	end
 
 	if args.str_content then
+		local x_pad = 16
 		self.entities.content_text = ecs.entity()
 			:give(C.window)
 			:give(C.color, colors("flat", "white", "light"))
+			:give(C.textPad, vec2(16, 0))
 			:give(C.text, args.str_content, args.font_content, "center", args.spr_window:getWidth() * sx)
 			:give(C.pos, vec2(0, 0))
 			:give(C.parent, self.entities.main_window)

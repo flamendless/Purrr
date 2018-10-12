@@ -36,6 +36,7 @@ local Components = {
 	windowIndex = req("windowIndex"),
 	attachToWindow = req("attachToWindow"),
 	window = req("window"),
+	textPad = req("textPad"),
 }
 
 return Components

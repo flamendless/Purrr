@@ -90,6 +90,17 @@ function Gamestate:keypressed(key)
 	end
 end
 
+function Gamestate:keyreleased(key)
+	if self.__current.keyreleased and self.__current.isReady then
+		self.__current:keyreleased(key)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.keyreleased then
+			v:keyreleased(key)
+		end
+	end
+end
+
 function Gamestate:mousepressed(mx, my, mb)
 	if self.__current.mousepressed and self.__current.isReady then
 		self.__current:mousepressed(mx, my, mb)
@@ -97,6 +108,17 @@ function Gamestate:mousepressed(mx, my, mb)
 	for k,v in pairs(self.__instances) do
 		if v.mousepressed then
 			v:mousepressed(mx, my, mb)
+		end
+	end
+end
+
+function Gamestate:mousereleased(mx, my, mb)
+	if self.__current.mousereleased and self.__current.isReady then
+		self.__current:mousereleased(mx, my, mb)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.mousereleased then
+			v:mousereleased(mx, my, mb)
 		end
 	end
 end
