@@ -27,12 +27,14 @@ function Menu:init()
 		images = {
 			{ id = "title", path = "assets/images/title.png" },
 			{ id = "bg_space", path = "assets/images/title_space.png" },
-			{ id = "button_play", path = "assets/gui/button_play.png" },
-			{ id = "button_play_hovered", path = "assets/gui/button_play_hovered.png" },
-			{ id = "button_quit", path = "assets/gui/button_quit.png" },
-			{ id = "button_quit_hovered", path = "assets/gui/button_quit_hovered.png" },
-			{ id = "button", path = "assets/gui/button_yellow.png" },
-			{ id = "hovered_button", path = "assets/gui/button_yellow_hovered.png" },
+			{ id = "btn_play", path = "assets/gui/play.png" },
+			{ id = "btn_play_hovered", path = "assets/gui/play_hovered.png" },
+			{ id = "btn_leave", path = "assets/gui/leave.png" },
+			{ id = "btn_leave_hovered", path = "assets/gui/leave_hovered.png" },
+			{ id = "btn_accept", path = "assets/gui/accept.png" },
+			{ id = "btn_accept_hovered", path = "assets/gui/accept_hovered.png" },
+			{ id = "btn_cancel", path = "assets/gui/cancel.png" },
+			{ id = "btn_cancel_hovered", path = "assets/gui/cancel_hovered.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
@@ -65,8 +67,8 @@ function Menu:enter(previous, ...)
 	self.entities.btn_play = ecs.entity()
 		:give(C.button, "play",
 			{
-				normal = self.images.button_play,
-				hovered = self.images.button_play_hovered,
+				normal = self.images.btn_play,
+				hovered = self.images.btn_play_hovered,
 				onClick = function()
 					gamestate:switch(next_state)
 				end
@@ -81,8 +83,8 @@ function Menu:enter(previous, ...)
 	self.entities.btn_quit = ecs.entity()
 		:give(C.button, "quit",
 		{
-			normal = self.images.button_quit,
-			hovered = self.images.button_quit_hovered,
+			normal = self.images.btn_leave,
+			hovered = self.images.btn_leave_hovered,
 			onClick = function()
 				event:showExitConfirmation()
 			end
@@ -92,7 +94,7 @@ function Menu:enter(previous, ...)
 		:give(C.transform, 0, 1.5, 1.5, "center", "center")
 		:give(C.maxScale, 1.25, 1.25)
 		:give(C.follow, self.entities.btn_play)
-		:give(C.offsetPos, vec2(0, 172))
+		:give(C.offsetPos, vec2(0, 148))
 		:give(C.windowIndex, 1)
 		:apply()
 

@@ -8,6 +8,7 @@ local States = {
 	splash = req("splash"),
 	menu = req("menu"),
 	lobby = req("lobby"),
+	intro = req("intro"),
 }
 
 return States

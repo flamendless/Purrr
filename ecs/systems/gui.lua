@@ -20,6 +20,8 @@ function GUI:entityAdded(e)
 		local args = c_button.args
 		if args.normal then
 			e:give(C.sprite, args.normal):apply()
+		else
+			log.trace("GUI Normal Sprite Does Not Exist!")
 		end
 		if args.text then
 			assert(args.font, "Font does not exist!")

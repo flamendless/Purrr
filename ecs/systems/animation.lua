@@ -16,7 +16,10 @@ function Animation:entityAdded(e)
 			c_anim.anim:stop(true)
 		end
 		if c_callback and c_callback.callback.onComplete then
-			c_callback.callback.onComplete()
+			c_callback.callback.onComplete(c_anim.anim)
+		end
+		if c_callback and c_callback.volatile then
+			e:remove(C.anim_callback):apply()
 		end
 	end)
 	if e:has(C.transform) then self:getInstance():emit("handleAnim", e) end

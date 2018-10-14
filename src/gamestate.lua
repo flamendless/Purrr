@@ -23,6 +23,7 @@ function Gamestate:removeInstance(id)
 end
 
 function Gamestate:start(state)
+	assert(state, "State must be passed")
 	self.__current = state
 	self:init()
 end

@@ -27,10 +27,8 @@ function Event:showExitConfirmation()
 			font_content = self.fonts.content,
 			button1 = {
 				id = "Accept",
-				text = "Accept",
-				font = self.fonts.button,
-				normal = self.images.normal,
-				hovered = self.images.hovered,
+				normal = self.images.accept,
+				hovered = self.images.accept_hovered,
 				onClick = function()
 					transition.color = { 0, 0, 0, 1 }
 					transition:start(function()
@@ -40,10 +38,8 @@ function Event:showExitConfirmation()
 			},
 			button2 = {
 				id = "Cancel",
-				text = "Cancel",
-				font = self.fonts.button,
-				normal = self.images.normal,
-				hovered = self.images.hovered,
+				normal = self.images.cancel,
+				hovered = self.images.cancel_hovered,
 				onClick = function()
 					window:close()
 				end
@@ -66,8 +62,10 @@ function Event:checkAssets()
 	end
 	if not self.images then
 		self.images = {
-			normal = resourceManager:getImage("button"),
-			hovered = resourceManager:getImage("hovered_button")
+			accept = resourceManager:getImage("btn_accept"),
+			accept_hovered = resourceManager:getImage("btn_accept_hovered"),
+			cancel = resourceManager:getImage("btn_cancel"),
+			cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
 		}
 	end
 	if not self.fonts then

@@ -34,7 +34,8 @@ function love.load()
 	transition:init()
 	preload:init()
 	-- gamestate:start( require("states").splash )
-	gamestate:start( require("states").menu )
+	-- gamestate:start( require("states").menu )
+	gamestate:start( require("states").intro )
 end
 
 function love.update(dt)

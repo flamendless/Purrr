@@ -78,9 +78,9 @@ function Window:load(args)
 					onClick = args.button1.onClick,
 				})
 			:give(C.color, colors("white"))
-			:give(C.transform, 0, 1, 1, "center", "center")
+			:give(C.transform, 0, 2, 2, "center", "center")
 			:give(C.pos, vec2())
-			:give(C.maxScale, 1.25, 1.25)
+			:give(C.maxScale, 2.25, 2.25)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
 			:give(C.offsetPos, vec2(args.spr_window:getWidth() * sx/4, 256))
@@ -100,14 +100,13 @@ function Window:load(args)
 					onClick = args.button2.onClick,
 				})
 			:give(C.color, colors("white"))
-			:give(C.transform, 0, 1, 1, "center", "center")
+			:give(C.transform, 0, 2, 2, "center", "center")
 			:give(C.pos, vec2())
-			:give(C.maxScale, 1.25, 1.25)
+			:give(C.maxScale, 2.25, 2.25)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
 			:give(C.offsetPos, vec2(
-				-args.button2.normal:getWidth() * sx/5,
-				256))
+				-args.button2.normal:getWidth() * sx/2, 256))
 			:apply()
 	end
 

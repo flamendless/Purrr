@@ -5,6 +5,7 @@ local req = function(id)
 end
 
 local Entities = {
+	scene = req("scene"),
 }
 
 return Entities
