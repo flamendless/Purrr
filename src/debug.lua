@@ -10,6 +10,8 @@ local colors = require("src.colors")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
+local event = require("src.event")
+local resourceManager = require("src.resource_manager")
 
 local Debug = {
 	graphs = {},
@@ -81,6 +83,10 @@ function Debug:keypressed(key)
 		self.modes.lines = not self.modes.lines
 	elseif key == "c" then
 		self.modes.collisions = not self.modes.collisions
+	elseif key == "h" then
+		event:showHomeConfirmation()
+	elseif key == "p" then
+		print(inspect(resourceManager:getRef()))
 	end
 end
 

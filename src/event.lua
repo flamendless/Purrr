@@ -30,10 +30,42 @@ function Event:showExitConfirmation()
 				normal = self.images.accept,
 				hovered = self.images.accept_hovered,
 				onClick = function()
+					window:close()
 					transition.color = { 0, 0, 0, 1 }
 					transition:start(function()
 						love.event.quit()
 					end)
+				end
+			},
+			button2 = {
+				id = "Cancel",
+				normal = self.images.cancel,
+				hovered = self.images.cancel_hovered,
+				onClick = function()
+					window:close()
+				end
+			}
+		})
+end
+
+function Event:showHomeConfirmation()
+	self:checkAssets()
+	local window = require("ecs.instances.window")
+	local spr_window = lume.randomchoice(self.gui)
+	gamestate:addInstance( "window", window,
+		{
+			spr_window = spr_window,
+			str_title = "CONFIRMATION",
+			font_title = self.fonts.title,
+			str_content = "Are you sure you want to return to menu screen?",
+			font_content = self.fonts.content,
+			button1 = {
+				id = "Accept",
+				normal = self.images.accept,
+				hovered = self.images.accept_hovered,
+				onClick = function()
+					window:close()
+					transition:start( require("states.menu") )
 				end
 			},
 			button2 = {
@@ -75,7 +107,6 @@ function Event:checkAssets()
 			button = resourceManager:getFont("upheaval_28"),
 		}
 	end
-
 end
 
 return Event

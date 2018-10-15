@@ -49,9 +49,18 @@ function Menu:init()
 end
 
 function Menu:enter(previous, ...)
-	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
+	self.instance = ecs.instance()
+	self:setupSystems()
+	self:setupEntities()
+	self.instance:addEntity(self.entities.btn_play)
+	self.instance:addEntity(self.entities.btn_quit)
+	self.instance:addEntity(self.entities.title)
+	self:start()
+end
+
+function Menu:setupSystems()
 	self.systems = {
 		collision = S.collision(),
 		follow = S.follow(),
@@ -62,7 +71,29 @@ function Menu:enter(previous, ...)
 		renderer = S.renderer(),
 		transform = S.transform(),
 	}
+	self.instance:addSystem(self.systems.position, "update")
+	self.instance:addSystem(self.systems.moveTo)
+	self.instance:addSystem(self.systems.moveTo, "update")
+	self.instance:addSystem(self.systems.follow, "update")
+	self.instance:addSystem(self.systems.patrol)
+	self.instance:addSystem(self.systems.patrol, "startPatrol")
+	self.instance:addSystem(self.systems.collision)
+	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
+	self.instance:addSystem(self.systems.collision, "update", "updateSize")
+	self.instance:addSystem(self.systems.collision, "update", "checkPoint", false)
+	self.instance:addSystem(self.systems.transform)
+	self.instance:addSystem(self.systems.transform, "handleSprite")
+	self.instance:addSystem(self.systems.transform, "changeScale")
+	self.instance:addSystem(self.systems.gui, "update")
+	self.instance:addSystem(self.systems.gui, "update", "onClick")
+	self.instance:addSystem(self.systems.gui, "onEnter")
+	self.instance:addSystem(self.systems.gui, "onExit")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
+	self.instance:addSystem(self.systems.collision, "draw", "draw")
+end
 
+function Menu:setupEntities()
 	self.entities = {}
 	self.entities.btn_play = ecs.entity()
 		:give(C.button, "play",
@@ -70,7 +101,7 @@ function Menu:enter(previous, ...)
 				normal = self.images.btn_play,
 				hovered = self.images.btn_play_hovered,
 				onClick = function()
-					gamestate:switch(next_state)
+					transition:start(next_state)
 				end
 			})
 		:give(C.color, colors("white"))
@@ -104,33 +135,6 @@ function Menu:enter(previous, ...)
 		:give(C.pos, vec2(screen.x/2, -screen.y/2))
 		:give(C.transform, 0, 1, 1, "center", "center")
 		:apply()
-
-	self.instance:addEntity(self.entities.btn_play)
-	self.instance:addEntity(self.entities.btn_quit)
-	self.instance:addEntity(self.entities.title)
-
-	self.instance:addSystem(self.systems.position, "update")
-	self.instance:addSystem(self.systems.moveTo)
-	self.instance:addSystem(self.systems.moveTo, "update")
-	self.instance:addSystem(self.systems.follow, "update")
-	self.instance:addSystem(self.systems.patrol)
-	self.instance:addSystem(self.systems.patrol, "startPatrol")
-	self.instance:addSystem(self.systems.collision)
-	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
-	self.instance:addSystem(self.systems.collision, "update", "updateSize")
-	self.instance:addSystem(self.systems.collision, "update", "checkPoint", false)
-	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.transform, "handleSprite")
-	self.instance:addSystem(self.systems.transform, "changeScale")
-	self.instance:addSystem(self.systems.gui, "update")
-	self.instance:addSystem(self.systems.gui, "update", "onClick")
-	self.instance:addSystem(self.systems.gui, "onEnter")
-	self.instance:addSystem(self.systems.gui, "onExit")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
-	self.instance:addSystem(self.systems.collision, "draw", "draw")
-
-	self:start()
 end
 
 function Menu:start()
@@ -146,7 +150,11 @@ function Menu:start()
 	if data.new_game then
 		next_state = require("states.intro")
 	else
-		next_state = require("states.lobby")
+		if data.customization then
+			next_state = require("states.customization")
+		else
+			next_state = require("states.lobby")
+		end
 	end
 	bg.image = self.images.bg_space
 	bg.sx = screen.x/bg.image:getWidth()
@@ -162,9 +170,6 @@ function Menu:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
-	if not (__window == 1) then
-		event:drawCover()
-	end
 end
 
 function Menu:exit()

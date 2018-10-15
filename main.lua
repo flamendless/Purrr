@@ -35,7 +35,8 @@ function love.load()
 	preload:init()
 	-- gamestate:start( require("states").splash )
 	-- gamestate:start( require("states").menu )
-	gamestate:start( require("states").intro )
+	-- gamestate:start( require("states").intro )
+	gamestate:start( require("states").customization )
 end
 
 function love.update(dt)
@@ -51,6 +52,9 @@ end
 function love.draw()
 	preload:draw()
 	gamestate:draw()
+	if not (__window == 1) then
+		event:drawCover()
+	end
 	transition:draw()
 	if __debug then debugging:draw() end
 end

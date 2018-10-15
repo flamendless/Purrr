@@ -37,6 +37,7 @@ local Components = {
 	attachToWindow = req("attachToWindow"),
 	window = req("window"),
 	textPad = req("textPad"),
+	shaders = req("shaders"),
 }
 
 return Components

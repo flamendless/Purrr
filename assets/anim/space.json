@@ -105,7 +105,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 12.aseprite",
@@ -114,7 +114,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 13.aseprite",
@@ -123,7 +123,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 14.aseprite",
@@ -132,7 +132,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 15.aseprite",
@@ -141,7 +141,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 16.aseprite",
@@ -150,7 +150,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 17.aseprite",
@@ -159,7 +159,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 18.aseprite",
@@ -168,7 +168,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 19.aseprite",
@@ -177,7 +177,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 20.aseprite",
@@ -186,7 +186,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 75
    },
    {
     "filename": "space 21.aseprite",
@@ -195,7 +195,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 22.aseprite",
@@ -204,7 +204,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 23.aseprite",
@@ -213,7 +213,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 24.aseprite",
@@ -222,7 +222,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 25.aseprite",
@@ -231,7 +231,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 26.aseprite",
@@ -240,7 +240,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 27.aseprite",
@@ -249,7 +249,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 28.aseprite",
@@ -258,7 +258,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 29.aseprite",
@@ -267,7 +267,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 30.aseprite",
@@ -276,7 +276,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 31.aseprite",
@@ -285,7 +285,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 32.aseprite",
@@ -294,7 +294,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 33.aseprite",
@@ -303,7 +303,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 34.aseprite",
@@ -312,7 +312,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 35.aseprite",
@@ -321,7 +321,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 36.aseprite",
@@ -330,7 +330,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 37.aseprite",
@@ -339,7 +339,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 38.aseprite",
@@ -348,7 +348,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 150
    },
    {
     "filename": "space 39.aseprite",
@@ -357,7 +357,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 500
    },
    {
     "filename": "space 40.aseprite",
@@ -366,7 +366,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 50
    },
    {
     "filename": "space 41.aseprite",
@@ -375,7 +375,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 50
    },
    {
     "filename": "space 42.aseprite",
@@ -384,7 +384,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 50
    },
    {
     "filename": "space 43.aseprite",
@@ -393,7 +393,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 100, "h": 180 },
     "sourceSize": { "w": 100, "h": 180 },
-    "duration": 200
+    "duration": 50
    },
    {
     "filename": "space 44.aseprite",
@@ -413,12 +413,7 @@
   "size": { "w": 1024, "h": 1024 },
   "scale": "1",
   "frameTags": [
-   { "name": "earth", "from": 0, "to": 10, "direction": "forward" },
-   { "name": "spaceship1", "from": 11, "to": 20, "direction": "forward" },
-   { "name": "snore", "from": 21, "to": 27, "direction": "forward" },
-   { "name": "eyes", "from": 28, "to": 34, "direction": "forward" },
-   { "name": "appear", "from": 35, "to": 39, "direction": "forward" },
-   { "name": "exit", "from": 40, "to": 44, "direction": "forward" }
+   { "name": "default", "from": 0, "to": 44, "direction": "forward" }
   ],
   "layers": [
    { "name": "bg", "opacity": 255, "blendMode": "normal" },

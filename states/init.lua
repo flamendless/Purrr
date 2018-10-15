@@ -9,6 +9,7 @@ local States = {
 	menu = req("menu"),
 	lobby = req("lobby"),
 	intro = req("intro"),
+	customization = req("customization"),
 }
 
 return States
