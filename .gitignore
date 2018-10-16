@@ -5,6 +5,7 @@
 *.zip
 *.love
 *.code-workspace
+assets/palettes/main.lua
 res
 test
 ctags

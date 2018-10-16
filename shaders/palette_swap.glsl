@@ -2,7 +2,7 @@ uniform sampler2D palette;
 
 vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
    vec4 source = Texel(texture, texture_coords);
-   vec4 pixel = Texel(palette, vec2(source.r, 0));
+   vec4 pixel = Texel(palette, vec2(source.r, 0.0));
    pixel.a = source.a;
    return pixel * color;
 }

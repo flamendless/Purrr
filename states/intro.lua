@@ -56,7 +56,7 @@ end
 function Intro:setupEntities()
 	local sx = screen.x/100
 	local sy = screen.y/180
-	local json = "assets/anim/space.json"
+	local json = "assets/anim/json/space.json"
 	local sheet = self.images.spritesheet
 	self.entities = {}
 	self.entities.intro = E.scene(ecs.entity(),

@@ -40,7 +40,7 @@ function Loading:load()
 	self.entities = {}
 	self.entities.loading = ecs.entity()
 		:give(C.color, self.colors.loading)
-		:give(C.anim, "assets/anim/cat_swing.json", self.images.cat)
+		:give(C.anim, "assets/anim/json/cat_swing.json", self.images.cat)
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.transform, 0, 3, 3, "center", "center")
 		:apply()
