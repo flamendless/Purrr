@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "cat_attack 0.ase",
+    "filename": "cat_attack2 0.ase",
     "frame": { "x": 0, "y": 0, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 100
    },
    {
-    "filename": "cat_attack 1.ase",
+    "filename": "cat_attack2 1.ase",
     "frame": { "x": 64, "y": 0, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
@@ -18,7 +18,7 @@
     "duration": 100
    },
    {
-    "filename": "cat_attack 2.ase",
+    "filename": "cat_attack2 2.ase",
     "frame": { "x": 0, "y": 64, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
@@ -27,7 +27,7 @@
     "duration": 100
    },
    {
-    "filename": "cat_attack 3.ase",
+    "filename": "cat_attack2 3.ase",
     "frame": { "x": 64, "y": 64, "w": 64, "h": 64 },
     "rotated": false,
     "trimmed": false,
@@ -39,8 +39,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.3-dev",
-  "image": "/home/brbl/Development/Projects/am2018-v3/assets/anim/ase/cat_attack.png",
-  "format": "RGBA8888",
+  "format": "I8",
   "size": { "w": 128, "h": 128 },
   "scale": "1",
   "frameTags": [

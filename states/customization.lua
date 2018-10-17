@@ -13,7 +13,6 @@ local vec2 = require("modules.hump.vector")
 local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
-local anim_data = require("src.animation_data")
 
 local next_state
 local bg = {}
@@ -49,19 +48,6 @@ end
 function Customization:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	self.shaders = { palette_swap = love.graphics.newShader("shaders/palette_swap.glsl") }
-	self.palettes = {
-		self.images.pal_attack_source,
-		self.images.pal_blink_source,
-		self.images.pal_dizzy_source,
-		self.images.pal_heart_source,
-		self.images.pal_hurt_source,
-		self.images.pal_mouth_source,
-		self.images.pal_sleep_source,
-		self.images.pal_snore_source,
-		self.images.pal_spin_source,
-	}
-
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -76,7 +62,10 @@ function Customization:setupSystems()
 		renderer = S.renderer(),
 		transform = S.transform(),
 		animation = S.animation(),
+		cat_fsm = S.cat_fsm(),
 	}
+
+	self.instance:addSystem(self.systems.cat_fsm, "changeState")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
@@ -98,17 +87,13 @@ function Customization:setupSystems()
 end
 
 function Customization:setupEntities(tag)
-	local tag = tag or "dizzy"
-	local img = self.images["sheet_cat_" .. tag]
-	local json = "assets/anim/json/cat_" .. tag .. ".json"
-	local pal = self.images["pal_" .. tag .. "_source"]
 	self.entities = {}
 	self.entities.character = ecs.entity()
+		:give(C.cat)
+		:give(C.fsm, "sleep", { "attack", "blink", "dizzy", "hurt", "heart", "sleep", "snore", "spin"})
 		:give(C.color, colors("white"))
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.transform, 0, 4, 4, "center", "center")
-		:give(C.anim, json, img, { speed = anim_data:getSpeed(tag) })
-		:give(C.shaders, self.shaders.palette_swap, "palette", pal)
 		:apply()
 
 	self.instance:addEntity(self.entities.character)
@@ -128,13 +113,6 @@ function Customization:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
-end
-
-function Customization:keypressed(key)
-	if key == "s" then
-		self.instance:removeEntity(self.entities.character)
-		self:setupEntities("sleep")
-	end
 end
 
 function Customization:exit()

@@ -29,10 +29,15 @@ function Gamestate:start(state)
 end
 
 function Gamestate:switch(state, ...)
+	self:exit()
 	self.__previous = self.__current
 	self.__current = state
 	self.__args = { ... }
 	self:init()
+end
+
+function Gamestate:reload()
+	self:switch(self.__current)
 end
 
 function Gamestate:init()
@@ -50,6 +55,12 @@ function Gamestate:enter(previous, ...)
 	log.trace(("State %s Entered!"):format(self.__current.__id))
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
+end
+
+function Gamestate:exit()
+	if self.__current and self.__current.exit then
+		self.__current:exit()
+	end
 end
 
 function Gamestate:update(dt)

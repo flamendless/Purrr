@@ -21,7 +21,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.3-dev",
-  "image": "/home/brbl/Development/Projects/am2018-v3/assets/anim/ase/cat_blink.png",
+  "image": "/home/brbl/Development/Projects/am2018-v3/assets/anim/cat_blink.png",
   "format": "RGBA8888",
   "size": { "w": 128, "h": 64 },
   "scale": "1",

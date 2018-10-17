@@ -18,6 +18,7 @@ local Systems = {
 	collision = req("collision"),
 	follow = req("follow"),
 	windows = req("windows"),
+	cat_fsm = req("cat_fsm"),
 }
 
 return Systems

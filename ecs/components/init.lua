@@ -38,6 +38,8 @@ local Components = {
 	window = req("window"),
 	textPad = req("textPad"),
 	shaders = req("shaders"),
+	fsm = req("fsm"),
+	cat = req("cat"),
 }
 
 return Components

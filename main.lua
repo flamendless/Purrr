@@ -23,14 +23,12 @@ local screen = require("src.screen")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local event = require("src.event")
-local anim_data = require("src.animation_data")
 
 function love.load()
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
-	if __debug then debugging:load() end
+	if __debug then debugging:init() end
 	math.randomseed(os.time())
-	anim_data:init()
 	data:init()
 	event:init()
 	transition:init()

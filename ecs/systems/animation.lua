@@ -1,5 +1,6 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
+local log = require("modules.log.log")
 local peachy = require("modules.peachy.peachy")
 
 local Animation = System({
@@ -13,10 +14,11 @@ function Animation:entityAdded(e)
 	c_anim.anim = peachy.new(c_anim.json, c_anim.sheet, c_anim.tag)
 	c_anim.anim:onLoop(function()
 		if c_anim.stopOnLast then
-			c_anim.anim:stop(true)
+			c_anim.anim:stop(c_anim.stopOnLast)
 		end
 		if c_callback and c_callback.callback.onComplete then
 			c_callback.callback.onComplete(c_anim.anim)
+			log.trace("Animation OnComplete Callback Called!")
 		end
 		if c_callback and c_callback.volatile then
 			e:remove(C.anim_callback):apply()

@@ -24,7 +24,14 @@ local Debug = {
 	},
 }
 
-function Debug:load()
+lurker.postswap = function(filename)
+	log.trace("Swapped: " .. filename)
+	local f = require("src.animation_data")
+	f:init()
+	gamestate:reload()
+end
+
+function Debug:init()
 	self.colors.line = colors(1, 0, 0, 0.5)
 	self.colors.graph = colors(1, 0, 0, 1)
 	log.trace("Load")
