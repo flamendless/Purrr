@@ -57,7 +57,6 @@ function Debug:update(dt)
 	self.graphs.state.label = ("Gamestate: %s"):format(gamestate:getCurrent().__id)
 	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
 	self.graphs.transition.label = ("Transition: %s"):format(tostring(transition:getState()))
-	self.drawList = {}
 end
 
 function Debug:draw()

@@ -26,18 +26,21 @@ function GUI:entityAdded(e)
 		if args.text then
 			assert(args.font, "Font does not exist!")
 			local pos = e[C.pos].pos:clone()
+			local c_transform = e[C.transform]
+			local sx, sy
+			if c_transform then sx = c_transform.sx sy = c_transform.sy end
 			local text = Entity()
-				:give(C.text, args.text, args.font, "center", args.normal:getWidth())
+				:give(C.text, args.text, args.font, "center", args.normal:getWidth() * (sx or 1))
 				:give(C.color, args.textColor)
 				:give(C.pos, pos)
-				:give(C.offsetPos, vec2(-args.normal:getWidth()/2, 0))
+				:give(C.offsetPos, vec2(-args.normal:getWidth()/2 * (sx or 1), 0))
 				:give(C.parent, e)
 				:apply()
 			self:getInstance():addEntity(text)
 			self.text[c_button.id] = text
 		end
 	end
-	e:give(C.colliderBox, { "point" }):apply()
+	e:give(C.colliderSprite, { "point" }):apply()
 	log.trace(("GUI ADDED: %s"):format(c_button.id))
 end
 
@@ -73,6 +76,7 @@ end
 function GUI:onEnter(e)
 	local c_button = e[C.button]
 	local c_transform = e[C.transform]
+	if not c_button then return end
 	if c_button.args and c_button.args.hovered then
 		e:give(C.hoveredSprite, c_button.args.hovered)
 			:give(C.patrol, { vec2(0, -8), vec2(0, 8) }, true)
@@ -92,6 +96,7 @@ end
 function GUI:onExit(e)
 	local c_button = e[C.button]
 	local c_transform = e[C.transform]
+	if not c_button then return end
 	c_button.isClicked = false
 	e:remove(C.hoveredSprite)
 		:remove(C.patrol)

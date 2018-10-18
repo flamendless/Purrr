@@ -4,9 +4,13 @@ local vec2 = require("modules.hump.vector")
 local debugging = require("src.debug")
 
 local Collision = System({
-		C.colliderBox,
+		C.colliderSprite,
 		C.pos,
 		C.sprite,
+		"sprite"
+	}, {
+		C.colliderBox,
+		C.pos,
 		"box"
 	})
 
@@ -15,16 +19,16 @@ function Collision:init()
 end
 
 function Collision:entityAddedTo(e, pool)
-	if pool.name == "box" then
-		local c_colliderBox = e[C.colliderBox]
+	if pool.name == "sprite" then
+		local c_colliderSprite = e[C.colliderSprite]
+		local c_sprite = e[C.sprite]
 		local c_pos = e[C.pos].pos
-		local c_sprite = e[C.sprite].sprite
-		local c_transform = e[C.transform]
-
 		local x = c_pos.x
 		local y = c_pos.y
-		local w = c_sprite:getWidth()
-		local h = c_sprite:getHeight()
+		local w = c_sprite.sprite:getWidth()
+		local h = c_sprite.sprite:getHeight()
+		local c_transform = e[C.transform]
+
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
@@ -33,8 +37,37 @@ function Collision:entityAddedTo(e, pool)
 				y = y - h/2
 			end
 		end
+		c_colliderSprite.pos = vec2(x, y)
+		c_colliderSprite.size = vec2(w, h)
+		if c_colliderSprite.canCollideWith then
+			for i = 1, #c_colliderSprite.canCollideWith do
+				local tag = c_colliderSprite.canCollideWith[i]
+				if not self.entities[tag] then self.entities[tag] = {} end
+				table.insert(self.entities[tag], e)
+			end
+		end
+
+	elseif pool.name == "box" then
+		local c_colliderBox = e[C.colliderBox]
+		local c_pos = e[C.pos].pos
+		local x = c_pos.x
+		local y = c_pos.y
+		local w = c_colliderBox.size.x
+		local h = c_colliderBox.size.y
+		local c_transform = e[C.transform]
+
+		if c_transform then
+			if c_transform.orig_ox == "center" then
+				x = x - w/2
+			end
+			if c_transform.orig_oy == "center" then
+				y = y - h/2
+			end
+		end
+
 		c_colliderBox.pos = vec2(x, y)
 		c_colliderBox.size = vec2(w, h)
+
 		if c_colliderBox.canCollideWith then
 			for i = 1, #c_colliderBox.canCollideWith do
 				local tag = c_colliderBox.canCollideWith[i]
@@ -46,16 +79,42 @@ function Collision:entityAddedTo(e, pool)
 end
 
 function Collision:updatePosition()
-	for _,e in ipairs(self.box) do
-		local c_colliderBox = e[C.colliderBox]
+	for _,e in ipairs(self.sprite) do
+		local c_colliderSprite = e[C.colliderSprite]
 		local c_pos = e[C.pos].pos
 		local c_sprite = e[C.sprite].sprite
 		local c_transform = e[C.transform]
 
+		local sx = 1
+		local sy = 1
+		if c_transform then
+			sx = c_transform.sx
+			sy = c_transform.sy
+		end
 		local x = c_pos.x
 		local y = c_pos.y
-		local w = c_sprite:getWidth() * c_transform.sx
-		local h = c_sprite:getHeight() * c_transform.sy
+		local w = c_sprite:getWidth() * sx
+		local h = c_sprite:getHeight() * sy
+		if c_transform then
+			if c_transform.orig_ox == "center" then
+				x = x - w/2
+			end
+			if c_transform.orig_oy == "center" then
+				y = y - h/2
+			end
+		end
+		c_colliderSprite.pos = vec2(x, y)
+	end
+
+	for _,e in ipairs(self.box) do
+		local c_colliderBox = e[C.colliderBox]
+		local c_pos = e[C.pos].pos
+		local c_transform = e[C.transform]
+
+		local x = c_pos.x
+		local y = c_pos.y
+		local w = c_colliderBox.size.x
+		local h = c_colliderBox.size.y
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
@@ -69,13 +128,19 @@ function Collision:updatePosition()
 end
 
 function Collision:updateSize()
-	for _,e in ipairs(self.box) do
-		local c_colliderBox = e[C.colliderBox]
+	for _,e in ipairs(self.sprite) do
+		local c_colliderSprite = e[C.colliderSprite]
 		local c_sprite = e[C.sprite].sprite
 		local c_transform = e[C.transform]
-		local w = c_sprite:getWidth() * c_transform.sx
-		local h = c_sprite:getHeight() * c_transform.sy
-		c_colliderBox.size = vec2(w, h)
+		local sx = 1
+		local sy = 1
+		if c_transform then
+			sx = c_transform.sx
+			sy = c_transform.sy
+		end
+		local w = c_sprite:getWidth() * sx
+		local h = c_sprite:getHeight() * sy
+		c_colliderSprite.size = vec2(w, h)
 	end
 end
 
@@ -83,6 +148,7 @@ function Collision:checkPoint(dt)
 	if not self.entities.point then return end
 	for _,e in ipairs(self.entities.point) do
 		local c_collider
+		if e:has(C.colliderSprite) then c_collider = e[C.colliderSprite] end
 		if e:has(C.colliderBox) then c_collider = e[C.colliderBox] end
 		if c_collider then
 			local x,y = c_collider.pos:unpack()
@@ -105,6 +171,12 @@ end
 
 function Collision:draw()
 	if not debugging.modes.collisions then return end
+	for _,e in ipairs(self.sprite) do
+		local c_collider = e[C.colliderSprite]
+		love.graphics.setColor(1, 0, 0, 1)
+		love.graphics.rectangle("line", c_collider.pos.x, c_collider.pos.y, c_collider.size.x, c_collider.size.y)
+	end
+
 	for _,e in ipairs(self.box) do
 		local c_collider = e[C.colliderBox]
 		love.graphics.setColor(1, 0, 0, 1)

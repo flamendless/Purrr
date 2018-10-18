@@ -1,8 +1,7 @@
 local Component = require("modules.concord.lib.component")
 
-local ColliderBox = Component(function(e, size, canCollideWith)
-	e.size = size
+local ColliderSprite = Component(function(e, canCollideWith)
 	e.canCollideWith = canCollideWith
 end)
 
-return ColliderBox
+return ColliderSprite

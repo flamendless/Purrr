@@ -25,6 +25,7 @@ local Components = {
 	anim_callback = req("anim_callback"),
 	patch = req("patch"),
 	button = req("button"),
+	colliderSprite = req("colliderSprite"),
 	colliderBox = req("colliderBox"),
 	hoveredSprite = req("hoveredSprite"),
 	follow = req("follow"),

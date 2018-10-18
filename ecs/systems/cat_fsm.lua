@@ -2,6 +2,7 @@ local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
 local lume = require("modules.lume.lume")
 local timer = require("modules.hump.timer")
+local vec2 = require("modules.hump.vector")
 local resourceManager = require("src.resource_manager")
 
 local CatFSM = System({
@@ -10,14 +11,12 @@ local CatFSM = System({
 	})
 
 local _states = {}
-local _palettes = { "source", "softmilk", "green", "blue" }
+local _palettes = { "grayscale", "source", "softmilk", "green", "blue" }
 local cur_state = 1
-local cur_pal = 4
+local cur_pal = 1
 local current_pal
 local data = {}
 local shaders_palette
-
-local font = love.graphics.newFont(32)
 
 function CatFSM:init()
 	shaders_palette = love.graphics.newShader("shaders/palette_swap.glsl")
@@ -56,6 +55,8 @@ function CatFSM:entityAdded(e)
 	current_pal = _palettes[cur_pal]
 	self:changeState(state)
 	self:changePalette(current_pal)
+
+	e:give(C.colliderBox, vec2(128, 128), { "point" }):apply()
 end
 
 function CatFSM:changeState(state)
@@ -105,16 +106,11 @@ function CatFSM:keypressed(key)
 			cur_pal = cur_pal + 1
 			if cur_pal > #_palettes then cur_pal = 1 end
 		end
-		self:changePalette(_palettes[cur_pal])
-		self:changeState(_states[cur_state])
+		if key == "up" or key == "down" or key == "left" or key == "right" then
+			self:changePalette(_palettes[cur_pal])
+			self:changeState(_states[cur_state])
+		end
 	end
-end
-
-function CatFSM:drawDebug()
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.setFont(font)
-	love.graphics.print("State: " .. _states[cur_state], 32, 512)
-	love.graphics.print("Palette: " .. _palettes[cur_pal], 32, 540)
 end
 
 return CatFSM
