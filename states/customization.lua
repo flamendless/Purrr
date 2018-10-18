@@ -19,7 +19,7 @@ local bg = {}
 
 function Customization:init()
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
-	local palettes = {"source", "softmilk", "db", "green"}
+	local palettes = {"source", "softmilk", "blue", "green"}
 	self.assets = {
 		images = {
 			{ id = "bg_space", path = "assets/images/title_space.png" },
@@ -63,6 +63,7 @@ function Customization:setupSystems()
 	self.instance:addSystem(self.systems.cat_fsm, "changeState")
 	self.instance:addSystem(self.systems.cat_fsm, "changePalette")
 	self.instance:addSystem(self.systems.cat_fsm, "keypressed")
+	self.instance:addSystem(self.systems.cat_fsm, "draw", "drawDebug")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "update", "updatePosition")

@@ -10,12 +10,14 @@ local CatFSM = System({
 	})
 
 local _states = {}
-local _palettes = { "source", "softmilk", "green" }
-local current = 1
-local cur_pal = 3
+local _palettes = { "source", "softmilk", "green", "blue" }
+local cur_state = 1
+local cur_pal = 4
 local current_pal
 local data = {}
 local shaders_palette
+
+local font = love.graphics.newFont(32)
 
 function CatFSM:init()
 	shaders_palette = love.graphics.newShader("shaders/palette_swap.glsl")
@@ -91,11 +93,11 @@ end
 function CatFSM:keypressed(key)
 	for _,e in ipairs(self.pool) do
 		if key == "up" then
-			current = current + 1
-			if current > #_states then current = 1 end
+			cur_state = cur_state + 1
+			if cur_state > #_states then cur_state = 1 end
 		elseif key == "down" then
-			current = current - 1
-			if current <= 0 then current = #_states end
+			cur_state = cur_state - 1
+			if cur_state <= 0 then cur_state = #_states end
 		elseif key == "left" then
 			cur_pal = cur_pal - 1
 			if cur_pal <= 0 then cur_pal = #_palettes end
@@ -104,8 +106,15 @@ function CatFSM:keypressed(key)
 			if cur_pal > #_palettes then cur_pal = 1 end
 		end
 		self:changePalette(_palettes[cur_pal])
-		self:changeState(_states[current])
+		self:changeState(_states[cur_state])
 	end
+end
+
+function CatFSM:drawDebug()
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.setFont(font)
+	love.graphics.print("State: " .. _states[cur_state], 32, 512)
+	love.graphics.print("Palette: " .. _palettes[cur_pal], 32, 540)
 end
 
 return CatFSM
