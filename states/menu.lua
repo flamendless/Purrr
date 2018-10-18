@@ -27,6 +27,7 @@ function Menu:init()
 		images = {
 			{ id = "title", path = "assets/images/title.png" },
 			{ id = "bg_space", path = "assets/images/title_space.png" },
+			{ id = "bg", path = "assets/images/bg.png" },
 			{ id = "btn_play", path = "assets/gui/play.png" },
 			{ id = "btn_play_hovered", path = "assets/gui/play_hovered.png" },
 			{ id = "btn_leave", path = "assets/gui/leave.png" },
@@ -156,7 +157,7 @@ function Menu:start()
 			next_state = require("states.lobby")
 		end
 	end
-	bg.image = self.images.bg_space
+	bg.image = self.images.bg
 	bg.sx = screen.x/bg.image:getWidth()
 	bg.sy = screen.y/bg.image:getHeight()
 end

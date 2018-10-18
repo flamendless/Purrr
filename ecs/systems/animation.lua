@@ -30,7 +30,8 @@ end
 function Animation:update(dt)
 	for _,e in ipairs(self.pool) do
 		local c_anim = e[C.anim]
-		c_anim.anim:update(dt * (c_anim.speed or 1))
+		local speed = c_anim.speed
+		c_anim.anim:update(dt * (speed or 1))
 	end
 end
 
