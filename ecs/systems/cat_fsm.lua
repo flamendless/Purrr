@@ -3,6 +3,7 @@ local C = require("ecs.components")
 local lume = require("modules.lume.lume")
 local timer = require("modules.hump.timer")
 local vec2 = require("modules.hump.vector")
+local log = require("modules.log.log")
 local resourceManager = require("src.resource_manager")
 
 local CatFSM = System({
@@ -17,8 +18,12 @@ local cur_pal = 1
 local current_pal
 local data = {}
 local shaders_palette
+local time = 0
+local timer_activated = false
 
-function CatFSM:init()
+function CatFSM:init(state)
+	self.__state = state
+	self.__override = false
 	shaders_palette = love.graphics.newShader("shaders/palette_swap.glsl")
 	data.speed = {
 		attack = 0.3, blink = 0.5, dizzy = 0.5, heart = 0.75,
@@ -37,10 +42,17 @@ function CatFSM:init()
 	data.onComplete.blink = function()
 		local r = math.random(10, 30)/10
 		local next_state = lume.randomchoice({ "blink", "mouth" })
+		if self.__state == "customization" then
+			next_state = lume.randomchoice( { "blink", "mouth", "heart" } )
+		end
 		timer.after(r, function() self:changeState(next_state) end)
 	end
 	data.onComplete.mouth = data.onComplete.blink
-	data.onComplete.sleep = function() self:changeState("snore") end
+	data.onComplete.sleep = function() self:overrideState("snore") end
+	data.onComplete.heart = function()
+		local next_state = lume.weightedchoice({ blink = 30, heart = 70 })
+		self:changeState(next_state)
+	end
 end
 
 function CatFSM:entityAdded(e)
@@ -56,10 +68,13 @@ function CatFSM:entityAdded(e)
 	self:changeState(state)
 	self:changePalette(current_pal)
 
-	e:give(C.colliderBox, vec2(128, 128), { "point" }):apply()
+	e:give(C.colliderBox, vec2(128, 128), { "point" })
+		:give(C.state)
+		:apply()
 end
 
 function CatFSM:changeState(state)
+	if self.__override then return end
 	for _,e in ipairs(self.pool) do
 		local c_fsm = e[C.fsm]
 		if not (c_fsm.states[state]) then error("State does not exist!") end
@@ -68,7 +83,7 @@ function CatFSM:changeState(state)
 		local json = "assets/anim/json/cat_" .. state .. ".json"
 		local speed = data.speed[state]
 		local stopOnLast = data.stopOnLast[state]
-		-- local onComplete = data.onComplete[state]
+		local onComplete = data.onComplete[state]
 
 		e:remove(C.anim):remove(C.anim_callback):apply()
 		e:give(C.anim, json, sheet, {speed = speed, stopOnLast = stopOnLast})
@@ -77,6 +92,12 @@ function CatFSM:changeState(state)
 
 		self:changePalette(current_pal)
 	end
+end
+
+function CatFSM:overrideState(state)
+	self.__override = false
+	self:changeState(state)
+	self.__override = true
 end
 
 function CatFSM:changePalette(new_pal)
@@ -110,6 +131,47 @@ function CatFSM:keypressed(key)
 			self:changePalette(_palettes[cur_pal])
 			self:changeState(_states[cur_state])
 		end
+	end
+end
+
+function CatFSM:update(dt)
+	for _,e in ipairs(self.pool) do
+		local c_collider = e[C.colliderBox]
+		local c_state = e[C.state]
+		if c_collider.isColliding and not c_state.isClicked and love.mouse.isDown(1) then
+			c_state.isClicked = true
+			self:onClick(e)
+		end
+		if not c_state.isHovered then
+			c_state.isClicked = false
+			time = time + 1 * dt
+		else
+			time = 0
+			timer_activated = false
+		end
+		if time >= 5 and not timer_activated then
+			timer_activated = true
+			self:overrideState("sleep")
+			log.trace("Cat will now sleep")
+		end
+	end
+end
+
+function CatFSM:onClick(e)
+	if self.__state == "customization" then self:changeState("heart") end
+end
+
+function CatFSM:onEnter(e)
+	if e:has(C.cat) then
+		self:overrideState("blink")
+		self.__override = false
+	end
+end
+
+function CatFSM:onExit(e)
+	if e:has(C.cat) then
+		self:overrideState("mouth")
+		self.__override = false
 	end
 end
 

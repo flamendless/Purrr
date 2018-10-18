@@ -28,6 +28,10 @@ function Customization:init()
 			{ id = "bg_space", path = "assets/images/title_space.png" },
 			{ id = "header", path = "assets/gui/header.png" },
 			{ id = "window", path = "assets/gui/window.png" },
+			{ id = "btn_back", path = "assets/gui/button_back.png" },
+			{ id = "btn_back_hovered", path = "assets/gui/button_back_hovered.png" },
+			{ id = "btn_forward", path = "assets/gui/button_forward.png" },
+			{ id = "btn_forward_hovered", path = "assets/gui/button_forward_hovered.png" },
 		},
 		fonts = {
 			{ id = "header", path = "assets/fonts/upheavalpro.ttf", sizes = { 32, 36, 42, 48 } },
@@ -71,17 +75,26 @@ function Customization:setupSystems()
 		renderer = S.renderer(),
 		transform = S.transform(),
 		animation = S.animation(),
-		cat_fsm = S.cat_fsm(),
+		cat_fsm = S.cat_fsm("customization"),
+		moveTo = S.moveTo(),
+		patrol = S.patrol(),
 	}
 
+	self.instance:addSystem(self.systems.moveTo)
+	self.instance:addSystem(self.systems.moveTo, "update")
+	self.instance:addSystem(self.systems.patrol)
+	self.instance:addSystem(self.systems.patrol, "startPatrol")
 	self.instance:addSystem(self.systems.cat_fsm, "changeState")
 	self.instance:addSystem(self.systems.cat_fsm, "changePalette")
 	self.instance:addSystem(self.systems.cat_fsm, "keypressed")
+	self.instance:addSystem(self.systems.cat_fsm, "update")
+	self.instance:addSystem(self.systems.cat_fsm, "onEnter")
+	self.instance:addSystem(self.systems.cat_fsm, "onExit")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
 	self.instance:addSystem(self.systems.collision, "update", "updateSize")
-	self.instance:addSystem(self.systems.collision, "update", "checkPoint")
+	self.instance:addSystem(self.systems.collision, "update", "checkPoint", false)
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleSprite")
 	self.instance:addSystem(self.systems.transform, "handleAnim")
@@ -100,6 +113,7 @@ end
 function Customization:setupEntities(tag)
 	self.entities = {}
 	self.entities.cat = ecs.entity()
+		:give(C.tag, "cat")
 		:give(C.cat)
 		:give(C.fsm, "blink", { "attack", "blink", "dizzy", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
 		:give(C.color, colors("white"))
@@ -122,20 +136,22 @@ function Customization:setupEntities(tag)
 	self.entities.forward = ecs.entity()
 		:give(C.color, colors("white"))
 		:give(C.button, "forward", {
-				normal = self.images.forward,
-				hovered = self.images.forward_hovered,
+				normal = self.images.btn_forward,
+				hovered = self.images.btn_forward_hovered,
 			})
 		:give(C.transform, 0, 2, 2, "center", "center")
 		:give(C.pos, vec2(screen.x * 0.75, screen.y * 1.5))
+		:give(C.maxScale, 2.5, 2.5)
 		:apply()
 
 	self.entities.back = ecs.entity()
 		:give(C.color, colors("white"))
 		:give(C.button, "back", {
-				normal = self.images.back,
-				hovered = self.images.back,
+				normal = self.images.btn_back,
+				hovered = self.images.btn_back_hovered,
 			})
 		:give(C.transform, 0, 2, 2, "center", "center")
+		:give(C.maxScale, 2.5, 2.5)
 		:give(C.pos, vec2(screen.x * 0.25, screen.y * 1.5))
 		:apply()
 
@@ -149,6 +165,11 @@ function Customization:start()
 	local dur = 0.8
 	flux.to(self.entities.cat[C.pos].pos, dur, { y = screen.y  * 0.4 }):ease("backout")
 	flux.to(self.entities.header[C.pos].pos, dur, { y = 72 }):ease("backout")
+	flux.to(self.entities.back[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout")
+	flux.to(self.entities.forward[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout")
+		:oncomplete(function()
+			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+		end)
 
 	local r = math.random(1, maxPatterns)
 	bg.image = self.images["pattern" .. r]

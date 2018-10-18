@@ -41,6 +41,8 @@ local Components = {
 	shaders = req("shaders"),
 	fsm = req("fsm"),
 	cat = req("cat"),
+	tag = req("tag"),
+	state = req("state"),
 }
 
 return Components

@@ -1,6 +1,7 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
+local log = require("modules.log.log")
 local debugging = require("src.debug")
 
 local Collision = System({
@@ -154,14 +155,23 @@ function Collision:checkPoint(dt)
 			local x,y = c_collider.pos:unpack()
 			local w,h = c_collider.size:unpack()
 			local mx, my = love.mouse.getPosition()
+			local c_tag = e[C.tag]
+			local c_button = e[C.button]
+			local c_state = e[C.state]
 			if mx >= x and mx <= x + w and my >= y and my <= y + h then
 				if not c_collider.isColliding then
 					self:getInstance():emit("onEnter", e)
+					if c_state then c_state.isHovered = true end
+					if c_tag then log.trace("Point onEnter: " .. c_tag.tag) end
+					if c_button then log.trace("Point onEnter: " .. c_button.id) end
 				end
 				c_collider.isColliding = true
 			else
 				if c_collider.isColliding then
 					self:getInstance():emit("onExit", e)
+					if c_state then c_state.isHovered = false end
+					if c_tag then log.trace("Point onExit: " .. c_tag.tag) end
+					if c_button then log.trace("Point onExit: " .. c_button.id) end
 				end
 				c_collider.isColliding = false
 			end

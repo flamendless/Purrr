@@ -40,7 +40,9 @@ function GUI:entityAdded(e)
 			self.text[c_button.id] = text
 		end
 	end
-	e:give(C.colliderSprite, { "point" }):apply()
+	e:give(C.colliderSprite, { "point" })
+		:give(C.state)
+		:apply()
 	log.trace(("GUI ADDED: %s"):format(c_button.id))
 end
 
@@ -48,9 +50,11 @@ function GUI:update(dt)
 	for _,e in ipairs(self.pool) do
 		local c_collider
 		local c_button = e[C.button]
+		local c_state = e[C.state]
 		if e:has(C.colliderBox) then c_collider = e[C.colliderBox] end
-		if c_collider then
-			c_button.isHovered = c_collider.isColliding
+		if e:has(C.colliderSprite) then c_collider = e[C.colliderSprite] end
+		if not c_state.isHovered then
+			c_state.isClicked = false
 		end
 	end
 end
@@ -59,13 +63,16 @@ function GUI:onClick()
 	for _,e in ipairs(self.pool) do
 		local c_button = e[C.button]
 		local c_windowIndex = e[C.windowIndex]
+		local c_state = e[C.state]
 		if c_windowIndex then
 			if not (c_windowIndex.index == __window) then
 				return
 			end
 		end
-		if c_button.isHovered and not c_button.isClicked and love.mouse.isDown(1) then
-			c_button.isClicked = true
+
+		if c_state.isHovered and not c_state.isClicked and love.mouse.isDown(1) then
+			c_state.isClicked = true
+			log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 			if c_button.args and c_button.args.onClick then
 				c_button.args.onClick()
 			end
