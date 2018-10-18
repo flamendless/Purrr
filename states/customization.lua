@@ -87,7 +87,7 @@ function Customization:setupEntities(tag)
 	self.entities = {}
 	self.entities.character = ecs.entity()
 		:give(C.cat)
-		:give(C.fsm, "blink", { "attack", "blink", "dizzy", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
+		:give(C.fsm, "attack", { "attack", "blink", "dizzy", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
 		:give(C.color, colors("white"))
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
 		:give(C.transform, 0, 4, 4, "center", "center")

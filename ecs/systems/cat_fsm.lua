@@ -10,9 +10,9 @@ local CatFSM = System({
 	})
 
 local _states = {}
-local _palettes = { "source", "softmilk" }
+local _palettes = { "source", "softmilk", "green" }
 local current = 1
-local cur_pal = 1
+local cur_pal = 3
 local current_pal
 local data = {}
 local shaders_palette
