@@ -10,17 +10,20 @@ local C = require("ecs.components")
 local S = require("ecs.systems")
 local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
+local log = require("modules.log.log")
 
 local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local event = require("src.event")
+local data = require("src.data")
 
 local next_state
 local bg = {}
 local quad
 local maxPatterns = 9
+local level = 1
 
 function Customization:init()
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
@@ -155,6 +158,9 @@ function Customization:setupEntities(tag)
 		:give(C.button, "forward", {
 				normal = self.images.btn_forward,
 				hovered = self.images.btn_forward_hovered,
+				onClick = function(system)
+					self:forward()
+				end
 			})
 		:give(C.transform, 0, 2, 2, "center", "center")
 		:give(C.pos, vec2(screen.x * 0.82, screen.y * 1.5))
@@ -166,6 +172,9 @@ function Customization:setupEntities(tag)
 		:give(C.button, "back", {
 				normal = self.images.btn_back,
 				hovered = self.images.btn_back_hovered,
+				onClick = function(system)
+					self:back()
+				end
 			})
 		:give(C.transform, 0, 2, 2, "center", "center")
 		:give(C.maxScale, 2.5, 2.5)
@@ -184,25 +193,26 @@ function Customization:setupEntities(tag)
 			[4] = screen.y * 0.85,
 		}
 
-	self.entities.default = E.color_picker(ecs.entity(),
+	self.btns = {}
+	self.btns.default = E.color_picker(ecs.entity(),
 		"source", "default", "yellow", pos_x[1], pos_y[1])
-	self.entities.softmilk = E.color_picker(ecs.entity(),
+	self.btns.softmilk = E.color_picker(ecs.entity(),
 		"softmilk", "softmilk", "softmilk", pos_x[2], pos_y[1])
-	self.entities.grayscale = E.color_picker(ecs.entity(),
+	self.btns.grayscale = E.color_picker(ecs.entity(),
 		"grayscale", "grayscale", "grayscale", pos_x[3], pos_y[1])
-	self.entities.red = E.color_picker(ecs.entity(),
+	self.btns.red = E.color_picker(ecs.entity(),
 		"red", "red", "red", pos_x[1], pos_y[2])
-	self.entities.green = E.color_picker(ecs.entity(),
+	self.btns.green = E.color_picker(ecs.entity(),
 		"green", "green", "green", pos_x[2], pos_y[2])
-	self.entities.blue = E.color_picker(ecs.entity(),
+	self.btns.blue = E.color_picker(ecs.entity(),
 		"blue", "blue", "blue", pos_x[3], pos_y[2])
-	self.entities.purple = E.color_picker(ecs.entity(),
+	self.btns.purple = E.color_picker(ecs.entity(),
 		"purple", "purple", "purple", pos_x[1], pos_y[3])
-	self.entities.black = E.color_picker(ecs.entity(),
+	self.btns.black = E.color_picker(ecs.entity(),
 		"black", "black", "black", pos_x[2], pos_y[3])
-	self.entities.white = E.color_picker(ecs.entity(),
+	self.btns.white = E.color_picker(ecs.entity(),
 		"white", "white", "white", pos_x[3], pos_y[3])
-	self.entities.orange = E.color_picker(ecs.entity(),
+	self.btns.orange = E.color_picker(ecs.entity(),
 		"orange", "orange", "orange", pos_x[2], pos_y[4])
 
 	self.instance:addEntity(self.entities.forward)
@@ -222,16 +232,9 @@ function Customization:start()
 	flux.to(self.entities.forward[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout")
 		:oncomplete(function()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-			self.instance:addEntity(self.entities.default)
-			self.instance:addEntity(self.entities.softmilk)
-			self.instance:addEntity(self.entities.grayscale)
-			self.instance:addEntity(self.entities.red)
-			self.instance:addEntity(self.entities.green)
-			self.instance:addEntity(self.entities.blue)
-			self.instance:addEntity(self.entities.purple)
-			self.instance:addEntity(self.entities.black)
-			self.instance:addEntity(self.entities.white)
-			self.instance:addEntity(self.entities.orange)
+			for k,v in pairs(self.btns) do
+				self.instance:addEntity(v)
+			end
 		end)
 
 	local r = math.random(1, maxPatterns)
@@ -262,6 +265,36 @@ end
 
 function Customization:exit()
 	self.instance:clear()
+end
+
+local orig_pos = {}
+function Customization:forward()
+	if level == 1 then
+		level = 2
+		log.trace(("Cat Name: %s -> Palette: %s"):format(data.palette, data.cat_name))
+		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+		for k,v in pairs(self.btns) do
+			orig_pos[k] = v[C.pos].pos.x
+			flux.to(v[C.pos].pos, 1, { x = -screen.x/2 }):ease("backin")
+				:oncomplete(function()
+					self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+					self.entities.back[C.state].isDisabled = false
+				end)
+		end
+	end
+end
+
+function Customization:back()
+	if level == 2 then
+		level = 1
+		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+		for k,v in pairs(self.btns) do
+			flux.to(v[C.pos].pos, 1, { x = orig_pos[k] }):ease("backout")
+				:oncomplete(function()
+					self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+				end)
+		end
+	end
 end
 
 return Customization

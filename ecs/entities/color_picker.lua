@@ -5,6 +5,8 @@ local vec2 = require("modules.hump.vector")
 local colors = require("src.colors")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
+local event = require("src.event")
+local data = require("src.data")
 
 local ColorPicker = function(e, pal, id, btn_color, x, y)
 	e:give(C.color, colors("white"))
@@ -15,11 +17,16 @@ local ColorPicker = function(e, pal, id, btn_color, x, y)
 				font = resourceManager:getFont("buttons_24"),
 				textColor = colors("white"),
 				onClick = function(system)
-					local instance = system:getInstance()
-					instance:emit("changePalette", pal)
-
-					local current = gamestate:getCurrent()
-					current.entities.forward[C.state].isDisabled = false
+					local status, err = pcall(function()
+						local instance = system:getInstance()
+						instance:emit("changePalette", pal)
+						local current = gamestate:getCurrent()
+						current.entities.forward[C.state].isDisabled = false
+						data.palette = pal
+					end)
+					if not status then
+						event:showLock()
+					end
 				end
 			})
 		:give(C.transform, 0, 1, 1, "center", "center")

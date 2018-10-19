@@ -9,9 +9,12 @@ local flux = require("modules.flux.flux")
 local gamestate = require("src.gamestate")
 local screen = require("src.screen")
 local colors = require("src.colors")
+local event = require("src.event")
+local data = require("src.data")
 
 local Window = {}
 
+local keyboard = false
 local dur = 0.75
 local temp_window
 
@@ -20,6 +23,7 @@ function Window:load(args)
 	local sy = 4
 	temp_window = __window
 	__window = 2
+	self.uncloseable = args.uncloseable
 	self.instance = ecs.instance()
 	self.systems = {
 		collision = S.collision(),
@@ -160,14 +164,20 @@ function Window:start()
 		:ease("backout")
 		:oncomplete(function()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+			if self.entities.textinput then
+				self:showKeyboard()
+			end
 		end)
 end
 
-function Window:listen(msg)
+function Window:listen(msg, ...)
 	if msg == "enableAcceptButton" then
 		self.entities.btn1[C.state].isDisabled = false
 	elseif msg == "disableAcceptButton" then
 		self.entities.btn1[C.state].isDisabled = true
+	elseif msg == "saveName" then
+		local str = self.entities.textinput[C.text].text
+		data.cat_name = str
 	end
 end
 
@@ -181,7 +191,9 @@ end
 
 function Window:keypressed(key)
 	if key == "escape" then
-		self:close()
+		if not self.uncloseable then
+			self:close()
+		end
 	end
 	self.instance:emit("keypressed", key)
 end
@@ -191,9 +203,23 @@ function Window:textinput(t)
 end
 
 function Window:touchpressed(id, tx, ty, dx, dy, pressure)
+	if not keyboard then
+		self:showKeyboard()
+	end
+end
+
+function Window:showKeyboard()
+	love.keyboard.setTextInput(true)
+	keyboard = true
+end
+
+function Window:hideKeyboard()
+	love.keyboard.setTextInput(false)
+	keyboard = false
 end
 
 function Window:close()
+	self:hideKeyboard()
 	for k,v in pairs(self.entities) do
 		v:remove(C.colliderBox):apply()
 	end
@@ -205,10 +231,10 @@ function Window:close()
 end
 
 function Window:exit()
-	love.keyboard.setTextInput(false)
 	love.keyboard.setKeyRepeat(false)
-	self.instance:clear()
+	-- self.instance:clear()
 	__window = temp_window
+	event:reset()
 end
 
 return Window

@@ -76,10 +76,8 @@ end
 
 function Debug:keypressed(key)
 	if key == "q" then
-		log.trace("quit")
 		love.event.quit()
 	elseif key == "r" then
-		log.trace("restart")
 		love.event.quit("restart")
 	elseif key == "g" then
 		self.modes.graphs = not self.modes.graphs

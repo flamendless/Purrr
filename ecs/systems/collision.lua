@@ -162,16 +162,16 @@ function Collision:checkPoint(dt)
 				if not c_collider.isColliding then
 					self:getInstance():emit("onEnter", e)
 					if c_state then c_state.isHovered = true end
-					if c_tag then log.trace("Point onEnter: " .. c_tag.tag) end
-					if c_button then log.trace("Point onEnter: " .. c_button.id) end
+					-- if c_tag then log.trace("Point onEnter: " .. c_tag.tag) end
+					-- if c_button then log.trace("Point onEnter: " .. c_button.id) end
 				end
 				c_collider.isColliding = true
 			else
 				if c_collider.isColliding then
 					self:getInstance():emit("onExit", e)
 					if c_state then c_state.isHovered = false end
-					if c_tag then log.trace("Point onExit: " .. c_tag.tag) end
-					if c_button then log.trace("Point onExit: " .. c_button.id) end
+					-- if c_tag then log.trace("Point onExit: " .. c_tag.tag) end
+					-- if c_button then log.trace("Point onExit: " .. c_button.id) end
 				end
 				c_collider.isColliding = false
 			end

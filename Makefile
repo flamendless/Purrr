@@ -39,3 +39,4 @@ apk-install:
 	adb uninstall ${PACKAGE_NAME}
 	adb install ${TEST_APK_NAME}
 	echo "adb installed"
+	notify-send "APK INSTALLED!"

@@ -12,6 +12,9 @@ local preload = require("src.preload")
 function Gamestate:addInstance(id, instance, ...)
 	instance.id = id
 	instance:load(...)
+	if self.__instances[id] then
+		error("Instance ID already exists")
+	end
 	self.__instances[id] = instance
 end
 
@@ -63,12 +66,6 @@ function Gamestate:enter(previous, ...)
 	log.trace(("State %s Entered!"):format(self.__current.__id))
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
-end
-
-function Gamestate:exit()
-	if self.__current and self.__current.exit then
-		self.__current:exit()
-	end
 end
 
 function Gamestate:update(dt)
@@ -162,6 +159,12 @@ function Gamestate:textinput(t)
 		if v.textinput then
 			v:textinput(t)
 		end
+	end
+end
+
+function Gamestate:exit()
+	if self.__current and self.__current.exit then
+		self.__current:exit()
 	end
 end
 
