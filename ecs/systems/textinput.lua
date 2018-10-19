@@ -9,7 +9,7 @@ local TextInput = System({
 		C.text,
 	})
 
-local _erased = false
+local _erased
 local text = "NAME"
 local maxLength = 12
 local sec = 1
@@ -17,6 +17,7 @@ local amount = 1
 local dir = -1
 
 function TextInput:init()
+	_erased = false
 	self.timer = timer()
 	self.text_timer = timer()
 end

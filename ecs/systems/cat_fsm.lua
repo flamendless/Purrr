@@ -33,7 +33,6 @@ function CatFSM:init(state)
 	data.stopOnLast = {
 		attack = true,
 		blink = true,
-		hurt = true,
 		mouth = true,
 		sleep = true,
 	}
@@ -49,9 +48,17 @@ function CatFSM:init(state)
 	end
 	data.onComplete.mouth = data.onComplete.blink
 	data.onComplete.sleep = function() self:overrideState("snore") end
-	data.onComplete.heart = function()
-		local next_state = lume.weightedchoice({ blink = 30, heart = 70 })
-		self:changeState(next_state)
+	data.onComplete.heart = function(e)
+		if e[C.fsm].previous_state == "hurt" then
+			self:overrideState("hurt")
+		else
+			local next_state = lume.weightedchoice({ blink = 30, heart = 70 })
+			self:changeState(next_state)
+		end
+	end
+	data.onComplete.hurt = function(e)
+		local c_anim = e[C.anim].anim
+		c_anim:setFrame(4)
 	end
 end
 
@@ -78,6 +85,7 @@ function CatFSM:changeState(state)
 	for _,e in ipairs(self.pool) do
 		local c_fsm = e[C.fsm]
 		if not (c_fsm.states[state]) then error("State does not exist!") end
+		c_fsm.previous_state = c_fsm.current_state
 		c_fsm.current_state = state
 		local sheet = resourceManager:getImage("sheet_cat_" .. state)
 		local json = "assets/anim/json/cat_" .. state .. ".json"
@@ -87,7 +95,7 @@ function CatFSM:changeState(state)
 
 		e:remove(C.anim):remove(C.anim_callback):apply()
 		e:give(C.anim, json, sheet, {speed = speed, stopOnLast = stopOnLast})
-			:give(C.anim_callback, { onComplete = onComplete })
+			:give(C.anim_callback, { onComplete = function() if onComplete then onComplete(e) end end })
 			:apply()
 
 		self:changePalette(current_pal)
@@ -97,6 +105,7 @@ end
 function CatFSM:overrideState(state)
 	for _,e in ipairs(self.pool) do
 		e:remove(C.anim_callback):apply()
+		time = 0
 		self.__override = false
 		self:changeState(state)
 		self.__override = true
@@ -154,6 +163,7 @@ function CatFSM:update(dt)
 		end
 		if time >= 5 and not timer_activated then
 			timer_activated = true
+			if e[C.fsm].current_state == "hurt" then return end
 			self:overrideState("sleep")
 			log.trace("Cat will now sleep")
 		end
@@ -161,11 +171,12 @@ function CatFSM:update(dt)
 end
 
 function CatFSM:onClick(e)
-	if self.__state == "customization" then self:changeState("heart") end
+	if self.__state == "customization" then self:overrideState("heart") end
 end
 
 function CatFSM:onEnter(e)
 	if e:has(C.cat) then
+		if e[C.fsm].current_state == "hurt" or e[C.fsm].previous_state then return end
 		self:overrideState("blink")
 		self.__override = false
 	end
@@ -173,6 +184,7 @@ end
 
 function CatFSM:onExit(e)
 	if e:has(C.cat) then
+		if e[C.fsm].current_state == "hurt" or e[C.fsm].previous_state then return end
 		self:overrideState("mouth")
 		self.__override = false
 	end

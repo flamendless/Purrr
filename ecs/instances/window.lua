@@ -119,7 +119,7 @@ function Window:load(args)
 	if args.textinput then
 		self.entities.textinput = ecs.entity()
 			:give(C.textinput)
-			:give(C.color, colors("flat", "red", "light"))
+			:give(C.color, colors("white"))
 			:give(C.pos, vec2())
 			:give(C.text, "NAME", args.textinput.font, "center", screen.x - 64)
 			:give(C.windowIndex, __window)
