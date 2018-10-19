@@ -24,6 +24,10 @@ local Debug = {
 	},
 }
 
+lurker.preswap = function(filename)
+	return filename == "save.lua"
+end
+
 lurker.postswap = function(filename)
 	log.trace("Swapped: " .. filename)
 	gamestate:reload()

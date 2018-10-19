@@ -64,7 +64,7 @@ function Intro:setupEntities()
 		:give(C.anim_callback, {
 			onComplete = function()
 				timer.after(1, function()
-					data.new_game = false
+					data.data.new_game = false
 					transition:start(next_state)
 				end)
 			end }, true)

@@ -41,3 +41,6 @@
 [submodule "modules/coil"]
 	path = modules/coil
 	url = git@github.com:rxi/coil.git
+[submodule "modules/knife"]
+	path = modules/knife
+	url = git@github.com:airstruck/knife.git

@@ -42,6 +42,8 @@ function TextInput:update(dt)
 	end
 	if #text <= 0 then
 		gamestate:send("disableAcceptButton")
+	elseif #text >= 3 then
+		gamestate:send("enableAcceptButton")
 	end
 end
 
@@ -65,7 +67,6 @@ function TextInput:textinput(t)
 	if not _erased then
 		text = ""
 		_erased = true
-		gamestate:send("enableAcceptButton")
 	end
 	if #text <= maxLength then
 		text = text .. t

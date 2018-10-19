@@ -148,10 +148,10 @@ function Menu:start()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 		end)
 
-	if data.new_game then
+	if data.data.new_game then
 		next_state = require("states.intro")
 	else
-		if data.customization then
+		if data.data.customization then
 			next_state = require("states.customization")
 		else
 			next_state = require("states.lobby")

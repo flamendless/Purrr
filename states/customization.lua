@@ -23,7 +23,6 @@ local transition = require("src.transition")
 
 local next_state
 local bg = {}
-local quad
 local maxPatterns = 9
 local level = 1
 local orig_pos = {}
@@ -317,7 +316,7 @@ end
 function Customization:forward()
 	if level == 1 then
 		level = 2
-		log.trace(("Cat Name: %s -> Palette: %s"):format(data.palette, data.cat_name))
+		log.trace(("Cat Name: %s -> Palette: %s"):format(data.data.palette, data.data.cat_name))
 		self:hideEntities(self.btns)
 		self.instance:emit("overrideState", "hurt")
 	elseif level == 2 then

@@ -177,7 +177,7 @@ function Window:listen(msg, ...)
 		self.entities.btn1[C.state].isDisabled = true
 	elseif msg == "saveName" then
 		local str = self.entities.textinput[C.text].text
-		data.cat_name = str
+		data.data.cat_name = str
 	end
 end
 
