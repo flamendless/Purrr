@@ -81,7 +81,9 @@ function Intro:draw()
 end
 
 function Intro:exit()
-	self.instance:clear()
+	if self.instance then
+		self.instance:clear()
+	end
 end
 
 return Intro

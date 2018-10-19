@@ -18,7 +18,7 @@ function Event:init()
 end
 
 function Event:showLock()
-	self:checkAssets()
+	if not self:checkAssets() then return end
 	opened_id = "Window_ShowLock"
 	local spr_window = lume.randomchoice(self.gui)
 	local window = require("ecs.instances.window")
@@ -42,7 +42,7 @@ function Event:showLock()
 end
 
 function Event:getName()
-	self:checkAssets()
+	if not self:checkAssets() then return end
 	opened_id = "Window_GetName"
 	local spr_window = lume.randomchoice(self.gui)
 	local window = require("ecs.instances.window")
@@ -73,7 +73,7 @@ function Event:getName()
 end
 
 function Event:showExitConfirmation()
-	self:checkAssets()
+	if not self:checkAssets() then return end
 	opened_id = "Window_Exit"
 	local spr_window = lume.randomchoice(self.gui)
 	local window = require("ecs.instances.window")
@@ -108,7 +108,7 @@ function Event:showExitConfirmation()
 end
 
 function Event:showHomeConfirmation()
-	self:checkAssets()
+	if not self:checkAssets() then return end
 	opened_id = "Window_Home"
 	local window = require("ecs.instances.window")
 	local spr_window = lume.randomchoice(self.gui)
@@ -145,27 +145,31 @@ function Event:drawCover()
 end
 
 function Event:checkAssets()
-	if not self.gui then
-		self.gui = {
-			[1] = resourceManager:getImage("window_red"),
-			[2] = resourceManager:getImage("window_green"),
-			[3] = resourceManager:getImage("window_blue")
-		}
-	end
-	if not self.images then
-		self.images = {
-			accept = resourceManager:getImage("btn_accept"),
-			accept_hovered = resourceManager:getImage("btn_accept_hovered"),
-			cancel = resourceManager:getImage("btn_cancel"),
-			cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
-		}
-	end
-	if not self.fonts then
-		self.fonts = {
-			title = resourceManager:getFont("upheaval_42"),
-			content = resourceManager:getFont("upheaval_32"),
-			button = resourceManager:getFont("upheaval_28"),
-		}
+	if opened_id then return false
+	else
+		if not self.gui then
+			self.gui = {
+				[1] = resourceManager:getImage("window_red"),
+				[2] = resourceManager:getImage("window_green"),
+				[3] = resourceManager:getImage("window_blue")
+			}
+		end
+		if not self.images then
+			self.images = {
+				accept = resourceManager:getImage("btn_accept"),
+				accept_hovered = resourceManager:getImage("btn_accept_hovered"),
+				cancel = resourceManager:getImage("btn_cancel"),
+				cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
+			}
+		end
+		if not self.fonts then
+			self.fonts = {
+				title = resourceManager:getFont("upheaval_42"),
+				content = resourceManager:getFont("upheaval_32"),
+				button = resourceManager:getFont("upheaval_28"),
+			}
+		end
+		return true
 	end
 end
 

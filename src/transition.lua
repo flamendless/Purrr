@@ -19,41 +19,66 @@ function Transition:init()
 	self.max_scale = screen.y/self.overlays[1]:getHeight() * 1.5
 	self.scale = self.max_scale
 	self.color = colors("flat", "black", "dark")
+	self.pos_x = -screen.x
 end
 
 function Transition:start(next_state)
 	self.current = self.overlays[1]
 	self.isActive = true
-	flux.to(self, self.duration, { scale = 0 })
-		:ease("backout")
-		:oncomplete(function()
-				log.trace("State Changed!")
-				if type(next_state) == "function" then
-					next_state()
-				else
-					gamestate:switch(next_state)
-					self.current = self.overlays[1]
-				end
-		end)
-			:after(self, self.duration, { scale = self.max_scale })
+	if love.system.getOS() == "Android" then
+		self.pos_x = -screen.x
+		flux.to(self, self.duration, { pos_x = 0 })
 			:oncomplete(function()
-				log.trace("Transition Finished!")
-				self.isActive = false
-				-- gamestate:switch(next_state)
+					log.trace("State Changed!")
+					if type(next_state) == "function" then
+						next_state()
+					else
+						gamestate:switch(next_state)
+					end
 			end)
+				:after(self, self.duration * 2, { pos_x = screen.x })
+				:oncomplete(function()
+					log.trace("Transition Finished!")
+					self.isActive = false
+					-- gamestate:switch(next_state)
+				end)
+	else
+
+		flux.to(self, self.duration, { scale = 0 })
+			:ease("backout")
+			:oncomplete(function()
+					log.trace("State Changed!")
+					if type(next_state) == "function" then
+						next_state()
+					else
+						gamestate:switch(next_state)
+						self.current = self.overlays[1]
+					end
+			end)
+				:after(self, self.duration, { scale = self.max_scale })
+				:oncomplete(function()
+					log.trace("Transition Finished!")
+					self.isActive = false
+					-- gamestate:switch(next_state)
+				end)
+	end
 end
 
 function Transition:draw()
 	if not self.isActive then return end
-	love.graphics.setCanvas(self.canvas)
-	love.graphics.clear(self.color)
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.setBlendMode("multiply", "premultiplied")
-	love.graphics.draw(self.current, screen.x/2, screen.y/2, 0, self.scale, self.scale , self.current:getWidth()/2, self.current:getHeight()/2)
-	love.graphics.setBlendMode("alpha")
-	love.graphics.setCanvas()
-
-	love.graphics.draw(self.canvas)
+	if love.system.getOS() == "Android" then
+		self.color:set()
+		love.graphics.rectangle("fill", self.pos_x, 0, screen.x, screen.y)
+	else
+		love.graphics.setCanvas(self.canvas)
+		love.graphics.clear(self.color)
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.setBlendMode("multiply", "premultiplied")
+		love.graphics.draw(self.current, screen.x/2, screen.y/2, 0, self.scale, self.scale , self.current:getWidth()/2, self.current:getHeight()/2)
+		love.graphics.setBlendMode("alpha")
+		love.graphics.setCanvas()
+		love.graphics.draw(self.canvas)
+	end
 end
 
 function Transition:getState() return self.isActive end

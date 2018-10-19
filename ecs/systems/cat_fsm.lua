@@ -3,9 +3,9 @@ local C = require("ecs.components")
 local lume = require("modules.lume.lume")
 local timer = require("modules.hump.timer")
 local vec2 = require("modules.hump.vector")
-local log = require("modules.log.log")
 local resourceManager = require("src.resource_manager")
 local data = require("src.data")
+local touch = require("src.touch")
 
 local CatFSM = System({
 		C.fsm,
@@ -36,7 +36,7 @@ function CatFSM:init()
 	_data.onComplete.blink = function(e)
 		local r = math.random(10, 30)/10
 		local next_state = lume.randomchoice({ "blink", "mouth" })
-		next_state = lume.randomchoice( { "blink", "mouth", "heart" } )
+		next_state = lume.randomchoice( { "blink", "mouth" } )
 		timer.after(r, function()
 			if e[C.fsm].current_state == "hurt" then
 			elseif e[C.fsm].current_state == "spin" then
@@ -118,7 +118,6 @@ function CatFSM:changePalette(new_pal)
 		local state = c_fsm.current_state
 		local pal = resourceManager:getImage(("pal_%s_%s"):format(state, new_pal))
 		current_pal = new_pal
-		print(state, ("pal_%s_%s"):format(state, new_pal))
 		e:remove(C.shaders):apply()
 		e:give(C.shaders, shaders_palette, "palette", pal):apply()
 	end
@@ -128,9 +127,15 @@ function CatFSM:update(dt)
 	for _,e in ipairs(self.pool) do
 		local c_collider = e[C.colliderBox]
 		local c_state = e[C.state]
-		if c_collider.isColliding and not c_state.isClicked and love.mouse.isDown(1) then
-			c_state.isClicked = true
-			self:onClick(e)
+		if c_collider.isColliding and not c_state.isClicked then
+			local bool
+			if love.system.getOS() == "Android" then bool = love.mouse.isDown(1)
+			else bool = touch:getTouch()
+			end
+			if bool then
+				c_state.isClicked = true
+				self:onClick(e)
+			end
 		end
 		if not c_state.isHovered then
 			c_state.isClicked = false

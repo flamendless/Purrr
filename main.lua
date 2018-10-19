@@ -1,10 +1,8 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
 __debug = true
-if love.system.getOS() == "Android" then
-	__debug = false
-end
 __filter = "nearest"
 __window = 1
+__scale = 1
 
 local debugging
 if __debug then
@@ -26,11 +24,12 @@ local screen = require("src.screen")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local event = require("src.event")
+local touch = require("src.touch")
 
-local scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
+__scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 print(("Device: %s x %s"):format(love.graphics.getDimensions()))
 print(("Game: %s x %s"):format(screen.x, screen.y))
-print("Scale: " .. scale)
+print("Scale: " .. __scale)
 
 function love.load()
 	log.trace("Love Load")
@@ -44,8 +43,8 @@ function love.load()
 	-- gamestate:start( require("states").splash )
 	-- gamestate:start( require("states").menu )
 	-- gamestate:start( require("states").intro )
-	gamestate:start( require("states").customization )
-	-- gamestate:start( require("states").lobby )
+	-- gamestate:start( require("states").customization )
+	gamestate:start( require("states").lobby )
 end
 
 function love.update(dt)
@@ -54,13 +53,14 @@ function love.update(dt)
 	coil.update(dt)
 	flux.update(dt)
 	time:update(dt)
+	touch:update(dt)
 	preload:update(dt)
 	gamestate:update(dt)
 end
 
 function love.draw()
 	love.graphics.push()
-	love.graphics.scale(scale, scale)
+	love.graphics.scale(__scale, __scale)
 	preload:draw()
 	gamestate:draw()
 	transition:draw()
@@ -78,21 +78,40 @@ function love.keyreleased(key)
 	if __debug and debugging.keyreleased then debugging:keyreleased(key) end
 end
 
-function love.mousepressed(mx, my, mb)
-	gamestate:mousepressed(mx, my, mb)
+function love.mousepressed(mx, my, mb, istouch, count)
+	gamestate:mousepressed(mx, my, mb, istouch, count)
 end
 
-function love.mousereleased(mx, my, mb)
-	gamestate:mousereleased(mx, my, mb)
+function love.mousereleased(mx, my, mb, istouch, count)
+	gamestate:mousereleased(mx, my, mb, istouch, count)
 end
 
 function love.touchpressed(id, tx, ty, dx, dy, pressure)
+	local tx = tx/__scale
+	local ty = ty/__scale
 	gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
+	touch:touchpressed(id, tx, ty, dx, dy, pressure)
+end
+
+function love.touchreleased(id, tx, ty, dx, dy, pressure)
+	local tx = tx/__scale
+	local ty = ty/__scale
+	gamestate:touchreleased(id, tx, ty, dx, dy, pressure)
+	touch:touchreleased(id, tx, ty, dx, dy, pressure)
+end
+
+function love.touchmoved(id, tx, ty, dx, dy, pressure)
+	local tx = tx/__scale
+	local ty = ty/__scale
+	gamestate:touchmoved(id, tx, ty, dx, dy, pressure)
+	touch:touchmoved(id, tx, ty, dx, dy, pressure)
 end
 
 function love.textinput(t)
 	gamestate:textinput(t)
 end
+
+love.errhand = require("src.errorhandler").errhand
 
 function love.quit()
 	log.trace("Love Quit")

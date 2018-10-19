@@ -15,6 +15,7 @@ local colors = require("src.colors")
 local resourceManager = require("src.resource_manager")
 local screen = require("src.screen")
 local data = require("src.data")
+local event = require("src.event")
 
 local bg = {}
 local maxPatterns = 9
@@ -25,10 +26,22 @@ function Lobby:init()
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 	self.assets = {
 		images = {
+			{ id = "window_red", path = "assets/gui/window_red.png" },
+			{ id = "window_green", path = "assets/gui/window_green.png" },
+			{ id = "window_blue", path = "assets/gui/window_blue.png" },
 			{ id = "energy_full", path = "assets/gui/energy_full.png" },
 			{ id = "energy_half", path = "assets/gui/energy_half.png" },
 			{ id = "energy_empty", path = "assets/gui/energy_empty.png" },
 			{ id = "window", path = "assets/gui/window.png" },
+			{ id = "btn_accept", path = "assets/gui/accept.png" },
+			{ id = "btn_accept_hovered", path = "assets/gui/accept_hovered.png" },
+			{ id = "btn_cancel", path = "assets/gui/cancel.png" },
+			{ id = "btn_cancel_hovered", path = "assets/gui/cancel_hovered.png" },
+		},
+		fonts = {
+			{ id = "header", path = "assets/fonts/upheavalpro.ttf", sizes = { 32, 36, 42, 48 } },
+			{ id = "buttons", path = "assets/fonts/futurehandwritten.ttf", sizes = { 24, 30, 32, 36, 42, 48 } },
+			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
 		}
 	}
 	self.colors = {}
@@ -89,7 +102,6 @@ function Lobby:setupSystems()
 	self.instance:addSystem(self.systems.cat_fsm, "changeState")
 	self.instance:addSystem(self.systems.cat_fsm, "overrideState")
 	self.instance:addSystem(self.systems.cat_fsm, "changePalette")
-	self.instance:addSystem(self.systems.cat_fsm, "keypressed")
 	self.instance:addSystem(self.systems.cat_fsm, "update")
 	self.instance:addSystem(self.systems.cat_fsm, "onEnter")
 	self.instance:addSystem(self.systems.cat_fsm, "onExit")
@@ -156,6 +168,19 @@ function Lobby:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
+	if not (__window == 1) then
+		event:drawCover()
+	end
+end
+
+function Lobby:touchpressed(id, tx, ty, dx, dy, pressure)
+	self.instance:emit("touchpressed", id, tx, ty, dx, dy, pressure)
+end
+
+function Lobby:keypressed(key)
+	if key == "escape" then
+		event:showHomeConfirmation()
+	end
 end
 
 function Lobby:exit()

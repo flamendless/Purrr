@@ -23,6 +23,7 @@ function Window:load(args)
 	local sy = 4
 	temp_window = __window
 	__window = 2
+	self.canClose = false
 	self.uncloseable = args.uncloseable
 	self.instance = ecs.instance()
 	self.systems = {
@@ -165,6 +166,7 @@ function Window:start()
 		:ease("backout")
 		:oncomplete(function()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+			self.canClose = true
 			if self.entities.textinput then
 				self:showKeyboard()
 			end
@@ -192,8 +194,10 @@ end
 
 function Window:keypressed(key)
 	if key == "escape" then
-		if not self.uncloseable then
-			self:close()
+		if self.canClose then
+			if not self.uncloseable then
+				self:close()
+			end
 		end
 	end
 	self.instance:emit("keypressed", key)

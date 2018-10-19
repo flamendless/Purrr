@@ -12,6 +12,7 @@ local transition = require("src.transition")
 local gamestate = require("src.gamestate")
 local event = require("src.event")
 local resourceManager = require("src.resource_manager")
+local touch = require("src.touch")
 
 local Debug = {
 	graphs = {},
@@ -53,7 +54,7 @@ function Debug:init()
 end
 
 function Debug:update(dt)
-	lurker.update(dt)
+	if not (love.system.getOS() == "Android") then lurker.update(dt) end
 	for k,v in pairs(self.graphs) do v:update(dt) end
 	self.graphs.uptime.label = ("Uptime: %i"):format(time.uptime)
 	self.graphs.state.label = ("Gamestate: %s"):format(gamestate:getCurrent().__id)
@@ -76,6 +77,7 @@ function Debug:draw()
 		love.graphics.line(32, 0, 32, screen.y) --left
 		love.graphics.line(screen.x - 32, 0, screen.x - 32, screen.y) --right
 	end
+	touch:draw()
 end
 
 function Debug:keypressed(key)

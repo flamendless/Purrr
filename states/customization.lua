@@ -221,17 +221,19 @@ function Customization:setupEntities(tag)
 
 	self.accessories = {}
 	self.accessories.notice = ecs.entity()
-		:give(C.color, colors("flat", "black", "light"))
+		:give(C.color, colors("white"))
 		:give(C.pos, vec2(screen.x + 16, screen.y  * 0.55))
 		:give(C.text, "Accessories are currently unavailable! Do not worry, all is free", self.fonts.upheaval_32, "center", screen.x - 32)
 		:apply()
 	self.accessories.lock = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(-screen.x/2, screen.y  * 0.75))
+		:give(C.color, colors("white", 0.5))
+		:give(C.pos, vec2(-screen.x, screen.y  * 0.75))
 		:give(C.sprite, self.images.lock)
-		:give(C.transform, 0, 4, 4, "center", "center")
+		:give(C.transform, 0, 4, 3.5, "center", "center")
 		:apply()
 
+	self.instance:addEntity(self.accessories.notice)
+	self.instance:addEntity(self.accessories.lock)
 	self.instance:addEntity(self.entities.forward)
 	self.instance:addEntity(self.entities.back)
 	self.instance:addEntity(self.entities.header)
@@ -279,6 +281,9 @@ function Customization:draw()
 end
 
 function Customization:keypressed(key)
+	if key == "escape" then
+		event:showHomeConfirmation()
+	end
 	self.instance:emit("keypressed", key)
 end
 
@@ -298,8 +303,6 @@ function Customization:hideEntities(ent)
 				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 				self.entities.back[C.state].isDisabled = false
 				if level == 2 then
-					self.instance:addEntity(self.accessories.notice)
-					self.instance:addEntity(self.accessories.lock)
 					flux.to(self.accessories.notice[C.pos].pos, 1, { x = 16 }):ease("backout")
 					flux.to(self.accessories.lock[C.pos].pos, 1, { x = screen.x/2 }):ease("backout")
 				end
@@ -326,7 +329,7 @@ function Customization:forward()
 	elseif level == 2 then
 		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 		flux.to(self.accessories.notice[C.pos].pos, 1, { x = screen.x + 16 }):ease("backin")
-		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x/2 }):ease("backin")
+		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
 				self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
@@ -352,7 +355,7 @@ function Customization:back()
 	if level == 2 then
 		level = 1
 		flux.to(self.accessories.notice[C.pos].pos, 1, { x = screen.x + 16 }):ease("backin")
-		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x/2 }):ease("backin")
+		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
 				self:showEntities(self.btns)

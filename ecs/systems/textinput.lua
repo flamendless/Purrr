@@ -41,10 +41,12 @@ function TextInput:update(dt)
 		local c_color = e[C.color]
 		c_color.color[4] = c_color.color[4] + (amount * dir) * dt
 	end
-	if #text <= 0 then
-		gamestate:send("disableAcceptButton")
-	elseif #text >= 3 then
-		gamestate:send("enableAcceptButton")
+	if text then
+		if #text <= 0 then
+			gamestate:send("disableAcceptButton")
+		elseif #text >= 3 then
+			gamestate:send("enableAcceptButton")
+		end
 	end
 end
 

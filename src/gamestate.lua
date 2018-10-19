@@ -118,24 +118,24 @@ function Gamestate:keyreleased(key)
 	end
 end
 
-function Gamestate:mousepressed(mx, my, mb)
+function Gamestate:mousepressed(mx, my, mb, istouch, count)
 	if self.__current.mousepressed and self.__current.isReady then
-		self.__current:mousepressed(mx, my, mb)
+		self.__current:mousepressed(mx, my, mb, istouch, count)
 	end
 	for k,v in pairs(self.__instances) do
 		if v.mousepressed then
-			v:mousepressed(mx, my, mb)
+			v:mousepressed(mx, my, mb, istouch, count)
 		end
 	end
 end
 
-function Gamestate:mousereleased(mx, my, mb)
+function Gamestate:mousereleased(mx, my, mb, istouch, count)
 	if self.__current.mousereleased and self.__current.isReady then
-		self.__current:mousereleased(mx, my, mb)
+		self.__current:mousereleased(mx, my, mb, istouch, count)
 	end
 	for k,v in pairs(self.__instances) do
 		if v.mousereleased then
-			v:mousereleased(mx, my, mb)
+			v:mousereleased(mx, my, mb, istouch, count)
 		end
 	end
 end
@@ -147,6 +147,28 @@ function Gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
 	for k,v in pairs(self.__instances) do
 		if v.touchpressed then
 			v:touchpressed(id, tx, ty, dx, dy, pressure)
+		end
+	end
+end
+
+function Gamestate:touchreleased(id, tx, ty, dx, dy, pressure)
+	if self.__current.touchreleased and self.__current.isReady then
+		self.__current:touchreleased(id, tx, ty, dx, dy, pressure)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.touchreleased then
+			v:touchreleased(id, tx, ty, dx, dy, pressure)
+		end
+	end
+end
+
+function Gamestate:touchmoved(id, tx, ty, dx, dy, pressure)
+	if self.__current.touchmoved and self.__current.isReady then
+		self.__current:touchmoved(id, tx, ty, dx, dy, pressure)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.touchmoved then
+			v:touchmoved(id, tx, ty, dx, dy, pressure)
 		end
 	end
 end

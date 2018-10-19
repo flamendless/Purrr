@@ -4,6 +4,7 @@ local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
+local touch = require("src.touch")
 
 local GUI = System({
 		C.button,
@@ -76,11 +77,17 @@ function GUI:onClick()
 				end
 			end
 
-			if c_state.isHovered and not c_state.isClicked and love.mouse.isDown(1) then
-				c_state.isClicked = true
-				log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
-				if c_button.args and c_button.args.onClick then
-					c_button.args.onClick(self)
+			if c_state.isHovered and not c_state.isClicked then
+				local bool
+				if love.system.getOS() == "Android" then bool = touch:getTouch()
+				else bool = love.mouse.isDown(1)
+				end
+				if bool then
+					c_state.isClicked = true
+					log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
+					if c_button.args and c_button.args.onClick then
+						c_button.args.onClick(self)
+					end
 				end
 			end
 		end

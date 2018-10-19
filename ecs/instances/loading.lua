@@ -14,12 +14,10 @@ local resourceManager = require("src.resource_manager")
 local Loading = {}
 
 function Loading:load()
-	self.colors = {
-		loading = colors("random-flat"),
-	}
+	self.colors = { loading = colors("random-flat") }
 	self.images = {}
 	if not resourceManager:check("images", "loading") then
-		self.images.cat = love.graphics.newImage("assets/anim/cat_swing.png")
+		self.images.cat = love.graphics.newImage("assets/anim/preload.png")
 		resourceManager:add("images", "cat", self.images.cat)
 		for k,v in pairs(self.images) do v:setFilter("nearest", "nearest") end
 	else
@@ -40,9 +38,9 @@ function Loading:load()
 	self.entities = {}
 	self.entities.loading = ecs.entity()
 		:give(C.color, self.colors.loading)
-		:give(C.anim, "assets/anim/json/cat_swing.json", self.images.cat)
+		:give(C.anim, "assets/anim/json/preload.json", self.images.cat)
 		:give(C.pos, vec2(screen.x/2, screen.y/2))
-		:give(C.transform, 0, 3, 3, "center", "center")
+		:give(C.transform, 0, 2, 2, "center", "center")
 		:apply()
 
 	self.instance:addEntity(self.entities.loading)
