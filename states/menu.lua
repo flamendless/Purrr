@@ -171,6 +171,9 @@ function Menu:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
+	if not (__window == 1) then
+		event:drawCover()
+	end
 end
 
 function Menu:exit()

@@ -73,12 +73,18 @@ function Renderer:drawSprite()
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color]
 		local c_transform = e[C.transform]
+		local c_state = e[C.state]
 		local c_hoveredSprite = e[C.hoveredSprite]
 		local sprite = c_sprite.sprite
 		if c_hoveredSprite then
 			sprite = c_hoveredSprite.sprite
 		end
 		if c_color then c_color.color:set() end
+		if c_state then
+			if c_state.isDisabled then
+				love.graphics.setColor(0, 0, 0, 0.25)
+			end
+		end
 		if c_transform then
 			love.graphics.draw(sprite, c_pos.x, c_pos.y, c_transform.rot, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy)
 		else

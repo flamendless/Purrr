@@ -6,6 +6,7 @@ end
 
 local Entities = {
 	scene = req("scene"),
+	color_picker = req("color_picker"),
 }
 
 return Entities

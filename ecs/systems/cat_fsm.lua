@@ -95,9 +95,12 @@ function CatFSM:changeState(state)
 end
 
 function CatFSM:overrideState(state)
-	self.__override = false
-	self:changeState(state)
-	self.__override = true
+	for _,e in ipairs(self.pool) do
+		e:remove(C.anim_callback):apply()
+		self.__override = false
+		self:changeState(state)
+		self.__override = true
+	end
 end
 
 function CatFSM:changePalette(new_pal)

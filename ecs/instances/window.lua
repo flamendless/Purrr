@@ -30,6 +30,7 @@ function Window:load(args)
 		position = S.position(),
 		renderer = S.renderer(),
 		transform = S.transform(),
+		textinput = S.textinput(),
 	}
 
 	self.entities = {}
@@ -69,6 +70,7 @@ function Window:load(args)
 		self.entities.btn1 = ecs.entity()
 			:give(C.button, args.button1.id or "button1",
 				{
+					disabled = args.button1.disabled,
 					text = args.button1.text,
 					font = args.button1.font,
 					textColor = colors("flat", "white", "light"),
@@ -110,10 +112,23 @@ function Window:load(args)
 			:apply()
 	end
 
+	if args.textinput then
+		self.entities.textinput = ecs.entity()
+			:give(C.textinput)
+			:give(C.color, colors("flat", "red", "light"))
+			:give(C.pos, vec2())
+			:give(C.text, "NAME", args.textinput.font, "center", screen.x - 64)
+			:give(C.windowIndex, __window)
+			:give(C.follow, self.entities.main_window)
+			:give(C.offsetPos, vec2(-args.spr_window:getWidth(), -args.spr_window:getHeight()/2))
+			:apply()
+	end
+
 	for k,v in pairs(self.entities) do
 		self.instance:addEntity(v)
 	end
 
+	self.instance:addSystem(self.systems.textinput, "update")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)

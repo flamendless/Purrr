@@ -43,6 +43,9 @@ function GUI:entityAdded(e)
 	e:give(C.colliderSprite, { "point" })
 		:give(C.state)
 		:apply()
+	if c_button.args and c_button.args.disabled then
+		e[C.state].isDisabled = true
+	end
 	log.trace(("GUI ADDED: %s"):format(c_button.id))
 end
 
@@ -64,23 +67,29 @@ function GUI:onClick()
 		local c_button = e[C.button]
 		local c_windowIndex = e[C.windowIndex]
 		local c_state = e[C.state]
-		if c_windowIndex then
-			if not (c_windowIndex.index == __window) then
-				return
-			end
-		end
+		if c_state.isDisabled then
 
-		if c_state.isHovered and not c_state.isClicked and love.mouse.isDown(1) then
-			c_state.isClicked = true
-			log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
-			if c_button.args and c_button.args.onClick then
-				c_button.args.onClick()
+		else
+			if c_windowIndex then
+				if not (c_windowIndex.index == __window) then
+					return
+				end
+			end
+
+			if c_state.isHovered and not c_state.isClicked and love.mouse.isDown(1) then
+				c_state.isClicked = true
+				log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
+				if c_button.args and c_button.args.onClick then
+					c_button.args.onClick(self)
+				end
 			end
 		end
 	end
 end
 
 function GUI:onEnter(e)
+	local c_state = e[C.state]
+	if c_state.isDisabled then return end
 	local c_button = e[C.button]
 	local c_transform = e[C.transform]
 	if not c_button then return end
@@ -101,6 +110,8 @@ function GUI:onEnter(e)
 end
 
 function GUI:onExit(e)
+	local c_state = e[C.state]
+	if c_state.isDisabled then return end
 	local c_button = e[C.button]
 	local c_transform = e[C.transform]
 	if not c_button then return end

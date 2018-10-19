@@ -43,6 +43,7 @@ local Components = {
 	cat = req("cat"),
 	tag = req("tag"),
 	state = req("state"),
+	textinput = req("textinput"),
 }
 
 return Components

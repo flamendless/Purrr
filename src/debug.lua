@@ -26,8 +26,6 @@ local Debug = {
 
 lurker.postswap = function(filename)
 	log.trace("Swapped: " .. filename)
-	local f = require("src.animation_data")
-	f:init()
 	gamestate:reload()
 end
 

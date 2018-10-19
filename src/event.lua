@@ -14,6 +14,34 @@ function Event:init()
 	}
 end
 
+function Event:getName()
+	self:checkAssets()
+	local spr_window = lume.randomchoice(self.gui)
+	local window = require("ecs.instances.window")
+	gamestate:addInstance( "window", window,
+		{
+			spr_window = spr_window,
+			str_title = "Choose Your Cat's Name",
+			font_title = self.fonts.title,
+			-- str_content = "Input Name:",
+			-- font_content = self.fonts.content,
+
+			button1 = {
+				disabled = true,
+				id = "Accept",
+				normal = self.images.accept,
+				hovered = self.images.accept_hovered,
+				onClick = function()
+					window:close()
+				end
+			},
+
+			textinput = {
+				font = self.fonts.content
+			}
+		})
+end
+
 function Event:showExitConfirmation()
 	self:checkAssets()
 	local spr_window = lume.randomchoice(self.gui)

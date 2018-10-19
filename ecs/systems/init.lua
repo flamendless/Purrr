@@ -19,6 +19,8 @@ local Systems = {
 	follow = req("follow"),
 	windows = req("windows"),
 	cat_fsm = req("cat_fsm"),
+	event_listener = req("event_listener"),
+	textinput = req("textinput"),
 }
 
 return Systems
