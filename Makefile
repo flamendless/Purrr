@@ -18,7 +18,7 @@ build-android: build-love apk-compile apk-sign apk-install
 
 build-love:
 	echo "making .love file..."
-	noglob zip -9rv ${OUTPUT_DIR}/${LOVE_NAME} . -x *.git* *.md* *.txt* *.rst* *docs/* *.ase* *.swp* *spec/* *test/* *rockspec* *.mak* *.yml* *ctags* *Makefile* *build/*;
+	noglob zip -9rv ${OUTPUT_DIR}/${LOVE_NAME} . -x *.git* *.md* *.txt* *.rst* *docs/* *.ase* *.swp* *spec/* *test/* *rockspec* *.mak* *.yml* *ctags* *Makefile* *build/* *backup/* *res/*;
 	echo "made .love file!"
 
 apk-compile:

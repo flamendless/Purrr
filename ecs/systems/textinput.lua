@@ -30,6 +30,7 @@ function TextInput:entityAdded(e)
 		self:updateText()
 	end)
 	love.keyboard.setKeyRepeat(true)
+	love.keyboard.setTextInput(true)
 end
 
 function TextInput:update(dt)

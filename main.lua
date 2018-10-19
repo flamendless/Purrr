@@ -1,5 +1,8 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
 __debug = true
+if love.system.getOS() == "Android" then
+	__debug = false
+end
 __filter = "nearest"
 __window = 1
 
@@ -23,6 +26,11 @@ local screen = require("src.screen")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local event = require("src.event")
+
+local scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
+print(("Device: %s x %s"):format(love.graphics.getDimensions()))
+print(("Game: %s x %s"):format(screen.x, screen.y))
+print("Scale: " .. scale)
 
 function love.load()
 	log.trace("Love Load")
@@ -50,10 +58,13 @@ function love.update(dt)
 end
 
 function love.draw()
+	love.graphics.push()
+	love.graphics.scale(scale, scale)
 	preload:draw()
 	gamestate:draw()
 	transition:draw()
 	if __debug then debugging:draw() end
+	love.graphics.pop()
 end
 
 function love.keypressed(key)
@@ -72,6 +83,10 @@ end
 
 function love.mousereleased(mx, my, mb)
 	gamestate:mousereleased(mx, my, mb)
+end
+
+function love.touchpressed(id, tx, ty, dx, dy, pressure)
+	gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
 end
 
 function love.textinput(t)

@@ -143,6 +143,17 @@ function Gamestate:mousereleased(mx, my, mb)
 	end
 end
 
+function Gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
+	if self.__current.touchpressed and self.__current.isReady then
+		self.__current:touchpressed(id, tx, ty, dx, dy, pressure)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.touchpressed then
+			v:touchpressed(id, tx, ty, dx, dy, pressure)
+		end
+	end
+end
+
 function Gamestate:textinput(t)
 	if self.__current.textinput and self.__current.isReady then
 		self.__current:textinput(t)

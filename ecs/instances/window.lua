@@ -190,6 +190,9 @@ function Window:textinput(t)
 	self.instance:emit("textinput", t)
 end
 
+function Window:touchpressed(id, tx, ty, dx, dy, pressure)
+end
+
 function Window:close()
 	for k,v in pairs(self.entities) do
 		v:remove(C.colliderBox):apply()
@@ -202,6 +205,7 @@ function Window:close()
 end
 
 function Window:exit()
+	love.keyboard.setTextInput(false)
 	love.keyboard.setKeyRepeat(false)
 	self.instance:clear()
 	__window = temp_window
