@@ -22,6 +22,14 @@ function Gamestate:removeInstance(id)
 	self.__instances[id] = nil
 end
 
+function Gamestate:send(msg)
+	for k,v in pairs(self.__instances) do
+		if v.listen then
+			v:listen(msg)
+		end
+	end
+end
+
 function Gamestate:start(state)
 	assert(state, "State must be passed")
 	self.__current = state
@@ -131,6 +139,17 @@ function Gamestate:mousereleased(mx, my, mb)
 	for k,v in pairs(self.__instances) do
 		if v.mousereleased then
 			v:mousereleased(mx, my, mb)
+		end
+	end
+end
+
+function Gamestate:textinput(t)
+	if self.__current.textinput and self.__current.isReady then
+		self.__current:textinput(t)
+	end
+	for k,v in pairs(self.__instances) do
+		if v.textinput then
+			v:textinput(t)
 		end
 	end
 end

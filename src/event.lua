@@ -37,7 +37,7 @@ function Event:getName()
 			},
 
 			textinput = {
-				font = self.fonts.content
+				font = self.fonts.title
 			}
 		})
 end

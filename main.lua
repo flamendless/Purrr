@@ -74,6 +74,10 @@ function love.mousereleased(mx, my, mb)
 	gamestate:mousereleased(mx, my, mb)
 end
 
+function love.textinput(t)
+	gamestate:textinput(t)
+end
+
 function love.quit()
 	log.trace("Love Quit")
 	lily.quit()

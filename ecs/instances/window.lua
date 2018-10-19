@@ -129,6 +129,8 @@ function Window:load(args)
 	end
 
 	self.instance:addSystem(self.systems.textinput, "update")
+	self.instance:addSystem(self.systems.textinput, "textinput")
+	self.instance:addSystem(self.systems.textinput, "keypressed")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)
@@ -161,6 +163,14 @@ function Window:start()
 		end)
 end
 
+function Window:listen(msg)
+	if msg == "enableAcceptButton" then
+		self.entities.btn1[C.state].isDisabled = false
+	elseif msg == "disableAcceptButton" then
+		self.entities.btn1[C.state].isDisabled = true
+	end
+end
+
 function Window:update(dt)
 	self.instance:emit("update", dt)
 end
@@ -173,6 +183,11 @@ function Window:keypressed(key)
 	if key == "escape" then
 		self:close()
 	end
+	self.instance:emit("keypressed", key)
+end
+
+function Window:textinput(t)
+	self.instance:emit("textinput", t)
 end
 
 function Window:close()
@@ -187,6 +202,7 @@ function Window:close()
 end
 
 function Window:exit()
+	love.keyboard.setKeyRepeat(false)
 	self.instance:clear()
 	__window = temp_window
 end
