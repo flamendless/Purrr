@@ -117,11 +117,12 @@ function Window:load(args)
 	end
 
 	if args.textinput then
+		local str = data.data.cat_name or "NAME"
 		self.entities.textinput = ecs.entity()
 			:give(C.textinput)
 			:give(C.color, colors("white"))
 			:give(C.pos, vec2())
-			:give(C.text, "NAME", args.textinput.font, "center", screen.x - 64)
+			:give(C.text, str, args.textinput.font, "center", screen.x - 64)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
 			:give(C.offsetPos, vec2(-args.spr_window:getWidth(), -args.spr_window:getHeight()/2))

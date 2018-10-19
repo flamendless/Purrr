@@ -10,7 +10,7 @@ local TextInput = System({
 	})
 
 local _erased
-local text = "NAME"
+local text
 local maxLength = 12
 local sec = 1
 local amount = 1
@@ -24,6 +24,7 @@ end
 
 function TextInput:entityAdded(e)
 	local c_color = e[C.color]
+	text = e[C.text].text
 	self.timer:every(sec, function()
 		dir = dir * -1
 	end)

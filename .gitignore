@@ -1,3 +1,4 @@
+*.aseprite
 *.ase
 *.svg
 *.md
@@ -11,5 +12,6 @@ test
 ctags
 gitlog.txt
 build
+backup
 !README.md
 !LICENSE.txt

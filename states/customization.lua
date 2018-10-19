@@ -99,7 +99,7 @@ function Customization:setupSystems()
 		renderer = S.renderer(),
 		transform = S.transform(),
 		animation = S.animation(),
-		cat_fsm = S.cat_fsm("customization"),
+		customize_cat = S.customize_cat(),
 		moveTo = S.moveTo(),
 		patrol = S.patrol(),
 	}
@@ -108,13 +108,12 @@ function Customization:setupSystems()
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)
 	self.instance:addSystem(self.systems.patrol, "startPatrol")
-	self.instance:addSystem(self.systems.cat_fsm, "changeState")
-	self.instance:addSystem(self.systems.cat_fsm, "overrideState")
-	self.instance:addSystem(self.systems.cat_fsm, "changePalette")
-	self.instance:addSystem(self.systems.cat_fsm, "keypressed")
-	self.instance:addSystem(self.systems.cat_fsm, "update")
-	self.instance:addSystem(self.systems.cat_fsm, "onEnter")
-	self.instance:addSystem(self.systems.cat_fsm, "onExit")
+	self.instance:addSystem(self.systems.customize_cat, "changeState")
+	self.instance:addSystem(self.systems.customize_cat, "changePalette")
+	self.instance:addSystem(self.systems.customize_cat, "keypressed")
+	self.instance:addSystem(self.systems.customize_cat, "update")
+	self.instance:addSystem(self.systems.customize_cat, "onEnter")
+	self.instance:addSystem(self.systems.customize_cat, "onExit")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.collision)
 	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
@@ -140,7 +139,7 @@ function Customization:setupEntities(tag)
 	self.entities.cat = ecs.entity()
 		:give(C.tag, "cat")
 		:give(C.cat)
-		:give(C.fsm, "blink", { "attack", "blink", "dizzy", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
+		:give(C.fsm, "blink", { "blink", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
 		:give(C.color, colors("white"))
 		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
 		:give(C.transform, 0, 4, 4, "center", "center")
@@ -240,7 +239,9 @@ function Customization:setupEntities(tag)
 end
 
 function Customization:start()
-	event:getName()
+	if not data.data.cat_name then
+		event:getName()
+	end
 	local dur = 0.8
 	self.entities.back[C.state].isDisabled = true
 	self.entities.forward[C.state].isDisabled = true
@@ -321,21 +322,22 @@ function Customization:forward()
 		level = 2
 		log.trace(("Cat Name: %s -> Palette: %s"):format(data.data.palette, data.data.cat_name))
 		self:hideEntities(self.btns)
-		self.instance:emit("overrideState", "hurt")
+		self.instance:emit("changeState", "hurt")
 	elseif level == 2 then
 		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 		flux.to(self.accessories.notice[C.pos].pos, 1, { x = screen.x + 16 }):ease("backin")
 		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x/2 }):ease("backin")
 			:oncomplete(function()
+				self.instance:emit("changeState", "blink")
 				self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 				flux.to(window, 1, { y = screen.y * 2 }):ease("backin")
 				flux.to(self.entities.back[C.pos].pos, 1, { y = screen.y * 1.5 }):ease("backin")
 				flux.to(self.entities.forward[C.pos].pos, 1, { y = screen.y * 1.5 }):ease("backin")
 				flux.to(self.entities.header[C.pos].pos, 1, { y = -screen.y/2 }):ease("backin")
 					:oncomplete(function()
-						self.instance:emit("overrideState", "blink")
+						self.instance:emit("changeState", "blink")
 						timer.after(1, function()
-							self.instance:emit("overrideState", "spin")
+							self.instance:emit("changeState", "spin")
 							flux.to(self.entities.cat[C.pos].pos, 2, { y = screen.y * 1.5 }):ease("backin")
 								:oncomplete(function()
 									transition:start( require("states.lobby") )
@@ -352,6 +354,7 @@ function Customization:back()
 		flux.to(self.accessories.notice[C.pos].pos, 1, { x = screen.x + 16 }):ease("backin")
 		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x/2 }):ease("backin")
 			:oncomplete(function()
+				self.instance:emit("changeState", "blink")
 				self:showEntities(self.btns)
 			end)
 	end

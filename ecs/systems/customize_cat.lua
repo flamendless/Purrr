@@ -7,7 +7,7 @@ local log = require("modules.log.log")
 local resourceManager = require("src.resource_manager")
 local data = require("src.data")
 
-local CatFSM = System({
+local CustomizeCat = System({
 		C.fsm,
 		C.cat,
 	})
@@ -22,7 +22,7 @@ local shaders_palette
 local max_heart_count = 3
 local heart_count = 3
 
-function CatFSM:init()
+function CustomizeCat:init()
 	shaders_palette = love.graphics.newShader("shaders/palette_swap.glsl")
 	_data.speed = { blink = 0.5, heart = 0.75, hurt = 0.4, mouth = 0.5, sleep = 0.5, snore = 0.8, spin = 1.5 }
 
@@ -60,7 +60,7 @@ function CatFSM:init()
 	end
 end
 
-function CatFSM:entityAdded(e)
+function CustomizeCat:entityAdded(e)
 	local c_fsm = e[C.fsm]
 	local state = c_fsm.current_state
 	for i,v in ipairs(c_fsm.states) do
@@ -82,11 +82,12 @@ function CatFSM:entityAdded(e)
 		:apply()
 
 	timer.after(5, function()
+		if e[C.fsm].current_state == "hurt" or e[C.fsm].current_state == "heart" or e[C.fsm].current_state == "spin" then return end
 		self:changeState("sleep")
 	end)
 end
 
-function CatFSM:changeState(state)
+function CustomizeCat:changeState(state)
 	for _,e in ipairs(self.pool) do
 		local c_fsm = e[C.fsm]
 		if not (c_fsm.states[state]) then error("State does not exist!") end
@@ -112,7 +113,7 @@ function CatFSM:changeState(state)
 	end
 end
 
-function CatFSM:changePalette(new_pal)
+function CustomizeCat:changePalette(new_pal)
 	for _,e in ipairs(self.pool) do
 		local c_fsm = e[C.fsm]
 		local state = c_fsm.current_state
@@ -124,7 +125,29 @@ function CatFSM:changePalette(new_pal)
 	end
 end
 
-function CatFSM:update(dt)
+function CustomizeCat:keypressed(key)
+	for _,e in ipairs(self.pool) do
+		if key == "up" then
+			cur_state = cur_state + 1
+			if cur_state > #_states then cur_state = 1 end
+		elseif key == "down" then
+			cur_state = cur_state - 1
+			if cur_state <= 0 then cur_state = #_states end
+		elseif key == "left" then
+			cur_pal = cur_pal - 1
+			if cur_pal <= 0 then cur_pal = #_palettes end
+		elseif key == "right" then
+			cur_pal = cur_pal + 1
+			if cur_pal > #_palettes then cur_pal = 1 end
+		end
+		if key == "up" or key == "down" or key == "left" or key == "right" then
+			self:changePalette(_palettes[cur_pal])
+			self:changeState(_states[cur_state])
+		end
+	end
+end
+
+function CustomizeCat:update(dt)
 	for _,e in ipairs(self.pool) do
 		local c_collider = e[C.colliderBox]
 		local c_state = e[C.state]
@@ -138,20 +161,38 @@ function CatFSM:update(dt)
 	end
 end
 
-function CatFSM:onClick(e)
+function CustomizeCat:onClick(e)
 	if e:has(C.cat) then
-		self:changeState("heart")
+		if e[C.fsm].current_state == "hurt" then
+		elseif e[C.fsm].current_state == "spin" then
+		else
+			self:changeState("heart")
+		end
 	end
 end
 
-function CatFSM:onEnter(e)
+function CustomizeCat:onEnter(e)
 	if e:has(C.cat) then
+		if e[C.fsm].current_state == "heart" then
+		elseif e[C.fsm].current_state == "hurt" then
+		elseif e[C.fsm].current_state == "spin" then
+		elseif e[C.fsm].current_state == "snore" then
+		else
+			self:changeState("blink")
+		end
 	end
 end
 
-function CatFSM:onExit(e)
+function CustomizeCat:onExit(e)
 	if e:has(C.cat) then
+		if e[C.fsm].current_state == "heart" then
+		elseif e[C.fsm].current_state == "hurt" then
+		elseif e[C.fsm].current_state == "spin" then
+		elseif e[C.fsm].current_state == "snore" then
+		else
+			self:changeState("mouth")
+		end
 	end
 end
 
-return CatFSM
+return CustomizeCat

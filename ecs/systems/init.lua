@@ -18,6 +18,7 @@ local Systems = {
 	collision = req("collision"),
 	follow = req("follow"),
 	windows = req("windows"),
+	customize_cat = req("customize_cat"),
 	cat_fsm = req("cat_fsm"),
 	event_listener = req("event_listener"),
 	textinput = req("textinput"),

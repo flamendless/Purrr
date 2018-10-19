@@ -13,7 +13,6 @@ function Data:init()
 	self.data = {}
 	if love.filesystem.getInfo(file_save) then
 		self.data = require(stripExtension(file_save))
-		for k,v in pairs(self.data) do print(k,v) end
 		log.trace("File Loaded!")
 	else
 		self.data.new_game = true

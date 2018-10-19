@@ -44,8 +44,8 @@ function love.load()
 	-- gamestate:start( require("states").splash )
 	-- gamestate:start( require("states").menu )
 	-- gamestate:start( require("states").intro )
-	-- gamestate:start( require("states").customization )
-	gamestate:start( require("states").lobby )
+	gamestate:start( require("states").customization )
+	-- gamestate:start( require("states").lobby )
 end
 
 function love.update(dt)
