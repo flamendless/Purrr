@@ -37,7 +37,6 @@ function Lobby:enter(previous, ...)
 end
 
 function Lobby:start()
-	data:save()
 	local r = math.random(1, maxPatterns)
 	bg.image = self.images["pattern" .. r]
 	bg.sx = screen.x/bg.image:getWidth()

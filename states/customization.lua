@@ -283,6 +283,9 @@ end
 
 function Customization:exit()
 	self.instance:clear()
+	data.data.customization = false
+	data.data.new_game = false
+	data:save()
 end
 
 function Customization:hideEntities(ent)

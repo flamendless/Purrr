@@ -22,7 +22,7 @@ local ColorPicker = function(e, pal, id, btn_color, x, y)
 						instance:emit("changePalette", pal)
 						local current = gamestate:getCurrent()
 						current.entities.forward[C.state].isDisabled = false
-						data.palette = pal
+						data.data.palette = pal
 					end)
 					if not status then
 						event:showLock()
