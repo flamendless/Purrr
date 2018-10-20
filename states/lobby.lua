@@ -17,15 +17,12 @@ local screen = require("src.screen")
 local data = require("src.data")
 local event = require("src.event")
 local transition = require("src.transition")
+local assets = require("src.assets")
 
 local bg = {}
 local maxPatterns = 9
 
 function Lobby:init()
-	local buttons = {"bag","play","store","home","settings","mute","volume","cat","star","twitter"}
-	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
-	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
-	local items = {"walk","jump","attack"}
 	self.assets = {
 		images = {
 			{ id = "btn_back", path = "assets/gui/button_back.png" },
@@ -44,53 +41,16 @@ function Lobby:init()
 			{ id = "display_lobby", path = "assets/images/display_lobby.png" },
 			{ id = "name", path = "assets/gui/name.png" },
 		},
-
+		sources = {
+			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
+		},
 		fonts = {
 			{ id = "header", path = "assets/fonts/upheavalpro.ttf", sizes = { 32, 36, 42, 48 } },
 			{ id = "buttons", path = "assets/fonts/futurehandwritten.ttf", sizes = { 24, 30, 32, 36, 42, 48 } },
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42, 48} },
 		}
 	}
-	self.colors = {}
-
-	for i = 1, maxPatterns do
-		local id = "pattern" .. i
-		local path = "assets/images/pattern" .. i .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for _, btn in ipairs(buttons) do
-		local id = "button_" .. btn
-		local id_hovered = "button_" .. btn .. "_hovered"
-		local path = "assets/gui/" .. id .. ".png"
-		local path_hovered = "assets/gui/" .. id_hovered .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-		table.insert(self.assets.images, { id = id_hovered, path = path_hovered })
-	end
-	for i, state in ipairs(states) do
-		local id = "sheet_cat_" .. state
-		local path = "assets/anim/cat_" .. state .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for _, palette in ipairs(palettes) do
-		for _, state in ipairs(states) do
-			local id = ("pal_%s_%s"):format(state, palette)
-			local path = ("assets/palettes/%s/%s.png"):format(palette, state)
-			table.insert(self.assets.images, { id = id, path = path })
-		end
-	end
-	for i = 1, 4 do
-		local id = "window_settings" .. i
-		local path = "assets/gui/" .. id .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for i, item in ipairs(items) do
-		local id = "item_" .. item
-		local id_hovered = id .. "_hovered"
-		local path = "assets/gui/" .. id .. ".png"
-		local path_hovered = "assets/gui/" .. id_hovered .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-		table.insert(self.assets.images, { id = id_hovered, path = path_hovered })
-	end
+	assets:finalize(self.assets)
 end
 
 function Lobby:enter(previous, ...)

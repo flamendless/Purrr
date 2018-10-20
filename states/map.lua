@@ -18,19 +18,21 @@ local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
+local soundManager = require("src.sound_manager")
+local event = require("src.event")
+local assets = require("src.assets")
 
 local bg = {}
-local maxPatterns = 9
 local max_view = 4
+local maxPatterns = 9
 local current_view = 1
 
 function Map:init()
-	local maps = {"mars","underground","space","earth"}
-	local displays = {"mars","caverns","space","earth"}
-	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
-	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 	self.assets = {
 		images = {
+			{ id = "window_red", path = "assets/gui/window_red.png" },
+			{ id = "window_green", path = "assets/gui/window_green.png" },
+			{ id = "window_blue", path = "assets/gui/window_blue.png" },
 			{ id = "display_lobby", path = "assets/images/display_lobby.png" },
 			{ id = "level_complete", path = "assets/images/level_complete.png" },
 			{ id = "level_complete_hovered", path = "assets/images/level_complete_hovered.png" },
@@ -44,7 +46,9 @@ function Map:init()
 			{ id = "btn_back_hovered", path = "assets/gui/button_back_hovered.png" },
 			{ id = "lock", path = "assets/images/lock.png" },
 		},
-
+		sources = {
+			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
+		},
 		fonts = {
 			{ id = "header", path = "assets/fonts/upheavalpro.ttf", sizes = { 32, 36, 42, 48 } },
 			{ id = "buttons", path = "assets/fonts/futurehandwritten.ttf", sizes = { 24, 30, 32, 36, 42, 48 } },
@@ -52,34 +56,7 @@ function Map:init()
 			{ id = "level", path = "assets/fonts/trashhand.ttf", sizes = {18, 28, 32, 36, 42, 48} },
 		}
 	}
-
-	for i = 1, maxPatterns do
-		local id = "pattern" .. i
-		local path = "assets/images/pattern" .. i .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for i,map in ipairs(maps) do
-		local id = "map_" .. map
-		local path = "assets/images/" .. id .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for i,display in ipairs(displays) do
-		local id = "display_" .. display
-		local path = "assets/images/" .. id .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for i, state in ipairs(states) do
-		local id = "sheet_cat_" .. state
-		local path = "assets/anim/cat_" .. state .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-	for _, palette in ipairs(palettes) do
-		for _, state in ipairs(states) do
-			local id = ("pal_%s_%s"):format(state, palette)
-			local path = ("assets/palettes/%s/%s.png"):format(palette, state)
-			table.insert(self.assets.images, { id = id, path = path })
-		end
-	end
+	assets:finalize(self.assets)
 end
 
 function Map:enter(previous, ...)
@@ -196,6 +173,11 @@ function Map:setupEntities()
 							self:onClick("level" .. i)
 						end)
 					:apply()
+			else
+				self.entities["level" .. i]
+					:give(C.onClick, function(e)
+						soundManager:send("lock")
+					end)
 			end
 	end
 
@@ -218,6 +200,7 @@ function Map:setupEntities()
 					hovered = self.images.btn_forward_hovered,
 					onClick = function(system)
 						self:forward()
+						soundManager:send("page_turn")
 					end
 				})
 			:give(C.transform, 0, 2, 2, "center", "center")
@@ -234,6 +217,7 @@ function Map:setupEntities()
 					hovered = self.images.btn_back_hovered,
 					onClick = function(system)
 						self:back()
+						soundManager:send("page_turn")
 					end
 				})
 			:give(C.transform, 0, 2, 2, "center", "center")
@@ -261,8 +245,16 @@ function Map:setupEntities()
 		:give(C.transform, 0, 1, 1, "center", "center")
 		:apply()
 
+	self.entities.home = E.lobby_buttons(ecs.entity(), "home", "home")
+		:remove(C.pos):remove(C.transform):apply()
+		:give(C.pos, vec2( 16, 16 ))
+		:give(C.transform, 0, 2, 2)
+		:give(C.onClick, function(e) event:showHomeConfirmation() end)
+		:apply()
+
 	self.instance:addEntity(self.entities.map)
 	self.instance:addEntity(self.entities.display)
+	self.instance:addEntity(self.entities.home)
 	if self.entities.lock then self.instance:addEntity(self.entities.lock)
 	else
 		self.instance:addEntity(self.entities.level1)

@@ -19,7 +19,7 @@ function Event:init()
 end
 
 function Event:showStore()
-	if not self:checkAssets() then return end
+	if not self:checkAssets("Store") then return end
 	opened_id = "Window_ShowStore"
 	local spr_window = lume.randomchoice(self.gui)
 	local window = require("ecs.instances.window")
@@ -125,7 +125,7 @@ function Event:showEnergyInfo()
 end
 
 function Event:showSettings()
-	if not self:checkAssets() then return end
+	if not self:checkAssets("settings") then return end
 	opened_id = "Window_ShowSettings"
 	local btn_volume, btn_volume_hovered
 	if data.data.volume == 1 then
@@ -317,7 +317,7 @@ function Event:drawCover()
 	love.graphics.rectangle("fill", 0, 0, screen.x, screen.y)
 end
 
-function Event:checkAssets()
+function Event:checkAssets(arg)
 	if opened_id then return false
 	else
 		if not self.gui then
@@ -327,10 +327,12 @@ function Event:checkAssets()
 				[3] = resourceManager:getImage("window_blue"),
 			}
 		end
-		if not self.settings then
-			self.settings = {}
-			for i = 1, 4 do
-				self.settings[i] = resourceManager:getImage("window_settings" .. i)
+		if arg == "settings" then
+			if not self.settings then
+				self.settings = {}
+				for i = 1, 4 do
+					self.settings[i] = resourceManager:getImage("window_settings" .. i)
+				end
 			end
 		end
 
@@ -345,15 +347,17 @@ function Event:checkAssets()
 			}
 		end
 
-		if not self.items then
-			self.items = {
-				walk = resourceManager:getImage("item_walk"),
-				walk_hovered = resourceManager:getImage("item_walk_hovered"),
-				jump = resourceManager:getImage("item_jump"),
-				jump_hovered = resourceManager:getImage("item_jump_hovered"),
-				attack = resourceManager:getImage("item_attack"),
-				attack_hovered = resourceManager:getImage("item_attack_hovered"),
-			}
+		if arg == "store" then
+			if not self.items then
+				self.items = {
+					walk = resourceManager:getImage("item_walk"),
+					walk_hovered = resourceManager:getImage("item_walk_hovered"),
+					jump = resourceManager:getImage("item_jump"),
+					jump_hovered = resourceManager:getImage("item_jump_hovered"),
+					attack = resourceManager:getImage("item_attack"),
+					attack_hovered = resourceManager:getImage("item_attack_hovered"),
+				}
+			end
 		end
 
 		if not self.fonts then

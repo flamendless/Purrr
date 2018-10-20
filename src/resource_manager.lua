@@ -1,5 +1,5 @@
 local ResourceManager = {
-	__assets = { images = {}, fonts = {}, ImageData = {} },
+	__assets = { images = {}, fonts = {}, ImageData = {}, sources = {} },
 	__font_cache = {},
 	__ref = {},
 }
@@ -31,6 +31,12 @@ function ResourceManager:getFont(id)
 	assert(self.__assets.fonts[id], ("Font %s does not exist!"):format(id))
 	self:addRef(id)
 	return self.__assets.fonts[id]
+end
+
+function ResourceManager:getSource(id)
+	assert(self.__assets.sources[id], ("Sound %s does not exist!"):format(id))
+	self:addRef(id)
+	return self.__assets.sources[id]
 end
 
 function ResourceManager:getAll(kind)

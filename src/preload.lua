@@ -68,6 +68,10 @@ function Preload:add(kind, data)
 			self.userdata[self.n] = data.id .. "_" .. data.sizes[1]
 			self.n = self.n + 1
 		end
+	elseif kind == "sources" then
+		self.toLoad[self.n] = { "newSource", data.path, data.kind }
+		self.userdata[self.n] = data.id
+		self.n = self.n + 1
 	end
 end
 
@@ -82,7 +86,7 @@ function Preload:start()
 			if id then
 				local kind
 				local data_type = string.lower(data:type() .. "s")
-				if data_type == "images" or data_type == "fonts" then
+				if data_type == "images" or data_type == "fonts" or data_type == "sources" then
 					kind = data_type
 				else
 					kind = data:type()

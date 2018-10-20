@@ -18,6 +18,7 @@ local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
+local assets = require("src.assets")
 
 local next_state
 local bg = {}
@@ -42,8 +43,14 @@ function Menu:init()
 		},
 		fonts = {
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
+		},
+		sources = {
+			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
 		}
 	}
+
+	assets:finalize(self.assets)
+
 	self.colors = {
 		bg = colors("flat", "black", "dark"),
 	}
@@ -97,7 +104,7 @@ end
 function Menu:setupEntities()
 	self.entities = {}
 	self.entities.btn_play = ecs.entity()
-		:give(C.button, "play",
+		:give(C.button, "Play",
 			{
 				normal = self.images.btn_play,
 				hovered = self.images.btn_play_hovered,
@@ -113,7 +120,7 @@ function Menu:setupEntities()
 		:apply()
 
 	self.entities.btn_quit = ecs.entity()
-		:give(C.button, "quit",
+		:give(C.button, "Quit",
 		{
 			normal = self.images.btn_leave,
 			hovered = self.images.btn_leave_hovered,

@@ -4,6 +4,7 @@ local log = require("modules.log.log")
 local flux = require("modules.flux.flux")
 
 local screen = require("src.screen")
+local soundManager = require("src.sound_manager")
 local colors = require("src.colors")
 local gamestate = require("src.gamestate")
 
@@ -25,6 +26,7 @@ end
 function Transition:start(next_state)
 	self.current = self.overlays[1]
 	self.isActive = true
+	soundManager:send("transition")
 	if love.system.getOS() == "Android" then
 		self.pos_x = -screen.x
 		flux.to(self, self.duration, { pos_x = 0 })

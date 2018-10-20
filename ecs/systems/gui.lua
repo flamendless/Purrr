@@ -5,6 +5,7 @@ local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
 local touch = require("src.touch")
+local soundManager = require("src.sound_manager")
 
 local GUI = System({
 		C.button,
@@ -84,12 +85,15 @@ function GUI:onClick()
 				end
 				if bool then
 					c_state.isClicked = true
+					soundManager:send("guiOnClick")
 					if e:has(C.onClick) then
 						e[C.onClick].onClick(self, e)
+						soundManager:send("guiClicked_" .. c_button.id)
 						log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 					else
 						if c_button.args and c_button.args.onClick then
 							c_button.args.onClick(self, e)
+							soundManager:send("guiClicked_" .. c_button.id)
 							log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 						end
 					end
@@ -114,6 +118,7 @@ function GUI:onEnter(e)
 	local c_transform = e[C.transform]
 	if not c_button then return end
 	if c_button.args and c_button.args.hovered then
+		soundManager:send("guiOnEnter")
 		e:give(C.hoveredSprite, c_button.args.hovered)
 			:give(C.patrol, { vec2(0, -8), vec2(0, 8) }, true)
 			:give(C.speed, vec2(0, 32))
@@ -135,6 +140,7 @@ function GUI:onExit(e)
 	local c_button = e[C.button]
 	local c_transform = e[C.transform]
 	if not c_button then return end
+	soundManager:send("guiOnExit")
 	c_button.isClicked = false
 	e:remove(C.hoveredSprite)
 		:remove(C.patrol)
