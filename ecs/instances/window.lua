@@ -69,7 +69,7 @@ function Window:load(args)
 			:give(C.text, args.str_content, args.font_content, "center", args.spr_window:getWidth() * sx)
 			:give(C.pos, vec2(0, 0))
 			:give(C.parent, self.entities.main_window)
-			:give(C.offsetPos, vec2(0, 256))
+			:give(C.offsetPos, vec2(0, args.content_offset_y or 256))
 			:apply()
 	end
 

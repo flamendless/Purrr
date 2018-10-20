@@ -18,6 +18,58 @@ function Event:init()
 	}
 end
 
+function Event:showCatInfo()
+	if not self:checkAssets() then return end
+	opened_id = "Window_ShowCatInfo"
+	local spr_window = lume.randomchoice(self.settings)
+	local window = require("ecs.instances.window")
+	gamestate:addInstance( "Window_ShowCatInfo", window,
+		{
+			spr_window = spr_window,
+			str_title = "YOUR CAT",
+			font_title = self.fonts.title,
+			title_offset_y = 32,
+			str_content = ("NAME: %s\nCOLOUR: %s"):format(data.data.cat_name, data.data.palette),
+			content_offset_y = 128,
+			sx = 3, sy = 3,
+
+			middleButton = {
+				id = "Back",
+				normal = self.images.back,
+				hovered = self.images.back_hovered,
+				onClick = function()
+					window:close()
+				end
+			},
+		})
+end
+
+function Event:showEnergyInfo()
+	if not self:checkAssets() then return end
+	opened_id = "Window_ShowEnergy"
+	local spr_window = lume.randomchoice(self.settings)
+	local window = require("ecs.instances.window")
+	gamestate:addInstance( "Window_ShowEnergyInfo", window,
+		{
+			spr_window = spr_window,
+			str_title = "ENERGY",
+			font_title = self.fonts.title,
+			title_offset_y = 32,
+			str_content = ("ENERGY: %s"):format(data.data.energy),
+			content_offset_y = 128,
+			sx = 3, sy = 3,
+
+			middleButton = {
+				id = "Back",
+				normal = self.images.back,
+				hovered = self.images.back_hovered,
+				onClick = function()
+					window:close()
+				end
+			},
+		})
+end
+
 function Event:showSettings()
 	if not self:checkAssets() then return end
 	opened_id = "Window_ShowSettings"
@@ -29,10 +81,11 @@ function Event:showSettings()
 		btn_volume = resourceManager:getImage("button_mute")
 		btn_volume_hovered = resourceManager:getImage("button_mute_hovered")
 	end
+	local spr_window = lume.randomchoice(self.settings)
 	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_GetName", window,
+	gamestate:addInstance( "Window_ShowSettings", window,
 		{
-			spr_window = self.images.window_settings,
+			spr_window = spr_window,
 			str_title = "SETTINGS",
 			font_title = self.fonts.title,
 			title_offset_y = 32,
@@ -70,7 +123,7 @@ function Event:showLock()
 	opened_id = "Window_ShowLock"
 	local spr_window = lume.randomchoice(self.gui)
 	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_GetName", window,
+	gamestate:addInstance( "Window_ShowLock", window,
 		{
 			spr_window = spr_window,
 			str_title = "ALERT!",
@@ -202,6 +255,12 @@ function Event:checkAssets()
 				[3] = resourceManager:getImage("window_blue"),
 			}
 		end
+		if not self.settings then
+			self.settings = {}
+			for i = 1, 4 do
+				self.settings[i] = resourceManager:getImage("window_settings" .. i)
+			end
+		end
 		if not self.images then
 			self.images = {
 				accept = resourceManager:getImage("btn_accept"),
@@ -210,7 +269,6 @@ function Event:checkAssets()
 				back_hovered = resourceManager:getImage("btn_back_hovered"),
 				cancel = resourceManager:getImage("btn_cancel"),
 				cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
-				window_settings = resourceManager:getImage("window_settings"),
 			}
 		end
 		if not self.fonts then

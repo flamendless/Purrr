@@ -28,7 +28,6 @@ function Lobby:init()
 		images = {
 			{ id = "btn_back", path = "assets/gui/button_back.png" },
 			{ id = "btn_back_hovered", path = "assets/gui/button_back_hovered.png" },
-			{ id = "window_settings", path = "assets/gui/window_settings.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
@@ -76,6 +75,11 @@ function Lobby:init()
 			local path = ("assets/palettes/%s/%s.png"):format(palette, state)
 			table.insert(self.assets.images, { id = id, path = path })
 		end
+	end
+	for i = 1, 4 do
+		local id = "window_settings" .. i
+		local path = "assets/gui/" .. id .. ".png"
+			table.insert(self.assets.images, { id = id, path = path })
 	end
 end
 
@@ -178,13 +182,20 @@ function Lobby:setupEntities()
 		:remove(C.pos):remove(C.transform):apply()
 		:give(C.pos, vec2(-screen.x/2, 16))
 		:give(C.transform, 0, 2, 2)
+		:give(C.onClick, function(e) event:showCatInfo() end)
 		:apply()
 
 	self.entities.energy = ecs.entity()
 		:give(C.color, colors("white"))
-		:give(C.sprite, self.images["energy_" .. data.data.energy])
+		:give(C.button, "energy", {
+				normal = self.images["energy_" .. data.data.energy],
+				hovered = self.images["energy_" .. data.data.energy]
+			})
 		:give(C.pos, vec2(-screen.x/2, 32 + self.images.name:getHeight() * 2 + 8))
 		:give(C.transform, 0, 2, 2)
+		:give(C.maxScale, 2.75, 2.75)
+		:give(C.windowIndex, 1)
+		:give(C.onClick, function(e) event:showEnergyInfo() end)
 		:apply()
 
 	self.entities.cat = ecs.entity()
