@@ -44,7 +44,8 @@ function love.load()
 	-- gamestate:start( require("states").menu )
 	-- gamestate:start( require("states").intro )
 	-- gamestate:start( require("states").customization )
-	gamestate:start( require("states").lobby )
+	-- gamestate:start( require("states").lobby )
+	gamestate:start( require("states").map )
 end
 
 function love.update(dt)
@@ -115,5 +116,6 @@ love.errhand = require("src.errorhandler").errhand
 
 function love.quit()
 	log.trace("Love Quit")
+	data:save()
 	lily.quit()
 end

@@ -10,6 +10,7 @@ local States = {
 	lobby = req("lobby"),
 	intro = req("intro"),
 	customization = req("customization"),
+	map = req("map"),
 }
 
 return States

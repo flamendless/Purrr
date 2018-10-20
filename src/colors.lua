@@ -8,6 +8,7 @@ local lookup = {
 	red = { 1, 0, 0 },
 	green = { 0, 1, 0 },
 	blue = { 0, 0, 1 },
+	gray = { 0.5, 0.5, 0.5 },
 }
 
 --FLAT COLORS (https://www.materialui.co/flatuicolors)

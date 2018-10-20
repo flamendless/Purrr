@@ -24,7 +24,7 @@ local heart_count = 3
 
 function CatFSM:init()
 	shaders_palette = love.graphics.newShader("shaders/palette_swap.glsl")
-	_data.speed = { blink = 0.5, heart = 0.75, hurt = 0.4, mouth = 0.5, sleep = 0.5, snore = 0.8, spin = 1.5 }
+	_data.speed = { blink = 0.5, heart = 0.75, hurt = 0.4, mouth = 0.5, sleep = 0.5, snore = 0.8, spin = 2 }
 
 	_data.stopOnLast = {
 		blink = true,

@@ -21,7 +21,16 @@ function Data:init()
 		self.data.palette = "source"
 		self.data.energy = "full"
 		self.data.volume = 1
+		self.data.world = "mars"
+		self.data.level = 1
+		self.data.locked = {
+			mars = false,
+			underground = true,
+			space = true,
+			earth = true
+		}
 	end
+	self.dev = {}
 	self.dev.twitter = "https://twitter.com/flamendless"
 	self.dev.playstore = "https://twitter.com/flamendless"
 end

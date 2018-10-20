@@ -16,12 +16,13 @@ local resourceManager = require("src.resource_manager")
 local screen = require("src.screen")
 local data = require("src.data")
 local event = require("src.event")
+local transition = require("src.transition")
 
 local bg = {}
 local maxPatterns = 9
 
 function Lobby:init()
-	local buttons = {"bag","play","store","home","settings","mute","volume","cat","star"}
+	local buttons = {"bag","play","store","home","settings","mute","volume","cat","star","twitter"}
 	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 	self.assets = {
@@ -157,6 +158,9 @@ function Lobby:setupEntities()
 	self.entities.play = E.lobby_buttons(ecs.entity(), "play", "play")
 		:give(C.follow, self.entities.window)
 		:give(C.offsetPos, vec2(0, -window_height/2))
+		:give(C.onClick, function(e)
+				self:gotoMap()
+			end)
 		:apply()
 
 	self.entities.bag = E.lobby_buttons(ecs.entity(), "bag", "bag")
@@ -244,6 +248,15 @@ function Lobby:start()
 		end)
 end
 
+function Lobby:gotoMap()
+	self.instance:emit("changeState", "spin")
+	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+	flux.to(self.entities.cat[C.pos].pos, 1, { y = screen.y * 1.5 }):ease("backin")
+		:oncomplete(function()
+			transition:start(require("states.map"))
+		end)
+end
+
 function Lobby:update(dt)
 	self.instance:emit("update", dt)
 end
@@ -268,6 +281,7 @@ function Lobby:keypressed(key)
 end
 
 function Lobby:exit()
+	if self.instance then self.instance:clear() end
 end
 
 return Lobby

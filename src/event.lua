@@ -127,8 +127,8 @@ function Event:showSettings()
 
 			insideButton3 = {
 				id = "Twitter",
-				normal = resourceManager:getImage("button_star"),
-				hovered = resourceManager:getImage("button_star_hovered"),
+				normal = resourceManager:getImage("button_twitter"),
+				hovered = resourceManager:getImage("button_twitter_hovered"),
 				onClick = function()
 					love.system.openURL(data.dev.twitter)
 				end

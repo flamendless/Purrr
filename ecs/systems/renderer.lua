@@ -116,6 +116,7 @@ function Renderer:drawCircle()
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color]
 		if c_color then c_color.color:set() end
+		love.graphics.circle(c_circle.mode, c_pos.x, c_pos.y, c_circle.radius, c_circle.segments)
 	end
 end
 
