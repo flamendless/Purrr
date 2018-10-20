@@ -40,11 +40,11 @@ function love.load()
 	event:init()
 	transition:init()
 	preload:init()
-	-- gamestate:start( require("states").splash )
+	gamestate:start( require("states").splash )
 	-- gamestate:start( require("states").menu )
 	-- gamestate:start( require("states").intro )
 	-- gamestate:start( require("states").customization )
-	gamestate:start( require("states").lobby )
+	-- gamestate:start( require("states").lobby )
 	-- gamestate:start( require("states").map )
 end
 

@@ -22,11 +22,14 @@ local assets = require("src.assets")
 local bg = {}
 local maxPatterns = 9
 
+local colours = {"back","forward","yellow","green","purple","red","blue","grayscale","softmilk","black","white","lime","orange","pink"}
+local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
+local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
+local buttons = {"bag","play","store","home","settings","mute","volume","cat","star","twitter","back","accept","cancel","forward"}
+
 function Lobby:init()
 	self.assets = {
 		images = {
-			{ id = "btn_back", path = "assets/gui/button_back.png" },
-			{ id = "btn_back_hovered", path = "assets/gui/button_back_hovered.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
@@ -34,10 +37,6 @@ function Lobby:init()
 			{ id = "energy_half", path = "assets/gui/energy_half.png" },
 			{ id = "energy_empty", path = "assets/gui/energy_empty.png" },
 			{ id = "window", path = "assets/gui/window.png" },
-			{ id = "btn_accept", path = "assets/gui/accept.png" },
-			{ id = "btn_accept_hovered", path = "assets/gui/accept_hovered.png" },
-			{ id = "btn_cancel", path = "assets/gui/cancel.png" },
-			{ id = "btn_cancel_hovered", path = "assets/gui/cancel_hovered.png" },
 			{ id = "display_lobby", path = "assets/images/display_lobby.png" },
 			{ id = "name", path = "assets/gui/name.png" },
 		},
@@ -50,7 +49,41 @@ function Lobby:init()
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42, 48} },
 		}
 	}
-	assets:finalize(self.assets)
+	for _, btn in ipairs(buttons) do
+		local id = "button_" .. btn
+		local id_hovered = "button_" .. btn .. "_hovered"
+		local path = "assets/gui/" .. id .. ".png"
+		local path_hovered = "assets/gui/" .. id_hovered .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+		table.insert(self.assets.images, { id = id_hovered, path = path_hovered })
+	end
+	for i, state in ipairs(states) do
+		local id = "sheet_cat_" .. state
+		local path = "assets/anim/cat_" .. state .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
+
+	for _, palette in ipairs(palettes) do
+		for _, state in ipairs(states) do
+			local id = ("pal_%s_%s"):format(state, palette)
+			local path = ("assets/palettes/%s/%s.png"):format(palette, state)
+			table.insert(self.assets.images, { id = id, path = path })
+		end
+	end
+
+	for _,btn in ipairs(colours) do
+		local id = "btn_" .. btn
+		local id_hovered = id .. "_hovered"
+		local path = "assets/gui/button_" .. btn .. ".png"
+		local path_hovered = "assets/gui/button_" .. btn .. "_hovered.png"
+		table.insert(self.assets.images, { id = id, path = path })
+		table.insert(self.assets.images, { id = id_hovered, path = path_hovered })
+	end
+	for i = 1, maxPatterns do
+		local id = "pattern" .. i
+		local path = "assets/images/pattern" .. i .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
 end
 
 function Lobby:enter(previous, ...)

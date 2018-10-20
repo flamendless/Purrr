@@ -33,13 +33,15 @@ function Menu:init()
 			{ id = "btn_play_hovered", path = "assets/gui/play_hovered.png" },
 			{ id = "btn_leave", path = "assets/gui/leave.png" },
 			{ id = "btn_leave_hovered", path = "assets/gui/leave_hovered.png" },
-			{ id = "btn_accept", path = "assets/gui/accept.png" },
-			{ id = "btn_accept_hovered", path = "assets/gui/accept_hovered.png" },
-			{ id = "btn_cancel", path = "assets/gui/cancel.png" },
-			{ id = "btn_cancel_hovered", path = "assets/gui/cancel_hovered.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
+			{ id = "button_accept", path = "assets/gui/button_accept.png" },
+			{ id = "button_accept_hovered", path = "assets/gui/button_accept_hovered.png" },
+			{ id = "button_back", path = "assets/gui/button_back.png" },
+			{ id = "button_back_hovered", path = "assets/gui/button_back_hovered.png" },
+			{ id = "button_cancel", path = "assets/gui/button_cancel.png" },
+			{ id = "button_cancel_hovered", path = "assets/gui/button_cancel_hovered.png" },
 		},
 		fonts = {
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
@@ -48,8 +50,13 @@ function Menu:init()
 			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
 		}
 	}
+	for i = 1, 4 do
+		local id = "window_settings" .. i
+		local path = "assets/gui/" .. id .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
 
-	assets:finalize(self.assets)
+	assets:getMusic(self.assets)
 
 	self.colors = {
 		bg = colors("flat", "black", "dark"),
@@ -57,6 +64,7 @@ function Menu:init()
 end
 
 function Menu:enter(previous, ...)
+	event:setup()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
 	self.instance = ecs.instance()

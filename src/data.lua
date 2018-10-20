@@ -18,6 +18,7 @@ function Data:init()
 		self.data.new_game = true
 		self.data.customization = true
 		self.data.cat_name = "ponkan"
+		self.data.got_name = false
 		self.data.palette = "source"
 		self.data.energy = "full"
 		self.data.volume = 1

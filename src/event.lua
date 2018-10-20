@@ -18,10 +18,35 @@ function Event:init()
 	}
 end
 
+function Event:setup()
+	self.windows = {
+		resourceManager:getImage("window_red"),
+		resourceManager:getImage("window_green"),
+		resourceManager:getImage("window_blue"),
+	}
+	self.images = {
+		accept = resourceManager:getImage("button_accept"),
+		accept_hovered = resourceManager:getImage("button_accept_hovered"),
+		cancel = resourceManager:getImage("button_cancel"),
+		cancel_hovered = resourceManager:getImage("button_cancel_hovered"),
+		back = resourceManager:getImage("button_back"),
+		back_hovered = resourceManager:getImage("button_back_hovered"),
+	}
+	self.fonts = {
+		title = resourceManager:getFont("upheaval_42"),
+		content = resourceManager:getFont("upheaval_36")
+	}
+	self.settings = {
+		resourceManager:getImage("window_settings1"),
+		resourceManager:getImage("window_settings2"),
+		resourceManager:getImage("window_settings3"),
+	}
+end
+
 function Event:showStore()
-	if not self:checkAssets("Store") then return end
+	if opened_id then return end
 	opened_id = "Window_ShowStore"
-	local spr_window = lume.randomchoice(self.gui)
+	local spr_window = lume.randomchoice(self.windows)
 	local window = require("ecs.instances.window")
 	gamestate:addInstance( "Window_ShowStore", window,
 		{
@@ -73,7 +98,7 @@ function Event:showStore()
 end
 
 function Event:showCatInfo()
-	if not self:checkAssets() then return end
+	if opened_id then return end
 	opened_id = "Window_ShowCatInfo"
 	local spr_window = lume.randomchoice(self.settings)
 	local window = require("ecs.instances.window")
@@ -99,7 +124,7 @@ function Event:showCatInfo()
 end
 
 function Event:showEnergyInfo()
-	if not self:checkAssets() then return end
+	if opened_id then return end
 	opened_id = "Window_ShowEnergy"
 	local spr_window = lume.randomchoice(self.settings)
 	local window = require("ecs.instances.window")
@@ -125,7 +150,7 @@ function Event:showEnergyInfo()
 end
 
 function Event:showSettings()
-	if not self:checkAssets("settings") then return end
+	if opened_id then return end
 	opened_id = "Window_ShowSettings"
 	local btn_volume, btn_volume_hovered
 	if data.data.volume == 1 then
@@ -191,9 +216,9 @@ function Event:showSettings()
 end
 
 function Event:showLock()
-	if not self:checkAssets() then return end
+	if opened_id then return end
 	opened_id = "Window_ShowLock"
-	local spr_window = lume.randomchoice(self.gui)
+	local spr_window = lume.randomchoice(self.windows)
 	local window = require("ecs.instances.window")
 	gamestate:addInstance( "Window_ShowLock", window,
 		{
@@ -215,9 +240,9 @@ function Event:showLock()
 end
 
 function Event:getName()
-	if not self:checkAssets() then return end
+	if opened_id then return end
 	opened_id = "Window_GetName"
-	local spr_window = lume.randomchoice(self.gui)
+	local spr_window = lume.randomchoice(self.windows)
 	local window = require("ecs.instances.window")
 	gamestate:addInstance( "Window_GetName", window,
 		{
@@ -246,9 +271,9 @@ function Event:getName()
 end
 
 function Event:showExitConfirmation()
-	if not self:checkAssets() then return end
+	if opened_id then return end
 	opened_id = "Window_Exit"
-	local spr_window = lume.randomchoice(self.gui)
+	local spr_window = lume.randomchoice(self.windows)
 	local window = require("ecs.instances.window")
 	gamestate:addInstance( "Window_Exit", window,
 		{
@@ -280,17 +305,21 @@ function Event:showExitConfirmation()
 		})
 end
 
-function Event:showHomeConfirmation()
-	if not self:checkAssets() then return end
+function Event:showHomeConfirmation(arg)
+	if opened_id then return end
 	opened_id = "Window_Home"
 	local window = require("ecs.instances.window")
-	local spr_window = lume.randomchoice(self.gui)
+	local spr_window = lume.randomchoice(self.windows)
+	local str_content = "Are you sure you want to return to menu screen?"
+	if arg == "lobby" then
+		str_content = "Are you sure you want to return to lobby?"
+	end
 	gamestate:addInstance( "Window_Home", window,
 		{
 			spr_window = spr_window,
 			str_title = "CONFIRMATION",
 			font_title = self.fonts.title,
-			str_content = "Are you sure you want to return to menu screen?",
+			str_content = str_content,
 			font_content = self.fonts.content,
 			button1 = {
 				id = "Accept",
@@ -298,7 +327,11 @@ function Event:showHomeConfirmation()
 				hovered = self.images.accept_hovered,
 				onClick = function()
 					window:close()
-					transition:start( require("states.menu") )
+					if arg == "lobby" then
+						transition:start( require("states.lobby") )
+					else
+						transition:start( require("states.menu") )
+					end
 				end
 			},
 			button2 = {
@@ -315,60 +348,6 @@ end
 function Event:drawCover()
 	self.colors.cover:set()
 	love.graphics.rectangle("fill", 0, 0, screen.x, screen.y)
-end
-
-function Event:checkAssets(arg)
-	if opened_id then return false
-	else
-		if not self.gui then
-			self.gui = {
-				[1] = resourceManager:getImage("window_red"),
-				[2] = resourceManager:getImage("window_green"),
-				[3] = resourceManager:getImage("window_blue"),
-			}
-		end
-		if arg == "settings" then
-			if not self.settings then
-				self.settings = {}
-				for i = 1, 4 do
-					self.settings[i] = resourceManager:getImage("window_settings" .. i)
-				end
-			end
-		end
-
-		if not self.images then
-			self.images = {
-				accept = resourceManager:getImage("btn_accept"),
-				accept_hovered = resourceManager:getImage("btn_accept_hovered"),
-				back = resourceManager:getImage("btn_back"),
-				back_hovered = resourceManager:getImage("btn_back_hovered"),
-				cancel = resourceManager:getImage("btn_cancel"),
-				cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
-			}
-		end
-
-		if arg == "store" then
-			if not self.items then
-				self.items = {
-					walk = resourceManager:getImage("item_walk"),
-					walk_hovered = resourceManager:getImage("item_walk_hovered"),
-					jump = resourceManager:getImage("item_jump"),
-					jump_hovered = resourceManager:getImage("item_jump_hovered"),
-					attack = resourceManager:getImage("item_attack"),
-					attack_hovered = resourceManager:getImage("item_attack_hovered"),
-				}
-			end
-		end
-
-		if not self.fonts then
-			self.fonts = {
-				title = resourceManager:getFont("upheaval_42"),
-				content = resourceManager:getFont("upheaval_32"),
-				button = resourceManager:getFont("upheaval_28"),
-			}
-		end
-		return true
-	end
 end
 
 function Event:reset()

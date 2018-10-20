@@ -23,13 +23,13 @@ function Transition:init()
 	self.pos_x = -screen.x
 end
 
-function Transition:start(next_state)
+function Transition:start(next_state, d)
 	self.current = self.overlays[1]
 	self.isActive = true
 	soundManager:send("transition")
 	if love.system.getOS() == "Android" then
 		self.pos_x = -screen.x
-		flux.to(self, self.duration, { pos_x = 0 })
+		flux.to(self, d or self.duration, { pos_x = 0 })
 			:oncomplete(function()
 					log.trace("State Changed!")
 					if type(next_state) == "function" then
@@ -38,7 +38,7 @@ function Transition:start(next_state)
 						gamestate:switch(next_state)
 					end
 			end)
-				:after(self, self.duration * 2, { pos_x = screen.x })
+				:after(self, d or self.duration * 2, { pos_x = screen.x })
 				:oncomplete(function()
 					log.trace("Transition Finished!")
 					self.isActive = false
@@ -46,7 +46,7 @@ function Transition:start(next_state)
 				end)
 	else
 
-		flux.to(self, self.duration, { scale = 0 })
+		flux.to(self, d or self.duration, { scale = 0 })
 			:ease("backout")
 			:oncomplete(function()
 					log.trace("State Changed!")
@@ -57,7 +57,7 @@ function Transition:start(next_state)
 						self.current = self.overlays[1]
 					end
 			end)
-				:after(self, self.duration, { scale = self.max_scale })
+				:after(self, d or self.duration, { scale = self.max_scale })
 				:oncomplete(function()
 					log.trace("Transition Finished!")
 					self.isActive = false

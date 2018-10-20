@@ -22,6 +22,8 @@ local soundManager = require("src.sound_manager")
 local event = require("src.event")
 local assets = require("src.assets")
 
+local maps = {"mars","underground","space","earth"}
+local displays = {"mars","caverns","space","earth"}
 local bg = {}
 local max_view = 4
 local maxPatterns = 9
@@ -56,7 +58,18 @@ function Map:init()
 			{ id = "level", path = "assets/fonts/trashhand.ttf", sizes = {18, 28, 32, 36, 42, 48} },
 		}
 	}
-	assets:finalize(self.assets)
+	for i,map in ipairs(maps) do
+		local id = "map_" .. map
+		local path = "assets/images/" .. id .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
+
+	for i,display in ipairs(displays) do
+		local id = "display_" .. display
+		local path = "assets/images/" .. id .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
+
 end
 
 function Map:enter(previous, ...)
@@ -249,7 +262,7 @@ function Map:setupEntities()
 		:remove(C.pos):remove(C.transform):apply()
 		:give(C.pos, vec2( 16, 16 ))
 		:give(C.transform, 0, 2, 2)
-		:give(C.onClick, function(e) event:showHomeConfirmation() end)
+		:give(C.onClick, function(e) event:showHomeConfirmation("lobby") end)
 		:apply()
 
 	self.instance:addEntity(self.entities.map)

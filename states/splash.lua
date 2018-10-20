@@ -20,6 +20,7 @@ local screen = require("src.screen")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
 local resourceManager = require("src.resource_manager")
+local assets = require("src.assets")
 
 local next_state = require("states.menu")
 local delay = 1
@@ -30,15 +31,16 @@ function Splash:init()
 	self.assets = {
 		images = {
 			{ id = "flamendless", path = "assets/anim/flamendless.png" },
-			{ id = "loading", path = "assets/anim/loading.png" },
-			{ id = "eyes", path = "assets/parts/eyes.png" },
-			{ id = "nose", path = "assets/parts/nose.png" },
+		},
+		sources = {
+			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
 		},
 		fonts = {
 			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
 			{ id = "bmdelico", path = "assets/fonts/bmdelico.ttf", sizes = { 18, 24, 32, 42 } },
 		}
 	}
+	assets:getMusic(self.assets)
 	self.colors = {
 		bg = colors("black"),
 		logo = colors("white"),
@@ -59,8 +61,8 @@ function Splash:enter(previous, ...)
 	self.entities = {}
 	self.entities.logo = ecs.entity()
 		:give(C.color, self.colors.logo)
-		:give(C.anim, "assets/anim/flamendless.json", self.images.flamendless, {
-				speed = 1.5,
+		:give(C.anim, "assets/anim/json/flamendless.json", self.images.flamendless, {
+				speed = 2,
 				stopOnLast = true,
 			})
 		:give(C.pos, vec2(screen.x/2, screen.y/2 + 64))

@@ -28,6 +28,11 @@ local bg = {}
 local level = 1
 local orig_pos = {}
 local window = { y = screen.y - 16 }
+local maxPatterns = 9
+
+local colours = {"back","forward","yellow","green","purple","red","blue","grayscale","softmilk","black","white","lime","orange","pink"}
+local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
+local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 
 function Customization:init()
 	self.assets = {
@@ -39,10 +44,6 @@ function Customization:init()
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
-			{ id = "btn_accept", path = "assets/gui/accept.png" },
-			{ id = "btn_accept_hovered", path = "assets/gui/accept_hovered.png" },
-			{ id = "btn_cancel", path = "assets/gui/cancel.png" },
-			{ id = "btn_cancel_hovered", path = "assets/gui/cancel_hovered.png" },
 		},
 		sources = {},
 		fonts = {
@@ -51,7 +52,34 @@ function Customization:init()
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
 		}
 	}
-	assets:finalize(self.assets)
+	for i, state in ipairs(states) do
+		local id = "sheet_cat_" .. state
+		local path = "assets/anim/cat_" .. state .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
+
+	for _, palette in ipairs(palettes) do
+		for _, state in ipairs(states) do
+			local id = ("pal_%s_%s"):format(state, palette)
+			local path = ("assets/palettes/%s/%s.png"):format(palette, state)
+			table.insert(self.assets.images, { id = id, path = path })
+		end
+	end
+
+	for _,btn in ipairs(colours) do
+		local id = "btn_" .. btn
+		local id_hovered = id .. "_hovered"
+		local path = "assets/gui/button_" .. btn .. ".png"
+		local path_hovered = "assets/gui/button_" .. btn .. "_hovered.png"
+		table.insert(self.assets.images, { id = id, path = path })
+		table.insert(self.assets.images, { id = id_hovered, path = path_hovered })
+	end
+
+	for i = 1, maxPatterns do
+		local id = "pattern" .. i
+		local path = "assets/images/pattern" .. i .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
 end
 
 function Customization:enter(previous, ...)
@@ -215,7 +243,7 @@ function Customization:setupEntities(tag)
 end
 
 function Customization:start()
-	if not data.data.cat_name then
+	if not data.data.got_name then
 		event:getName()
 	end
 	local dur = 0.8
@@ -262,9 +290,12 @@ function Customization:keypressed(key)
 end
 
 function Customization:exit()
-	self.instance:clear()
+	if self.instance then
+		self.instance:clear()
+	end
 	data.data.customization = false
 	data.data.new_game = false
+	data.data.got_name = true
 	data:save()
 end
 
