@@ -114,7 +114,25 @@ function Event:showSettings()
 					end
 					data:save()
 				end
-			}
+			},
+
+			insideButton2 = {
+				id = "Star",
+				normal = resourceManager:getImage("button_star"),
+				hovered = resourceManager:getImage("button_star_hovered"),
+				onClick = function()
+					love.system.openURL(data.dev.playstore)
+				end
+			},
+
+			insideButton3 = {
+				id = "Twitter",
+				normal = resourceManager:getImage("button_star"),
+				hovered = resourceManager:getImage("button_star_hovered"),
+				onClick = function()
+					love.system.openURL(data.dev.twitter)
+				end
+			},
 		})
 end
 

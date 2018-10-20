@@ -142,6 +142,52 @@ function Window:load(args)
 			:apply()
 	end
 
+	if args.insideButton2 then
+		self.entities.insideButton2 = ecs.entity()
+			:give(C.button, args.insideButton2.id or "insideButton2",
+				{
+					disabled = args.insideButton2.disabled,
+					text = args.insideButton2.text,
+					font = args.insideButton2.font,
+					textColor = colors("flat", "white", "light"),
+					hoveredTextColor = colors("flat", "white", "dark"),
+					normal = args.insideButton2.normal,
+					hovered = args.insideButton2.hovered,
+					onClick = args.insideButton2.onClick,
+				})
+			:give(C.color, colors("white"))
+			:give(C.transform, 0, 2, 2, "center", "center")
+			:give(C.pos, vec2())
+			:give(C.maxScale, 2.25, 2.25)
+			:give(C.windowIndex, __window)
+			:give(C.follow, self.entities.main_window)
+			:give(C.offsetPos, vec2(-128))
+			:apply()
+	end
+
+	if args.insideButton3 then
+		self.entities.insideButton3 = ecs.entity()
+			:give(C.button, args.insideButton3.id or "insideButton3",
+				{
+					disabled = args.insideButton3.disabled,
+					text = args.insideButton3.text,
+					font = args.insideButton3.font,
+					textColor = colors("flat", "white", "light"),
+					hoveredTextColor = colors("flat", "white", "dark"),
+					normal = args.insideButton3.normal,
+					hovered = args.insideButton3.hovered,
+					onClick = args.insideButton3.onClick,
+				})
+			:give(C.color, colors("white"))
+			:give(C.transform, 0, 2, 2, "center", "center")
+			:give(C.pos, vec2())
+			:give(C.maxScale, 2.25, 2.25)
+			:give(C.windowIndex, __window)
+			:give(C.follow, self.entities.main_window)
+			:give(C.offsetPos, vec2(128))
+			:apply()
+	end
+
 	if args.button2 then
 		self.entities.btn2 = ecs.entity()
 			:give(C.button, args.button2.id or "button2",

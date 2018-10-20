@@ -22,6 +22,8 @@ function Data:init()
 		self.data.energy = "full"
 		self.data.volume = 1
 	end
+	self.dev.twitter = "https://twitter.com/flamendless"
+	self.dev.playstore = "https://twitter.com/flamendless"
 end
 
 function Data:save()

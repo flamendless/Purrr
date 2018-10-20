@@ -21,7 +21,7 @@ local bg = {}
 local maxPatterns = 9
 
 function Lobby:init()
-	local buttons = {"bag","play","store","home","settings","mute","volume","cat"}
+	local buttons = {"bag","play","store","home","settings","mute","volume","cat","star"}
 	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 	self.assets = {
