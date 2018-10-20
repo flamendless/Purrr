@@ -6,6 +6,7 @@ local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local colors = require("src.colors")
 local screen = require("src.screen")
+local data = require("src.data")
 local lume = require("modules.lume.lume")
 local inspect = require("modules.inspect.inspect")
 
@@ -15,6 +16,53 @@ function Event:init()
 	self.colors = {
 		cover = colors("flat", "black", "dark", 0.8)
 	}
+end
+
+function Event:showSettings()
+	if not self:checkAssets() then return end
+	opened_id = "Window_ShowSettings"
+	local btn_volume, btn_volume_hovered
+	if data.data.volume == 1 then
+		btn_volume = resourceManager:getImage("button_volume")
+		btn_volume_hovered = resourceManager:getImage("button_volume_hovered")
+	elseif data.data.volume == 0 then
+		btn_volume = resourceManager:getImage("button_mute")
+		btn_volume_hovered = resourceManager:getImage("button_mute_hovered")
+	end
+	local window = require("ecs.instances.window")
+	gamestate:addInstance( "Window_GetName", window,
+		{
+			spr_window = self.images.window_settings,
+			str_title = "SETTINGS",
+			font_title = self.fonts.title,
+			title_offset_y = 32,
+			sx = 3, sy = 3,
+
+			middleButton = {
+				id = "Back",
+				normal = self.images.back,
+				hovered = self.images.back_hovered,
+				onClick = function()
+					window:close()
+				end
+			},
+
+			insideButton = {
+				id = "Volume",
+				normal = btn_volume,
+				hovered = btn_volume_hovered,
+				onClick = function(system, e)
+					if data.data.volume == 1 then
+						data.data.volume = 0
+						system:changeSprite(e, resourceManager:getImage("button_mute"), resourceManager:getImage("button_mute_hovered"))
+					else
+						data.data.volume = 1
+						system:changeSprite(e, resourceManager:getImage("button_volume"), resourceManager:getImage("button_volume_hovered"))
+					end
+					data:save()
+				end
+			}
+		})
 end
 
 function Event:showLock()
@@ -151,15 +199,18 @@ function Event:checkAssets()
 			self.gui = {
 				[1] = resourceManager:getImage("window_red"),
 				[2] = resourceManager:getImage("window_green"),
-				[3] = resourceManager:getImage("window_blue")
+				[3] = resourceManager:getImage("window_blue"),
 			}
 		end
 		if not self.images then
 			self.images = {
 				accept = resourceManager:getImage("btn_accept"),
 				accept_hovered = resourceManager:getImage("btn_accept_hovered"),
+				back = resourceManager:getImage("btn_back"),
+				back_hovered = resourceManager:getImage("btn_back_hovered"),
 				cancel = resourceManager:getImage("btn_cancel"),
 				cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
+				window_settings = resourceManager:getImage("window_settings"),
 			}
 		end
 		if not self.fonts then

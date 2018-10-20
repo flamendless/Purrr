@@ -21,11 +21,14 @@ local bg = {}
 local maxPatterns = 9
 
 function Lobby:init()
-	local buttons = {"bag","play","store","home","settings","mute"}
+	local buttons = {"bag","play","store","home","settings","mute","volume","cat"}
 	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 	self.assets = {
 		images = {
+			{ id = "btn_back", path = "assets/gui/button_back.png" },
+			{ id = "btn_back_hovered", path = "assets/gui/button_back_hovered.png" },
+			{ id = "window_settings", path = "assets/gui/window_settings.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
@@ -161,6 +164,7 @@ function Lobby:setupEntities()
 		:remove(C.pos):remove(C.transform):apply()
 		:give(C.pos, vec2(screen.x * 2 - 32, 32 + self.images.name:getHeight() * 2 + 8))
 		:give(C.transform, 0, 2, 2, "right")
+		:give(C.onClick, function(e) event:showSettings() end)
 		:apply()
 
 	self.entities.home = E.lobby_buttons(ecs.entity(), "home", "home")
@@ -170,17 +174,10 @@ function Lobby:setupEntities()
 		:give(C.onClick, function(e) event:showHomeConfirmation() end)
 		:apply()
 
-	self.entities.name = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.sprite, self.images.name)
-		:give(C.pos, vec2(-screen.x/2, 32))
+	self.entities.cat_info = E.lobby_buttons(ecs.entity(),"cat", "cat")
+		:remove(C.pos):remove(C.transform):apply()
+		:give(C.pos, vec2(-screen.x/2, 16))
 		:give(C.transform, 0, 2, 2)
-		:apply()
-
-	self.entities.cat_name = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.text, data.data.cat_name, self.fonts.upheaval_48, "center", self.images.name:getWidth() * 2)
-		:give(C.pos, vec2(-screen.x/2, 32 + self.images.name:getHeight()/2 * 2))
 		:apply()
 
 	self.entities.energy = ecs.entity()
@@ -214,8 +211,7 @@ function Lobby:setupEntities()
 	self.instance:addEntity(self.entities.settings)
 	self.instance:addEntity(self.entities.home)
 	self.instance:addEntity(self.entities.energy)
-	self.instance:addEntity(self.entities.name)
-	self.instance:addEntity(self.entities.cat_name)
+	self.instance:addEntity(self.entities.cat_info)
 	self.instance:addEntity(self.entities.cat)
 end
 
@@ -225,11 +221,10 @@ function Lobby:start()
 	bg.sx = screen.x/bg.image:getWidth()
 	bg.sy = screen.y/bg.image:getHeight()
 	local dur = 0.8
-	flux.to(self.entities.name[C.pos].pos, dur, { x = 32 }):ease("backout")
-	flux.to(self.entities.cat_name[C.pos].pos, dur, { x = 32 }):ease("backout")
-	flux.to(self.entities.energy[C.pos].pos, dur, { x = 32 }):ease("backout")
-	flux.to(self.entities.settings[C.pos].pos, dur, { x = screen.x - 32 }):ease("backout")
-	flux.to(self.entities.home[C.pos].pos, dur, { x = screen.x - 128 }):ease("backout")
+	flux.to(self.entities.cat_info[C.pos].pos, dur, { x = 8 }):ease("backout")
+	flux.to(self.entities.energy[C.pos].pos, dur, { x = 8 }):ease("backout")
+	flux.to(self.entities.settings[C.pos].pos, dur, { x = screen.x - 8 }):ease("backout")
+	flux.to(self.entities.home[C.pos].pos, dur, { x = screen.x - 104 }):ease("backout")
 	flux.to(self.entities.window[C.pos].pos, dur, { y = screen.y }):ease("backout")
 	flux.to(self.entities.display[C.pos].pos, dur, { x = screen.x/2 }):ease("backout")
 	flux.to(self.entities.cat[C.pos].pos, dur * 2, { y = screen.y  * 0.5 }):ease("backout")

@@ -86,16 +86,24 @@ function GUI:onClick()
 					c_state.isClicked = true
 					log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 					if e:has(C.onClick) then
-						e[C.onClick].onClick(self)
+						e[C.onClick].onClick(self, e)
 					else
 						if c_button.args and c_button.args.onClick then
-							c_button.args.onClick(self)
+							c_button.args.onClick(self, e)
 						end
 					end
 				end
 			end
 		end
 	end
+end
+
+function GUI:changeSprite(e, spr, hovered_spr)
+	local c_button = e[C.button]
+	c_button.args.normal = spr
+	c_button.args.hovered = hovered_spr
+	e:remove(C.sprite):remove(C.hoveredSprite):apply()
+	e:give(C.sprite, spr):give(C.hoveredSprite, hovered_spr):apply()
 end
 
 function GUI:onEnter(e)

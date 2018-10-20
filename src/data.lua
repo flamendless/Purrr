@@ -20,6 +20,7 @@ function Data:init()
 		self.data.cat_name = "ponkan"
 		self.data.palette = "source"
 		self.data.energy = "full"
+		self.data.volume = 1
 	end
 end
 

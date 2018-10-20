@@ -23,6 +23,8 @@ function Window:load(args)
 	local sy = 4
 	temp_window = __window
 	__window = 2
+	if args.sx then sx = args.sx end
+	if args.sy then sy = args.sy end
 	self.canClose = false
 	self.uncloseable = args.uncloseable
 	self.instance = ecs.instance()
@@ -54,7 +56,7 @@ function Window:load(args)
 			:give(C.text, args.str_title, args.font_title, "center", args.spr_window:getWidth() * sx)
 			:give(C.pos, vec2(0, 0))
 			:give(C.parent, self.entities.main_window)
-			:give(C.offsetPos, vec2(0, 64))
+			:give(C.offsetPos, vec2(0, args.title_offset_y or 64))
 			:apply()
 	end
 
@@ -91,6 +93,52 @@ function Window:load(args)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
 			:give(C.offsetPos, vec2(args.spr_window:getWidth() * sx/4, 256))
+			:apply()
+	end
+
+	if args.middleButton then
+		self.entities.middleBtn = ecs.entity()
+			:give(C.button, args.middleButton.id or "middleButton",
+				{
+					disabled = args.middleButton.disabled,
+					text = args.middleButton.text,
+					font = args.middleButton.font,
+					textColor = colors("flat", "white", "light"),
+					hoveredTextColor = colors("flat", "white", "dark"),
+					normal = args.middleButton.normal,
+					hovered = args.middleButton.hovered,
+					onClick = args.middleButton.onClick,
+				})
+			:give(C.color, colors("white"))
+			:give(C.transform, 0, 2, 2, "center", "center")
+			:give(C.pos, vec2())
+			:give(C.maxScale, 2.25, 2.25)
+			:give(C.windowIndex, __window)
+			:give(C.follow, self.entities.main_window)
+			:give(C.offsetPos, vec2(0, 256))
+			:apply()
+	end
+
+	if args.insideButton then
+		self.entities.insideBtn = ecs.entity()
+			:give(C.button, args.insideButton.id or "insideButton",
+				{
+					disabled = args.insideButton.disabled,
+					text = args.insideButton.text,
+					font = args.insideButton.font,
+					textColor = colors("flat", "white", "light"),
+					hoveredTextColor = colors("flat", "white", "dark"),
+					normal = args.insideButton.normal,
+					hovered = args.insideButton.hovered,
+					onClick = args.insideButton.onClick,
+				})
+			:give(C.color, colors("white"))
+			:give(C.transform, 0, 2, 2, "center", "center")
+			:give(C.pos, vec2())
+			:give(C.maxScale, 2.25, 2.25)
+			:give(C.windowIndex, __window)
+			:give(C.follow, self.entities.main_window)
+			:give(C.offsetPos, vec2(0, 0))
 			:apply()
 	end
 
