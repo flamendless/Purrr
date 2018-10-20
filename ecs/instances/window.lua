@@ -142,7 +142,7 @@ function Window:load(args)
 			:give(C.maxScale, 2.25, 2.25)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
-			:give(C.offsetPos, vec2(0, 0))
+			:give(C.offsetPos, vec2(args.insideButton.offset_x, args.insideButton.offset_y))
 			:apply()
 	end
 
@@ -165,7 +165,7 @@ function Window:load(args)
 			:give(C.maxScale, 2.25, 2.25)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
-			:give(C.offsetPos, vec2(-128))
+			:give(C.offsetPos, vec2(args.insideButton2.offset_x or -128, args.insideButton2.offset_y))
 			:apply()
 	end
 
@@ -188,7 +188,7 @@ function Window:load(args)
 			:give(C.maxScale, 2.25, 2.25)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
-			:give(C.offsetPos, vec2(128))
+			:give(C.offsetPos, vec2(args.insideButton3.offset_x or 128, args.insideButton3.offset_y))
 			:apply()
 	end
 
@@ -273,9 +273,13 @@ end
 
 function Window:listen(msg, ...)
 	if msg == "enableAcceptButton" then
-		self.entities.btn1[C.state].isDisabled = false
+		if self.entities.btn1 then
+			self.entities.btn1[C.state].isDisabled = false
+		end
 	elseif msg == "disableAcceptButton" then
-		self.entities.btn1[C.state].isDisabled = true
+		if self.entities.btn1 then
+			self.entities.btn1[C.state].isDisabled = true
+		end
 	elseif msg == "saveName" then
 		local str = self.entities.textinput[C.text].text
 		data.data.cat_name = str

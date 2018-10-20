@@ -4,6 +4,8 @@ local lume = require("modules.lume.lume")
 local timer = require("modules.hump.timer")
 local vec2 = require("modules.hump.vector")
 local resourceManager = require("src.resource_manager")
+local soundManager = require("src.sound_manager")
+local gamestate = require("src.gamestate")
 local data = require("src.data")
 local touch = require("src.touch")
 
@@ -168,6 +170,10 @@ end
 function CatFSM:onClick(e)
 	if e:has(C.cat) then
 		self:changeState("heart")
+		if self.event == "lobby" then
+			gamestate:getCurrent():addCoin(10)
+			soundManager:send("tapOnCat")
+		end
 	end
 end
 

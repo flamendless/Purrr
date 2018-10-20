@@ -17,6 +17,7 @@ local screen = require("src.screen")
 local data = require("src.data")
 local event = require("src.event")
 local transition = require("src.transition")
+local soundManager = require("src.sound_manager")
 local assets = require("src.assets")
 
 local bg = {}
@@ -46,9 +47,10 @@ function Lobby:init()
 		fonts = {
 			{ id = "header", path = "assets/fonts/upheavalpro.ttf", sizes = { 32, 36, 42, 48 } },
 			{ id = "buttons", path = "assets/fonts/futurehandwritten.ttf", sizes = { 24, 30, 32, 36, 42, 48 } },
-			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42, 48} },
+			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42, 48 }},
 		}
 	}
+
 	for _, btn in ipairs(buttons) do
 		local id = "button_" .. btn
 		local id_hovered = "button_" .. btn .. "_hovered"
@@ -90,6 +92,8 @@ function Lobby:enter(previous, ...)
 	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
+	self.bgm = resourceManager:getSource("bgm_lobby")
+	self.bgm:play()
 	self:setupSystems()
 	self:setupEntities()
 	self:start()
@@ -207,6 +211,13 @@ function Lobby:setupEntities()
 		:give(C.onClick, function(e) event:showEnergyInfo() end)
 		:apply()
 
+	self.entities.coins = ecs.entity()
+		:give(C.color, colors("flat", "red", "light"))
+		:give(C.pos, vec2(screen.x * 1.5, 48))
+		:give(C.text, data.data.coins, self.fonts.upheaval_48, "right", screen.x - 32)
+		:give(C.windowIndex, 1)
+		:apply()
+
 	self.entities.cat = ecs.entity()
 		:give(C.tag, "cat")
 		:give(C.cat)
@@ -232,6 +243,7 @@ function Lobby:setupEntities()
 	self.instance:addEntity(self.entities.home)
 	self.instance:addEntity(self.entities.energy)
 	self.instance:addEntity(self.entities.cat_info)
+	self.instance:addEntity(self.entities.coins)
 	self.instance:addEntity(self.entities.cat)
 end
 
@@ -242,6 +254,7 @@ function Lobby:start()
 	bg.sy = screen.y/bg.image:getHeight()
 	local dur = 0.8
 	flux.to(self.entities.cat_info[C.pos].pos, dur, { x = 8 }):ease("backout")
+	flux.to(self.entities.coins[C.pos].pos, dur, { x =  0  }):ease("backout")
 	flux.to(self.entities.energy[C.pos].pos, dur, { x = 8 }):ease("backout")
 	flux.to(self.entities.settings[C.pos].pos, dur, { x = screen.x - 8 }):ease("backout")
 	flux.to(self.entities.home[C.pos].pos, dur, { x = screen.x - 104 }):ease("backout")
@@ -275,6 +288,23 @@ function Lobby:draw()
 	end
 end
 
+function Lobby:buy(e, id, price)
+	if data.data.coins >= price then
+		soundManager:send("buy")
+		data.data.coins = data.data.coins - price
+		data.data.skills[id] = true
+		e[C.state].isDisabled = true
+		self.entities.coins[C.text].text = data.data.coins
+	else
+		soundManager:send("lock")
+	end
+end
+
+function Lobby:addCoin(inc)
+	data.data.coins = data.data.coins + inc
+	self.entities.coins[C.text].text = data.data.coins
+end
+
 function Lobby:touchpressed(id, tx, ty, dx, dy, pressure)
 	self.instance:emit("touchpressed", id, tx, ty, dx, dy, pressure)
 end
@@ -287,6 +317,7 @@ end
 
 function Lobby:exit()
 	if self.instance then self.instance:clear() end
+	self.bgm:stop()
 end
 
 return Lobby

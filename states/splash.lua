@@ -38,6 +38,7 @@ function Splash:init()
 		fonts = {
 			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
 			{ id = "bmdelico", path = "assets/fonts/bmdelico.ttf", sizes = { 18, 24, 32, 42 } },
+			{ id = "trashhand", path = "assets/fonts/trashhand.ttf", sizes = {18, 28, 32, 36, 42, 48} },
 		}
 	}
 	assets:getMusic(self.assets)

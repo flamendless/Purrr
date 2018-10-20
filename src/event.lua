@@ -3,6 +3,7 @@ local C = require("ecs.components")
 
 local transition = require("src.transition")
 local resourceManager = require("src.resource_manager")
+local soundManager = require("src.sound_manager")
 local gamestate = require("src.gamestate")
 local colors = require("src.colors")
 local screen = require("src.screen")
@@ -31,11 +32,16 @@ function Event:setup()
 		cancel_hovered = resourceManager:getImage("button_cancel_hovered"),
 		back = resourceManager:getImage("button_back"),
 		back_hovered = resourceManager:getImage("button_back_hovered"),
+		items_base = resourceManager:getImage("items_base"),
+		items_base_hovered = resourceManager:getImage("items_base_hovered"),
 	}
+
 	self.fonts = {
 		title = resourceManager:getFont("upheaval_42"),
-		content = resourceManager:getFont("upheaval_36")
+		content = resourceManager:getFont("upheaval_36"),
+		items = resourceManager:getFont("trashhand_32")
 	}
+
 	self.settings = {
 		resourceManager:getImage("window_settings1"),
 		resourceManager:getImage("window_settings2"),
@@ -53,19 +59,11 @@ function Event:showStore()
 			spr_window = spr_window,
 			str_title = "STORE",
 			font_title = self.fonts.title,
-			button1 = {
-				disabled = true,
-				id = "Accept",
-				normal = self.images.accept,
-				hovered = self.images.accept_hovered,
-				onClick = function()
-				end
-			},
 
-			button2 = {
-				id = "Cancel",
-				normal = self.images.cancel,
-				hovered = self.images.cancel_hovered,
+			middleButton = {
+				id = "Back",
+				normal = self.images.back,
+				hovered = self.images.back_hovered,
 				onClick = function()
 					window:close()
 				end
@@ -73,25 +71,35 @@ function Event:showStore()
 
 			insideButton = {
 				id = "item_walk",
-				normal = self.items.walk,
-				hovered = self.items.walk_hovered,
+				normal = self.images.items_base,
+				hovered = self.images.items_base_hovered,
+				text = "WALK pp1000",
+				font = self.fonts.items,
+				color = colors("white"),
 				onClick = function(system, e)
+					gamestate:getCurrent():buy(e, "walk", 1000)
 				end
 			},
 
 			insideButton2 = {
 				id = "item_jump",
-				normal = self.items.jump,
-				hovered = self.items.run_hovered,
+				normal = self.images.items_base,
+				hovered = self.images.items_base_hovered,
+				text = "JUMP pp2000",
+				font = self.fonts.items,
 				onClick = function(system, e)
+					gamestate:getCurrent():buy(e, "jump", 2000)
 				end
 			},
 
 			insideButton3 = {
 				id = "item_attack",
-				normal = self.items.attack,
-				hovered = self.items.attack_hovered,
+				text = "ATTACK pp3000",
+				font = self.fonts.items,
+				normal = self.images.items_base,
+				hovered = self.images.items_base_hovered,
 				onClick = function(system, e)
+					gamestate:getCurrent():buy(e, "attack", 3000)
 				end
 			},
 		})

@@ -24,6 +24,12 @@ function Data:init()
 		self.data.volume = 1
 		self.data.world = "mars"
 		self.data.level = 1
+		self.data.coins = 500
+		self.data.skills = {
+			walk = false,
+			jump = false,
+			attack = false,
+		}
 		self.data.locked = {
 			mars = false,
 			underground = true,

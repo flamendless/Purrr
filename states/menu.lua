@@ -42,6 +42,8 @@ function Menu:init()
 			{ id = "button_back_hovered", path = "assets/gui/button_back_hovered.png" },
 			{ id = "button_cancel", path = "assets/gui/button_cancel.png" },
 			{ id = "button_cancel_hovered", path = "assets/gui/button_cancel_hovered.png" },
+			{ id = "items_base", path = "assets/gui/items_base.png" },
+			{ id = "items_base_hovered", path = "assets/gui/items_base_hovered.png" },
 		},
 		fonts = {
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },

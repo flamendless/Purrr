@@ -13,7 +13,7 @@ local resourceManager = require("src.resource_manager")
 local screen = require("src.screen")
 local colors = require("src.colors")
 
-local dur = 2
+local dur = 1.5
 if __debug then dur = 0.25 end
 
 function Preload:init()
