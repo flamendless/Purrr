@@ -69,6 +69,9 @@ function Menu:enter(previous, ...)
 	event:setup()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
+	self.bgm = resourceManager:getSource("bgm_main_menu")
+	self.bgm:setLooping(true)
+	self.bgm:play()
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -195,6 +198,7 @@ end
 
 function Menu:exit()
 	self.instance:clear()
+	if self.bgm then self.bgm:stop() end
 end
 
 return Menu

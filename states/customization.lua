@@ -86,6 +86,9 @@ function Customization:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
 	self.instance = ecs.instance()
+	self.bgm = resourceManager:getSource("bgm_customization")
+	self.bgm:setLooping(true)
+	self.bgm:play()
 	self:setupSystems()
 	self:setupEntities()
 	self:start()
@@ -293,6 +296,7 @@ function Customization:exit()
 	if self.instance then
 		self.instance:clear()
 	end
+	if self.bgm then self.bgm:stop() end
 	data.data.customization = false
 	data.data.new_game = false
 	data.data.got_name = true

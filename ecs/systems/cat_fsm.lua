@@ -46,10 +46,15 @@ function CatFSM:init(event)
 			else
 				self:changeState(next_state)
 			end
+			local chance = lume.weightedchoice({ purrr = 30, no = 70 })
+			if chance == "purrr" then
+				soundManager:send("catPurrr")
+			end
 		end)
 	end
 	_data.onComplete.mouth = _data.onComplete.blink
-	_data.onComplete.sleep = function() self:changeState("snore") end
+	_data.onComplete.sleep = function() self:changeState("snore") soundManager:send("catSnore") end
+	_data.onComplete.snore = function() soundManager:send("catStopSnore") end
 	_data.onComplete.heart = function(e)
 		heart_count = heart_count - 1
 		if heart_count <= 0 then

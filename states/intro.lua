@@ -32,6 +32,9 @@ function Intro:enter(previous, ...)
 	self.images = {
 		spritesheet = resourceManager:getImage("spritesheet")
 	}
+	self.bgm = resourceManager:getSource("bgm_intro")
+	self.bgm:setLooping(true)
+	self.bgm:play()
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -84,6 +87,7 @@ function Intro:exit()
 	if self.instance then
 		self.instance:clear()
 	end
+	if self.bgm then self.bgm:stop() end
 end
 
 return Intro

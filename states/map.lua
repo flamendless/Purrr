@@ -75,6 +75,10 @@ end
 function Map:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
+	local r = math.random(1, 2)
+	self.bgm = resourceManager:getSource("bgm_map" .. r)
+	self.bgm:setLooping(true)
+	self.bgm:play()
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -330,7 +334,7 @@ function Map:back()
 end
 
 function Map:onClick(msg)
-	print(msg)
+	event:showLock("It's unavailable for now. The developer will update content as soon as possible. For now just enjoy the cuteness.")
 end
 
 function Map:keypressed(key)
@@ -341,6 +345,7 @@ end
 
 function Map:exit()
 	if self.instance then self.instance:clear() end
+	if self.bgm then self.bgm:stop() end
 end
 
 return Map

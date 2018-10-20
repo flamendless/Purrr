@@ -223,7 +223,7 @@ function Event:showSettings()
 		})
 end
 
-function Event:showLock()
+function Event:showLock(msg)
 	if opened_id then return end
 	opened_id = "Window_ShowLock"
 	local spr_window = lume.randomchoice(self.windows)
@@ -233,7 +233,7 @@ function Event:showLock()
 			spr_window = spr_window,
 			str_title = "ALERT!",
 			font_title = self.fonts.title,
-			str_content = "This palette is unavailable due to only one week of development. It will be available soon!",
+			str_content = msg or "This palette is unavailable due to only one week of development. It will be available soon!",
 			font_content = self.fonts.content,
 
 			button1 = {

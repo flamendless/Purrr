@@ -11,6 +11,9 @@ function SoundManager:check()
 	if not self.sfx_page_turn then self.sfx_page_turn = resourceManager:getSource("sfx_page_turn") end
 	if not self.sfx_transition then self.sfx_transition = resourceManager:getSource("sfx_transition") end
 	if not self.sfx_buy then self.sfx_buy = resourceManager:getSource("sfx_buy") end
+	if not self.cat_snore then self.cat_snore = resourceManager:getSource("cat_snore") end
+	if not self.cat_purrr then self.cat_purrr = resourceManager:getSource("cat_purrr") end
+
 	if not self.clicks then
 		self.clicks = {
 			resourceManager:getSource("sfx_click1"),
@@ -59,6 +62,13 @@ function SoundManager:send(event)
 		local r = math.random(50, 100)/100
 		self.coin:setVolume(r)
 		self.coin:play()
+	elseif event == "catSnore" then
+		self.cat_snore:setLooping(true)
+		self.cat_snore:play()
+	elseif event == "catPurrr" then
+		self.cat_purrr:play()
+	elseif event == "catStopSnore" then
+		if self.cat_snore then self.cat_snore:stop() end
 	end
 end
 

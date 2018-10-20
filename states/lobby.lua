@@ -92,7 +92,9 @@ function Lobby:enter(previous, ...)
 	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	self.bgm = resourceManager:getSource("bgm_lobby")
+	local r = math.random(1, 2)
+	self.bgm = resourceManager:getSource("bgm_lobby" .. r)
+	self.bgm:setLooping(true)
 	self.bgm:play()
 	self:setupSystems()
 	self:setupEntities()
@@ -317,7 +319,7 @@ end
 
 function Lobby:exit()
 	if self.instance then self.instance:clear() end
-	self.bgm:stop()
+	if self.bgm then self.bgm:stop() end
 end
 
 return Lobby

@@ -1,5 +1,5 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
-__debug = true
+-- __debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1

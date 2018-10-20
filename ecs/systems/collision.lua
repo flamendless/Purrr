@@ -213,6 +213,7 @@ function Collision:checkPoint(dt)
 end
 
 function Collision:draw()
+	if not __debug then return end
 	if not debugging.modes.collisions then return end
 	for _,e in ipairs(self.sprite) do
 		local c_collider = e[C.colliderSprite]
