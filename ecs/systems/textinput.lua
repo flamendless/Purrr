@@ -11,7 +11,7 @@ local TextInput = System({
 
 local _erased
 local text
-local maxLength = 12
+local maxLength = 9
 local sec = 1
 local amount = 1
 local dir = -1

@@ -19,6 +19,7 @@ function Data:init()
 		self.data.customization = true
 		self.data.cat_name = "ponkan"
 		self.data.palette = "source"
+		self.data.energy = "full"
 	end
 end
 

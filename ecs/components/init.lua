@@ -44,6 +44,7 @@ local Components = {
 	tag = req("tag"),
 	state = req("state"),
 	textinput = req("textinput"),
+	onClick = req("onClick"),
 }
 
 return Components

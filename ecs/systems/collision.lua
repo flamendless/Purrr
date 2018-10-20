@@ -33,6 +33,8 @@ function Collision:entityAddedTo(e, pool)
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
+			elseif c_transform.orig_ox == "right" then
+				x = x - w
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2
@@ -99,6 +101,8 @@ function Collision:updatePosition()
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
+			elseif c_transform.orig_ox == "right" then
+				x = x - w
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2
@@ -119,6 +123,8 @@ function Collision:updatePosition()
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
+			elseif c_transform.orig_ox == "right" then
+				x = x - w
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2

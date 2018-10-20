@@ -85,8 +85,12 @@ function GUI:onClick()
 				if bool then
 					c_state.isClicked = true
 					log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
-					if c_button.args and c_button.args.onClick then
-						c_button.args.onClick(self)
+					if e:has(C.onClick) then
+						e[C.onClick].onClick(self)
+					else
+						if c_button.args and c_button.args.onClick then
+							c_button.args.onClick(self)
+						end
 					end
 				end
 			end

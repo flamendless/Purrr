@@ -82,6 +82,7 @@ function CatFSM:entityAdded(e)
 		:apply()
 
 	timer.after(5, function()
+		if e[C.fsm].current_state == "heart" or e[C.fsm].current_state == "spin" then return end
 		self:changeState("sleep")
 	end)
 end
@@ -129,8 +130,8 @@ function CatFSM:update(dt)
 		local c_state = e[C.state]
 		if c_collider.isColliding and not c_state.isClicked then
 			local bool
-			if love.system.getOS() == "Android" then bool = love.mouse.isDown(1)
-			else bool = touch:getTouch()
+			if love.system.getOS() == "Android" then bool = touch:getTouch()
+			else bool = love.mouse.isDown(1)
 			end
 			if bool then
 				c_state.isClicked = true
@@ -151,11 +152,25 @@ end
 
 function CatFSM:onEnter(e)
 	if e:has(C.cat) then
+		if e[C.fsm].current_state == "heart" then
+		elseif e[C.fsm].current_state == "hurt" then
+		elseif e[C.fsm].current_state == "spin" then
+		elseif e[C.fsm].current_state == "snore" then
+		else
+			self:changeState("blink")
+		end
 	end
 end
 
 function CatFSM:onExit(e)
 	if e:has(C.cat) then
+		if e[C.fsm].current_state == "heart" then
+		elseif e[C.fsm].current_state == "hurt" then
+		elseif e[C.fsm].current_state == "spin" then
+		elseif e[C.fsm].current_state == "snore" then
+		else
+			self:changeState("mouth")
+		end
 	end
 end
 
