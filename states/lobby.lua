@@ -25,6 +25,7 @@ function Lobby:init()
 	local buttons = {"bag","play","store","home","settings","mute","volume","cat","star","twitter"}
 	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
 	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
+	local items = {"walk","jump","attack"}
 	self.assets = {
 		images = {
 			{ id = "btn_back", path = "assets/gui/button_back.png" },
@@ -80,7 +81,15 @@ function Lobby:init()
 	for i = 1, 4 do
 		local id = "window_settings" .. i
 		local path = "assets/gui/" .. id .. ".png"
-			table.insert(self.assets.images, { id = id, path = path })
+		table.insert(self.assets.images, { id = id, path = path })
+	end
+	for i, item in ipairs(items) do
+		local id = "item_" .. item
+		local id_hovered = id .. "_hovered"
+		local path = "assets/gui/" .. id .. ".png"
+		local path_hovered = "assets/gui/" .. id_hovered .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+		table.insert(self.assets.images, { id = id_hovered, path = path_hovered })
 	end
 end
 
@@ -153,6 +162,9 @@ function Lobby:setupEntities()
 	self.entities.store = E.lobby_buttons(ecs.entity(), "store", "store")
 		:give(C.follow, self.entities.window)
 		:give(C.offsetPos, vec2(-window_width/3.5, -window_height/2))
+		:give(C.onClick, function(e)
+				event:showStore()
+			end)
 		:apply()
 
 	self.entities.play = E.lobby_buttons(ecs.entity(), "play", "play")

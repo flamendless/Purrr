@@ -74,6 +74,10 @@ function Window:load(args)
 	end
 
 	if args.button1 then
+		local btn1_sx = 2
+		local btn1_sy = 2
+		if args.button1.scalex then btn1_sx = args.button1.scalex end
+		if args.button1.scaley then btn1_sy = args.button1.scaley end
 		self.entities.btn1 = ecs.entity()
 			:give(C.button, args.button1.id or "button1",
 				{
@@ -87,9 +91,9 @@ function Window:load(args)
 					onClick = args.button1.onClick,
 				})
 			:give(C.color, colors("white"))
-			:give(C.transform, 0, 2, 2, "center", "center")
+			:give(C.transform, 0, btn1_sx, btn1_sy, "center", "center")
 			:give(C.pos, vec2())
-			:give(C.maxScale, 2.25, 2.25)
+			:give(C.maxScale, btn1_sx + 0.25, btn1_sy + 0.25)
 			:give(C.windowIndex, __window)
 			:give(C.follow, self.entities.main_window)
 			:give(C.offsetPos, vec2(args.spr_window:getWidth() * sx/4, 256))

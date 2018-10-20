@@ -18,6 +18,60 @@ function Event:init()
 	}
 end
 
+function Event:showStore()
+	if not self:checkAssets() then return end
+	opened_id = "Window_ShowStore"
+	local spr_window = lume.randomchoice(self.gui)
+	local window = require("ecs.instances.window")
+	gamestate:addInstance( "Window_ShowStore", window,
+		{
+			spr_window = spr_window,
+			str_title = "STORE",
+			font_title = self.fonts.title,
+			button1 = {
+				disabled = true,
+				id = "Accept",
+				normal = self.images.accept,
+				hovered = self.images.accept_hovered,
+				onClick = function()
+				end
+			},
+
+			button2 = {
+				id = "Cancel",
+				normal = self.images.cancel,
+				hovered = self.images.cancel_hovered,
+				onClick = function()
+					window:close()
+				end
+			},
+
+			insideButton = {
+				id = "item_walk",
+				normal = self.items.walk,
+				hovered = self.items.walk_hovered,
+				onClick = function(system, e)
+				end
+			},
+
+			insideButton2 = {
+				id = "item_jump",
+				normal = self.items.jump,
+				hovered = self.items.run_hovered,
+				onClick = function(system, e)
+				end
+			},
+
+			insideButton3 = {
+				id = "item_attack",
+				normal = self.items.attack,
+				hovered = self.items.attack_hovered,
+				onClick = function(system, e)
+				end
+			},
+		})
+end
+
 function Event:showCatInfo()
 	if not self:checkAssets() then return end
 	opened_id = "Window_ShowCatInfo"
@@ -279,6 +333,7 @@ function Event:checkAssets()
 				self.settings[i] = resourceManager:getImage("window_settings" .. i)
 			end
 		end
+
 		if not self.images then
 			self.images = {
 				accept = resourceManager:getImage("btn_accept"),
@@ -289,6 +344,18 @@ function Event:checkAssets()
 				cancel_hovered = resourceManager:getImage("btn_cancel_hovered"),
 			}
 		end
+
+		if not self.items then
+			self.items = {
+				walk = resourceManager:getImage("item_walk"),
+				walk_hovered = resourceManager:getImage("item_walk_hovered"),
+				jump = resourceManager:getImage("item_jump"),
+				jump_hovered = resourceManager:getImage("item_jump_hovered"),
+				attack = resourceManager:getImage("item_attack"),
+				attack_hovered = resourceManager:getImage("item_attack_hovered"),
+			}
+		end
+
 		if not self.fonts then
 			self.fonts = {
 				title = resourceManager:getFont("upheaval_42"),
