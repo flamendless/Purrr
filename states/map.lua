@@ -25,8 +25,10 @@ local max_view = 4
 local current_view = 1
 
 function Map:init()
-	local maps = {"mars","underground","space"}
+	local maps = {"mars","underground","space","earth"}
 	local displays = {"mars","caverns","space","earth"}
+	local palettes = {"source", "softmilk", "blue", "green", "grayscale"}
+	local states = {"attack","blink","dizzy","heart","hurt","mouth","sleep","snore","spin"}
 	self.assets = {
 		images = {
 			{ id = "display_lobby", path = "assets/images/display_lobby.png" },
@@ -66,6 +68,18 @@ function Map:init()
 		local path = "assets/images/" .. id .. ".png"
 		table.insert(self.assets.images, { id = id, path = path })
 	end
+	for i, state in ipairs(states) do
+		local id = "sheet_cat_" .. state
+		local path = "assets/anim/cat_" .. state .. ".png"
+		table.insert(self.assets.images, { id = id, path = path })
+	end
+	for _, palette in ipairs(palettes) do
+		for _, state in ipairs(states) do
+			local id = ("pal_%s_%s"):format(state, palette)
+			local path = ("assets/palettes/%s/%s.png"):format(palette, state)
+			table.insert(self.assets.images, { id = id, path = path })
+		end
+	end
 end
 
 function Map:enter(previous, ...)
@@ -85,7 +99,7 @@ function Map:setupSystems()
 		renderer = S.renderer(),
 		transform = S.transform(),
 		animation = S.animation(),
-		cat_fsm = S.cat_fsm("lobby"),
+		cat_fsm = S.cat_fsm("map"),
 		moveTo = S.moveTo(),
 		patrol = S.patrol(),
 		follow = S.follow(),
@@ -150,7 +164,7 @@ function Map:setupEntities()
 		vec2(screen.x * 0.75, screen.y * 0.65),
 		vec2(screen.x * 0.5, screen.y * 0.85)
 	}
-	for i = 1, 5 do 
+	for i = 1, 5 do
 		local img_level, img_level_hovered
 		if i == current_level then
 			img_level = self.images.level_current
@@ -237,6 +251,16 @@ function Map:setupEntities()
 			:apply()
 	end
 
+	local cat_pos = pos[current_level]
+	self.entities.cat = ecs.entity()
+		:give(C.tag, "cat")
+		:give(C.cat)
+		:give(C.fsm, "random", { "attack", "blink", "dizzy", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
+		:give(C.color, colors("white"))
+		:give(C.pos, vec2(cat_pos.x, cat_pos.y - 64))
+		:give(C.transform, 0, 1, 1, "center", "center")
+		:apply()
+
 	self.instance:addEntity(self.entities.map)
 	self.instance:addEntity(self.entities.display)
 	if self.entities.lock then self.instance:addEntity(self.entities.lock)
@@ -246,6 +270,7 @@ function Map:setupEntities()
 		self.instance:addEntity(self.entities.level3)
 		self.instance:addEntity(self.entities.level4)
 		self.instance:addEntity(self.entities.level5)
+		self.instance:addEntity(self.entities.cat)
 	end
 	if self.entities.forward then self.instance:addEntity(self.entities.forward) end
 	if self.entities.back then self.instance:addEntity(self.entities.back) end

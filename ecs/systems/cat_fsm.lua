@@ -22,7 +22,8 @@ local shaders_palette
 local max_heart_count = 3
 local heart_count = 3
 
-function CatFSM:init()
+function CatFSM:init(event)
+	self.event = event
 	shaders_palette = love.graphics.newShader("shaders/palette_swap.glsl")
 	_data.speed = { blink = 0.5, heart = 0.75, hurt = 0.4, mouth = 0.5, sleep = 0.5, snore = 0.8, spin = 2 }
 
@@ -58,6 +59,15 @@ function CatFSM:init()
 		local c_anim = e[C.anim].anim
 		c_anim:setFrame(4)
 	end
+
+	if self.event == "map" then
+		local fn_random = function(e)
+			self:randomState(e)
+		end
+		for k,v in pairs(_data.onComplete) do
+			_data.onComplete[k] = fn_random
+		end
+	end
 end
 
 function CatFSM:entityAdded(e)
@@ -70,7 +80,11 @@ function CatFSM:entityAdded(e)
 	end
 
 	current_pal = _palettes[cur_pal]
-	self:changeState(state)
+	if state == "random" then
+		self:randomState(e)
+	else
+		self:changeState(state)
+	end
 
 	if data.data.palette then
 		current_pal = data.data.palette
@@ -85,6 +99,13 @@ function CatFSM:entityAdded(e)
 		if e[C.fsm].current_state == "heart" or e[C.fsm].current_state == "spin" then return end
 		self:changeState("sleep")
 	end)
+end
+
+function CatFSM:randomState(e)
+	local c_fsm = e[C.fsm]
+	local states = c_fsm.states
+	local r = math.random(1, #states)
+	self:changeState(states[r])
 end
 
 function CatFSM:changeState(state)
