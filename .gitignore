@@ -13,5 +13,6 @@ ctags
 gitlog.txt
 build
 backup
+Makefile
 !README.md
 !LICENSE.txt
