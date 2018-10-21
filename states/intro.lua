@@ -20,12 +20,6 @@ local resourceManager = require("src.resource_manager")
 local next_state = require("states.customization")
 
 function Intro:init()
-	self.assets = {
-		images = {
-			{ id = "spritesheet", path = "assets/anim/space.png" }
-		}
-	}
-	self.colors = {}
 end
 
 function Intro:enter(previous, ...)

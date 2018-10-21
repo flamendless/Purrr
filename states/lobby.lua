@@ -31,15 +31,6 @@ local buttons = {"bag","play","store","home","settings","mute","volume","cat","s
 function Lobby:init()
 	self.assets = {
 		images = {
-			{ id = "window_red", path = "assets/gui/window_red.png" },
-			{ id = "window_green", path = "assets/gui/window_green.png" },
-			{ id = "window_blue", path = "assets/gui/window_blue.png" },
-			{ id = "energy_full", path = "assets/gui/energy_full.png" },
-			{ id = "energy_half", path = "assets/gui/energy_half.png" },
-			{ id = "energy_empty", path = "assets/gui/energy_empty.png" },
-			{ id = "window", path = "assets/gui/window.png" },
-			{ id = "display_lobby", path = "assets/images/display_lobby.png" },
-			{ id = "name", path = "assets/gui/name.png" },
 		},
 		sources = {
 			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },

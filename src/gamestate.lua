@@ -8,6 +8,7 @@ local Gamestate = {
 
 local log = require("modules.log.log")
 local preload = require("src.preload")
+local assets = require("src.assets")
 
 function Gamestate:addInstance(id, instance, ...)
 	instance.id = id
@@ -53,12 +54,17 @@ end
 
 function Gamestate:init()
 	if self.__current and self.__current.init then
-		self.__current:init()
-		if self.__current.assets then
-			log.trace("Preload started!")
-			preload:check(self.__current.assets)
+		log.trace("Preload started!")
+		local a = assets:load(self.__current.__id)
+		if a then
+			preload:check(a)
 			self.isPreloading = true
 		end
+		self.__current:init()
+		-- if self.__current.assets then
+		-- 	preload:check(self.__current.assets)
+		-- 	self.isPreloading = true
+		-- end
 	end
 end
 

@@ -1,5 +1,5 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
--- __debug = true
+__debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1
@@ -17,6 +17,7 @@ local flux = require("modules.flux.flux")
 local coil = require("modules.coil.coil")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
+local assets = require("src.assets")
 local data = require("src.data")
 local time = require("src.time")
 local gamestate = require("src.gamestate")
