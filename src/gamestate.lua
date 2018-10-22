@@ -10,6 +10,7 @@ local log = require("modules.log.log")
 local preload = require("src.preload")
 local assets = require("src.assets")
 local soundManager = require("src.sound_manager")
+local bgm = require("src.bgm")
 
 function Gamestate:addInstance(id, instance, ...)
 	instance.id = id
@@ -64,7 +65,7 @@ end
 
 function Gamestate:enter(previous, ...)
 	log.trace(("State %s Entered!"):format(self.__current.__id))
-	soundManager:setBGM(self.__current, previous)
+	bgm:set(self.__current, previous)
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
 end
@@ -105,6 +106,9 @@ function Gamestate:keypressed(key)
 		if v.keypressed then
 			v:keypressed(key)
 		end
+	end
+	if key == "space" then
+		bgm:skip()
 	end
 end
 
@@ -189,6 +193,7 @@ function Gamestate:exit()
 	if self.__current and self.__current.exit then
 		self.__current:exit()
 	end
+	bgm:reset()
 end
 
 function Gamestate:getCurrent() return self.__current end

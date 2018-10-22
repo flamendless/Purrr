@@ -28,6 +28,7 @@ local transition = require("src.transition")
 local event = require("src.event")
 local touch = require("src.touch")
 local soundManager = require("src.sound_manager")
+local bgm = require("src.bgm")
 
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 print(("Device: %s x %s"):format(love.graphics.getDimensions()))
@@ -59,7 +60,7 @@ function love.update(dt)
 	time:update(dt)
 	touch:update(dt)
 	preload:update(dt)
-	soundManager:updateBGM()
+	bgm:update()
 	gamestate:update(dt)
 end
 

@@ -61,7 +61,7 @@ function states.menu()
 		},
 		sources = {
 			{ id = "bgm_menu", path = "assets/sounds/bgm/menu.ogg", kind = "stream" },
-			{ id = "bgm_main_menu", path = "assets/sounds/bgm/main_menu.ogg", kind = "stream" },
+			{ id = "bgm_menu", path = "assets/sounds/bgm/menu.ogg", kind = "stream" },
 		},
 		fonts = {
 			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
