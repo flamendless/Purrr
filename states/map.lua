@@ -22,63 +22,12 @@ local soundManager = require("src.sound_manager")
 local event = require("src.event")
 local assets = require("src.assets")
 
-local maps = {"mars","underground","space","earth"}
-local displays = {"mars","caverns","space","earth"}
-local bg = {}
 local max_view = 4
-local maxPatterns = 9
 local current_view = 1
-
-function Map:init()
-	self.assets = {
-		images = {
-			{ id = "window_red", path = "assets/gui/window_red.png" },
-			{ id = "window_green", path = "assets/gui/window_green.png" },
-			{ id = "window_blue", path = "assets/gui/window_blue.png" },
-			{ id = "display_lobby", path = "assets/images/display_lobby.png" },
-			{ id = "level_complete", path = "assets/images/level_complete.png" },
-			{ id = "level_complete_hovered", path = "assets/images/level_complete_hovered.png" },
-			{ id = "level_not", path = "assets/images/level_not.png" },
-			{ id = "level_not_hovered", path = "assets/images/level_not_hovered.png" },
-			{ id = "level_current", path = "assets/images/level_current.png" },
-			{ id = "level_current_hovered", path = "assets/images/level_current_hovered.png" },
-			{ id = "btn_forward", path = "assets/gui/button_forward.png" },
-			{ id = "btn_forward_hovered", path = "assets/gui/button_forward_hovered.png" },
-			{ id = "btn_back", path = "assets/gui/button_back.png" },
-			{ id = "btn_back_hovered", path = "assets/gui/button_back_hovered.png" },
-			{ id = "lock", path = "assets/images/lock.png" },
-		},
-		sources = {
-			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
-		},
-		fonts = {
-			{ id = "header", path = "assets/fonts/upheavalpro.ttf", sizes = { 32, 36, 42, 48 } },
-			{ id = "buttons", path = "assets/fonts/futurehandwritten.ttf", sizes = { 24, 30, 32, 36, 42, 48 } },
-			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42, 48} },
-			{ id = "level", path = "assets/fonts/trashhand.ttf", sizes = {18, 28, 32, 36, 42, 48} },
-		}
-	}
-	for i,map in ipairs(maps) do
-		local id = "map_" .. map
-		local path = "assets/images/" .. id .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-
-	for i,display in ipairs(displays) do
-		local id = "display_" .. display
-		local path = "assets/images/" .. id .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-
-end
 
 function Map:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	local r = math.random(1, 2)
-	self.bgm = resourceManager:getSource("bgm_map" .. r)
-	self.bgm:setLooping(true)
-	self.bgm:play()
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -286,10 +235,6 @@ function Map:setupEntities()
 end
 
 function Map:start()
-	local r = math.random(1, maxPatterns)
-	bg.image = self.images["pattern" .. r]
-	bg.sx = screen.x/bg.image:getWidth()
-	bg.sy = screen.y/bg.image:getHeight()
 	local dur = 1
 	if self.entities.back then flux.to(self.entities.back[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout") end
 	if self.entities.forward then flux.to(self.entities.forward[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout") end
@@ -303,8 +248,6 @@ function Map:update(dt)
 end
 
 function Map:draw()
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
 	if not (__window == 1) then
 		event:drawCover()
@@ -345,7 +288,6 @@ end
 
 function Map:exit()
 	if self.instance then self.instance:clear() end
-	if self.bgm then self.bgm:stop() end
 end
 
 return Map

@@ -1,6 +1,7 @@
 local Data = {}
 local serialize = require("modules.knife.knife.serialize")
 local log = require("modules.log.log")
+local semver = require("modules.semver.semver")
 
 local file_save = "save.lua"
 local dir_save = love.filesystem.getSaveDirectory() .. "/"
@@ -9,12 +10,17 @@ local stripExtension = function(str)
 	return str:match("(.+)%..+")
 end
 
+local convert = function(t)
+	return ("%s.%s.%s"):format(t.major, t.minor, t.patch)
+end
+
 function Data:init()
 	self.data = {}
 	if love.filesystem.getInfo(file_save) then
 		self.data = require(stripExtension(file_save))
 		log.trace("File Loaded!")
 	else
+		self.data.version = __version
 		self.data.new_game = true
 		self.data.customization = true
 		self.data.cat_name = "ponkan"
@@ -40,6 +46,14 @@ function Data:init()
 	self.dev = {}
 	self.dev.twitter = "https://twitter.com/flamendless"
 	self.dev.playstore = "https://twitter.com/flamendless"
+
+	self:check()
+end
+
+function Data:check()
+	-- if not (data.data.version == __version) then
+		log.trace(("Game Version: %s : Save Version: %s"):format(__version, convert(self.data.version)))
+	-- end
 end
 
 function Data:save()

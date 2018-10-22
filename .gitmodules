@@ -44,3 +44,6 @@
 [submodule "modules/knife"]
 	path = modules/knife
 	url = git@github.com:airstruck/knife.git
+[submodule "modules/semver"]
+	path = modules/semver
+	url = git@github.com:kikito/semver.lua.git

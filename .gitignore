@@ -6,6 +6,7 @@
 *.zip
 *.love
 *.code-workspace
+*.vscode
 assets/palettes/main.lua
 res
 test

@@ -8,6 +8,8 @@ local Gamestate = {
 
 local log = require("modules.log.log")
 local preload = require("src.preload")
+local assets = require("src.assets")
+local soundManager = require("src.sound_manager")
 
 function Gamestate:addInstance(id, instance, ...)
 	instance.id = id
@@ -36,7 +38,7 @@ end
 function Gamestate:start(state)
 	assert(state, "State must be passed")
 	self.__current = state
-	self:init()
+	self:preload()
 end
 
 function Gamestate:switch(state, ...)
@@ -44,26 +46,25 @@ function Gamestate:switch(state, ...)
 	self.__previous = self.__current
 	self.__current = state
 	self.__args = { ... }
-	self:init()
+	self:preload()
 end
 
 function Gamestate:reload()
 	self:switch(self.__current)
 end
 
-function Gamestate:init()
-	if self.__current and self.__current.init then
-		self.__current:init()
-		if self.__current.assets then
-			log.trace("Preload started!")
-			preload:check(self.__current.assets)
-			self.isPreloading = true
-		end
+function Gamestate:preload()
+	log.trace("Preload started!")
+	local a = assets:load(self.__current.__id)
+	if a then
+		preload:check(a)
+		self.isPreloading = true
 	end
 end
 
 function Gamestate:enter(previous, ...)
 	log.trace(("State %s Entered!"):format(self.__current.__id))
+	soundManager:setBGM(self.__current, previous)
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
 end

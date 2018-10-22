@@ -1,8 +1,9 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
--- __debug = true
+__debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1
+__version = require("modules.semver.semver")(0,1,0)
 
 local debugging
 if __debug then
@@ -17,6 +18,7 @@ local flux = require("modules.flux.flux")
 local coil = require("modules.coil.coil")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
+local assets = require("src.assets")
 local data = require("src.data")
 local time = require("src.time")
 local gamestate = require("src.gamestate")
@@ -25,6 +27,7 @@ local preload = require("src.preload")
 local transition = require("src.transition")
 local event = require("src.event")
 local touch = require("src.touch")
+local soundManager = require("src.sound_manager")
 
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 print(("Device: %s x %s"):format(love.graphics.getDimensions()))
@@ -56,6 +59,7 @@ function love.update(dt)
 	time:update(dt)
 	touch:update(dt)
 	preload:update(dt)
+	soundManager:updateBGM()
 	gamestate:update(dt)
 end
 

@@ -23,55 +23,11 @@ local assets = require("src.assets")
 local next_state
 local bg = {}
 
-function Menu:init()
-	self.assets = {
-		images = {
-			{ id = "title", path = "assets/images/title.png" },
-			{ id = "bg_space", path = "assets/images/title_space.png" },
-			{ id = "bg", path = "assets/images/bg.png" },
-			{ id = "btn_play", path = "assets/gui/play.png" },
-			{ id = "btn_play_hovered", path = "assets/gui/play_hovered.png" },
-			{ id = "btn_leave", path = "assets/gui/leave.png" },
-			{ id = "btn_leave_hovered", path = "assets/gui/leave_hovered.png" },
-			{ id = "window_red", path = "assets/gui/window_red.png" },
-			{ id = "window_green", path = "assets/gui/window_green.png" },
-			{ id = "window_blue", path = "assets/gui/window_blue.png" },
-			{ id = "button_accept", path = "assets/gui/button_accept.png" },
-			{ id = "button_accept_hovered", path = "assets/gui/button_accept_hovered.png" },
-			{ id = "button_back", path = "assets/gui/button_back.png" },
-			{ id = "button_back_hovered", path = "assets/gui/button_back_hovered.png" },
-			{ id = "button_cancel", path = "assets/gui/button_cancel.png" },
-			{ id = "button_cancel_hovered", path = "assets/gui/button_cancel_hovered.png" },
-			{ id = "items_base", path = "assets/gui/items_base.png" },
-			{ id = "items_base_hovered", path = "assets/gui/items_base_hovered.png" },
-		},
-		fonts = {
-			{ id = "upheaval", path = "assets/fonts/upheavalpro.ttf", sizes = {18, 28, 32, 36, 42} },
-		},
-		sources = {
-			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
-		}
-	}
-	for i = 1, 4 do
-		local id = "window_settings" .. i
-		local path = "assets/gui/" .. id .. ".png"
-		table.insert(self.assets.images, { id = id, path = path })
-	end
-
-	assets:getMusic(self.assets)
-
-	self.colors = {
-		bg = colors("flat", "black", "dark"),
-	}
-end
-
 function Menu:enter(previous, ...)
 	event:setup()
+	self.colors = { bg = colors("flat", "black", "dark") }
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	self.bgm = resourceManager:getSource("bgm_main_menu")
-	self.bgm:setLooping(true)
-	self.bgm:play()
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -197,8 +153,7 @@ function Menu:draw()
 end
 
 function Menu:exit()
-	self.instance:clear()
-	if self.bgm then self.bgm:stop() end
+	if self.instance then self.instance:clear() end
 end
 
 return Menu

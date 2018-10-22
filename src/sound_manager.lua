@@ -1,4 +1,4 @@
-local SoundManager = {}
+local SoundManager = { current = 1, queue_bgm = {} }
 local resourceManager = require("src.resource_manager")
 local data = require("src.data")
 local lume = require("modules.lume.lume")
@@ -29,6 +29,45 @@ function SoundManager:check()
 			resourceManager:getSource("sfx_coins2"),
 			resourceManager:getSource("sfx_coins3"),
 		}
+	end
+end
+
+function SoundManager:setBGM(current, previous)
+	local current_id = string.lower(current.__id)
+	local previous_id = previous and string.lower(previous.__id)
+	if current_id == "menu" then
+		self.queue_bgm[self.current] = resourceManager:getSource("bgm_menu")
+	elseif current_id == "intro" then
+		self.queue_bgm[self.current] = resourceManager:getSource("bgm_intro")
+	elseif current_id == "customization" then
+		self.queue_bgm[self.current] = resourceManager:getSource("bgm_customization")
+	elseif current_id == "lobby" then
+		local t = { resourceManager:getSource("bgm_lobby1"), resourceManager:getSource("bgm_lobby2") }
+		self.queue_bgm = { unpack(t) }
+	elseif current_id == "map" then
+	end
+
+	if self.queue_bgm[self.current] then
+		if #self.queue_bgm > 1 then
+			for i,bgm in ipairs(self.queue_bgm) do
+				bgm:setLooping(false)
+			end
+		else
+			self.queue_bgm[self.current]:setLooping(true)
+		end
+		self.queue_bgm[self.current]:play()
+	end
+end
+
+function SoundManager:updateBGM(dt)
+	if self.queue_bgm and self.queue_bgm[self.current] then
+		if not (self.queue_bgm[self.current]:isPlaying()) then
+			self.current = self.current + 1
+			if self.current > #self.queue_bgm then
+				self.current = 1
+			end
+			self.queue_bgm[self.current]:play()
+		end
 	end
 end
 

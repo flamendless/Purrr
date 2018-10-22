@@ -26,30 +26,13 @@ local next_state = require("states.menu")
 local delay = 1
 if __debug then delay = 0 end
 
-function Splash:init()
+function Splash:enter(previous, ...)
 	self.exiting = false
-	self.assets = {
-		images = {
-			{ id = "flamendless", path = "assets/anim/flamendless.png" },
-		},
-		sources = {
-			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
-		},
-		fonts = {
-			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
-			{ id = "bmdelico", path = "assets/fonts/bmdelico.ttf", sizes = { 18, 24, 32, 42 } },
-			{ id = "trashhand", path = "assets/fonts/trashhand.ttf", sizes = {18, 28, 32, 36, 42, 48} },
-		}
-	}
-	assets:getMusic(self.assets)
 	self.colors = {
 		bg = colors("black"),
 		logo = colors("white"),
 		text = colors("flat", "white", "light"),
 	}
-end
-
-function Splash:enter(previous, ...)
 	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")

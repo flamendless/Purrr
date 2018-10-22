@@ -20,21 +20,12 @@ local resourceManager = require("src.resource_manager")
 local next_state = require("states.customization")
 
 function Intro:init()
-	self.assets = {
-		images = {
-			{ id = "spritesheet", path = "assets/anim/space.png" }
-		}
-	}
-	self.colors = {}
 end
 
 function Intro:enter(previous, ...)
 	self.images = {
 		spritesheet = resourceManager:getImage("spritesheet")
 	}
-	self.bgm = resourceManager:getSource("bgm_intro")
-	self.bgm:setLooping(true)
-	self.bgm:play()
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -79,15 +70,19 @@ function Intro:update(dt)
 	self.instance:emit("update", dt)
 end
 
+function Intro:keypressed(key)
+	if __debug and key == "space" then
+		data.data.new_game = false
+		transition:start(next_state)
+	end
+end
+
 function Intro:draw()
 	self.instance:emit("draw")
 end
 
 function Intro:exit()
-	if self.instance then
-		self.instance:clear()
-	end
-	if self.bgm then self.bgm:stop() end
+	if self.instance then self.instance:clear() end
 end
 
 return Intro
