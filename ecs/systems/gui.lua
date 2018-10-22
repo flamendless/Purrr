@@ -61,6 +61,11 @@ function GUI:update(dt)
 		if not c_state.isHovered then
 			c_state.isClicked = false
 		end
+		if love.system.getOS() == "Android" then
+			if not touch:getTouch() then
+				c_state.isClicked = false
+			end
+		end
 	end
 end
 
@@ -80,7 +85,8 @@ function GUI:onClick()
 
 			if c_state.isHovered and not c_state.isClicked then
 				local bool
-				if love.system.getOS() == "Android" then bool = touch:getTouch()
+				if love.system.getOS() == "Android" then
+					bool = touch:getTouch()
 				else bool = love.mouse.isDown(1)
 				end
 				if bool then
