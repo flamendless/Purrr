@@ -11,6 +11,7 @@ local screen = require("src.screen")
 local colors = require("src.colors")
 local event = require("src.event")
 local data = require("src.data")
+local touch = require("src.touch")
 
 local Window = {}
 

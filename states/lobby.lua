@@ -243,6 +243,10 @@ function Lobby:touchpressed(id, tx, ty, dx, dy, pressure)
 	self.instance:emit("touchpressed", id, tx, ty, dx, dy, pressure)
 end
 
+function Lobby:touchreleased(id, tx, ty, dx, dy, pressure)
+	self.instance:emit("touchreleased", id, tx, ty, dx, dy, pressure)
+end
+
 function Lobby:keypressed(key)
 	if key == "escape" then
 		event:showHomeConfirmation()

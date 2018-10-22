@@ -238,6 +238,10 @@ function Customization:keypressed(key)
 	self.instance:emit("keypressed", key)
 end
 
+function Customization:touchreleased(id, tx, ty, dx, dy, pressure)
+	self.instance:emit("touchreleased", id, tx, ty, dx, dy, pressure)
+end
+
 function Customization:exit()
 	if self.instance then self.instance:clear() end
 	data.data.customization = false

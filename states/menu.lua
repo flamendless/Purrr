@@ -152,6 +152,12 @@ function Menu:draw()
 	end
 end
 
+function Menu:keypressed(key)
+	if key == "escape" then
+		event:showExitConfirmation()
+	end
+end
+
 function Menu:exit()
 	if self.instance then self.instance:clear() end
 end

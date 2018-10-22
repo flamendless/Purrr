@@ -51,9 +51,14 @@ function Data:init()
 end
 
 function Data:check()
-	-- if not (data.data.version == __version) then
-		log.trace(("Game Version: %s : Save Version: %s"):format(__version, convert(self.data.version)))
-	-- end
+	local data_version = convert(self.data.version)
+	local game_version = convert(__version)
+	log.trace(("Game Version: %s : Save Version: %s"):format(game_version, data_version))
+	if not (data_version == game_version) then
+		local success = love.filesystem.remove(file_save)
+		self.data.version = __version
+		self:save()
+	end
 end
 
 function Data:save()

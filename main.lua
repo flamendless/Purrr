@@ -1,16 +1,18 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
-__debug = true
+__debug = false
 __filter = "nearest"
 __window = 1
 __scale = 1
-__version = require("modules.semver.semver")(0,1,0)
+__version = require("modules.semver.semver")(0,1,1)
 
 local debugging
+local font = love.graphics.newFont(16)
 if __debug then
 	io.stdout:setvbuf("no")
 	debugging = require("src.debug")
 end
 
+local semver = require("modules.semver.semver")
 local log = require("modules.log.log")
 local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
@@ -71,6 +73,11 @@ function love.draw()
 	gamestate:draw()
 	transition:draw()
 	if __debug then debugging:draw() end
+	if __version < semver(1, 0, 0) then
+		love.graphics.setColor(1, 0, 0, 1)
+		love.graphics.setFont(font)
+		love.graphics.print("BETA v" .. tostring(__version))
+	end
 	love.graphics.pop()
 end
 
@@ -95,22 +102,22 @@ end
 function love.touchpressed(id, tx, ty, dx, dy, pressure)
 	local tx = tx/__scale
 	local ty = ty/__scale
-	gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
 	touch:touchpressed(id, tx, ty, dx, dy, pressure)
+	gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
 end
 
 function love.touchreleased(id, tx, ty, dx, dy, pressure)
 	local tx = tx/__scale
 	local ty = ty/__scale
-	gamestate:touchreleased(id, tx, ty, dx, dy, pressure)
 	touch:touchreleased(id, tx, ty, dx, dy, pressure)
+	gamestate:touchreleased(id, tx, ty, dx, dy, pressure)
 end
 
 function love.touchmoved(id, tx, ty, dx, dy, pressure)
 	local tx = tx/__scale
 	local ty = ty/__scale
-	gamestate:touchmoved(id, tx, ty, dx, dy, pressure)
 	touch:touchmoved(id, tx, ty, dx, dy, pressure)
+	gamestate:touchmoved(id, tx, ty, dx, dy, pressure)
 end
 
 function love.textinput(t)

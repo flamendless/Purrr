@@ -63,6 +63,7 @@ function Debug:update(dt)
 	self.graphs.version.label = ("Version: %s"):format(__version)
 	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
 	self.graphs.transition.label = ("Transition: %s"):format(tostring(transition:getState()))
+	touch:update(dt)
 end
 
 function Debug:draw()
@@ -96,8 +97,6 @@ function Debug:keypressed(key)
 		self.modes.collisions = not self.modes.collisions
 	elseif key == "h" then
 		event:showHomeConfirmation()
-	elseif key == "p" then
-		print(inspect(resourceManager:getRef()))
 	end
 end
 

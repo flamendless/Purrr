@@ -296,7 +296,7 @@ function Event:showExitConfirmation()
 				hovered = self.images.accept_hovered,
 				onClick = function()
 					window:close()
-					transition.color = { 0, 0, 0, 1 }
+					transition.color = colors("black")
 					transition:start(function()
 						love.event.quit()
 					end)

@@ -69,7 +69,11 @@ end
 function Transition:draw()
 	if not self.isActive then return end
 	if love.system.getOS() == "Android" then
-		self.color:set()
+		if self.color and self.color.set then
+			self.color:set()
+		else
+			love.graphics.setBackgroundColor(self.color)
+		end
 		love.graphics.rectangle("fill", self.pos_x, 0, screen.x, screen.y)
 	else
 		love.graphics.setCanvas(self.canvas)
