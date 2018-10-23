@@ -11,7 +11,11 @@ local stripExtension = function(str)
 end
 
 local convert = function(t)
-	return ("%s.%s.%s"):format(t.major, t.minor, t.patch)
+	if t then
+		return ("%s.%s.%s"):format(t.major, t.minor, t.patch)
+	else
+		return "Version not found!"
+	end
 end
 
 function Data:init()
