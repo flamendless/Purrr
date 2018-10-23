@@ -66,6 +66,17 @@ function Error.errhand(msg)
 
 	p = p:gsub("\t", "")
 	p = p:gsub("%[string \"(.-)\"%]", "%1")
+	p = p .. "\n\n\n\n\nDo you want to report this? Copy the message or take a screenshot and send it to\n@flamendless on twitter or\nemail me flamendless8@gmail.com\n\n\n\n"
+
+	local function draw()
+		local pos = 70
+		love.graphics.clear()
+
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.printf(p, pos, pos, love.graphics.getWidth() - pos)
+
+		love.graphics.present()
+	end
 
 	local fullErrorText = p
 	local function copyToClipboard()
@@ -74,7 +85,13 @@ function Error.errhand(msg)
 		p = p .. "\nCopied to clipboard!"
 	end
 
-	if love.system then p = p .. "\n\nPress Ctrl+C or tap to copy this error" end
+	if love.system then
+		if love.system.getOS() == "Android" then
+			p = p .. "\n\nTap to copy this error"
+		else
+			p = p .. "\n\nPress Ctrl+C or tap to copy this error"
+		end
+	end
 
 	lily.quit()
 
@@ -103,6 +120,7 @@ function Error.errhand(msg)
 				end
 			end
 		end
+		draw()
 		if love.timer then love.timer.sleep(0.1) end
 	end
 end

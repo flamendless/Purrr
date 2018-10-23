@@ -7,7 +7,7 @@ function love.conf(t)
 	t.window.fullscreen = love._os == "Android" or love._os == "iOS"
 	t.window.fullscreentype = "desktop"
 	t.window.resizable = false
-	t.externalstorage = false
+	t.externalstorage = true
 	t.console = false
 	t.identity = "purrr"
 	t.version = "11.1"

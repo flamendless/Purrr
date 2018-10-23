@@ -1,9 +1,9 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
-__debug = false
+__debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1
-__version = require("modules.semver.semver")(0,1,1)
+__version = require("modules.semver.semver")(0,1,2)
 
 local debugging
 local font = love.graphics.newFont(16)
