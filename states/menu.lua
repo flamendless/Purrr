@@ -19,21 +19,41 @@ local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local assets = require("src.assets")
+local pos = require("src.positions")
 
-local next_state
 local bg = {}
 
+function Menu:dummy()
+	self.entities.test = E.window(ecs.entity(),
+		resourceManager:getImage("window_red"),
+		(screen.x - 64)/self.images.window_red:getWidth(),
+		(screen.y - 64)/self.images.window_red:getHeight())
+	self.entities.accept = E.button_accept(ecs.entity(), self.entities.test)
+		:give(C.onClick, function()
+			self.instance:emit("close")
+			transition:start(function()
+				love.event.quit()
+			end)
+		end)
+		:apply()
+	self.entities.cancel = E.button_cancel(ecs.entity(), self.entities.test)
+		:give(C.onClick, function()
+			self.instance:emit("close")
+		end)
+		:apply()
+
+	self.instance:addEntity(self.entities.test)
+	self.instance:addEntity(self.entities.accept)
+	self.instance:addEntity(self.entities.cancel)
+end
+
 function Menu:enter(previous, ...)
-	event:setup()
 	self.colors = { bg = colors("flat", "black", "dark") }
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
-	self.instance:addEntity(self.entities.btn_play)
-	self.instance:addEntity(self.entities.btn_quit)
-	self.instance:addEntity(self.entities.title)
 	self:start()
 end
 
@@ -47,7 +67,10 @@ function Menu:setupSystems()
 		position = S.position(),
 		renderer = S.renderer(),
 		transform = S.transform(),
+		window_manager = S.window_manager(),
 	}
+
+	self.instance:addSystem(self.systems.window_manager, "close")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
@@ -71,68 +94,37 @@ function Menu:setupSystems()
 end
 
 function Menu:setupEntities()
+	if data.data.new_game then next_state = require("states.intro")
+	else
+		if data.data.customization then next_state = require("states.customization")
+		else next_state = require("states.lobby")
+		end
+	end
 	self.entities = {}
-	self.entities.btn_play = ecs.entity()
-		:give(C.button, "Play",
-			{
-				normal = self.images.btn_play,
-				hovered = self.images.btn_play_hovered,
-				onClick = function()
-					transition:start(next_state)
-				end
-			})
-		:give(C.color, colors("white"))
-		:give(C.transform, 0, 3, 3, "center", "center")
-		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-		:give(C.maxScale, 2.5, 2.5)
-		:give(C.windowIndex, 1)
-		:apply()
-
-	self.entities.btn_quit = ecs.entity()
-		:give(C.button, "Quit",
-		{
-			normal = self.images.btn_leave,
-			hovered = self.images.btn_leave_hovered,
-			onClick = function()
-				event:showExitConfirmation()
-			end
-		})
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x/2, screen.y * 1.75))
-		:give(C.transform, 0, 1.5, 1.5, "center", "center")
-		:give(C.maxScale, 1.25, 1.25)
+	self.entities.btn_play = E.button_play(ecs.entity(), next_state)
+	self.entities.btn_quit = E.button_quit(ecs.entity())
 		:give(C.follow, self.entities.btn_play)
 		:give(C.offsetPos, vec2(0, 148))
-		:give(C.windowIndex, 1)
 		:apply()
+	self.entities.settings = E.button_settings(ecs.entity())
+	self.entities.title = E.title(ecs.entity())
 
-	self.entities.title = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.sprite, self.images.title)
-		:give(C.pos, vec2(screen.x/2, -screen.y/2))
-		:give(C.transform, 0, 1, 1, "center", "center")
-		:apply()
+	self.instance:addEntity(self.entities.btn_play)
+	self.instance:addEntity(self.entities.btn_quit)
+	self.instance:addEntity(self.entities.title)
+	self.instance:addEntity(self.entities.settings)
 end
 
 function Menu:start()
 	local dur = 1
-	flux.to(self.entities.title[C.pos].pos, dur, { y = screen.y * 0.25 }):ease("backout")
-	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = screen.y * 0.65 })
+	flux.to(self.entities.title[C.pos].pos, dur, { y = pos.menu.title.y }):ease("backout")
+	flux.to(self.entities.settings[C.pos].pos, dur, { x = pos.menu.settings.x, y = pos.menu.settings.y })
+	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = pos.menu.play.y })
 		:ease("backout")
 		:oncomplete(function()
 			self.entities.btn_quit:remove(C.follow):apply()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 		end)
-
-	if data.data.new_game then
-		next_state = require("states.intro")
-	else
-		if data.data.customization then
-			next_state = require("states.customization")
-		else
-			next_state = require("states.lobby")
-		end
-	end
 	bg.image = self.images.bg
 	bg.sx = screen.x/bg.image:getWidth()
 	bg.sy = screen.y/bg.image:getHeight()
@@ -147,14 +139,14 @@ function Menu:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
-	if not (__window == 1) then
-		event:drawCover()
-	end
 end
 
 function Menu:keypressed(key)
 	if key == "escape" then
 		event:showExitConfirmation()
+	end
+	if key == "s" then
+		self:dummy()
 	end
 end
 

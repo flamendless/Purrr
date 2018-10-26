@@ -45,6 +45,7 @@ local Components = {
 	state = req("state"),
 	textinput = req("textinput"),
 	onClick = req("onClick"),
+	windowButton = req("windowButton"),
 }
 
 return Components

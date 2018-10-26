@@ -3,13 +3,14 @@ __debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1
-__version = require("modules.semver.semver")(0,1,2)
+__version = require("modules.semver.semver")(0, 1, 2)
 
 local debugging
 local font = love.graphics.newFont(16)
 if __debug then
 	io.stdout:setvbuf("no")
 	debugging = require("src.debug")
+	love.audio.setVolume(0)
 end
 
 local semver = require("modules.semver.semver")
@@ -18,6 +19,7 @@ local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
 local coil = require("modules.coil.coil")
+local inspect = require("modules.inspect.inspect")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
 local assets = require("src.assets")
@@ -37,7 +39,7 @@ print(("Device: %s x %s"):format(love.graphics.getDimensions()))
 print(("Game: %s x %s"):format(screen.x, screen.y))
 print("Scale: " .. __scale)
 
-function love.load()
+function love.load(args)
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:init() end

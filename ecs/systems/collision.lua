@@ -35,9 +35,13 @@ function Collision:entityAddedTo(e, pool)
 				x = x - w/2
 			elseif c_transform.orig_ox == "right" then
 				x = x - w
+			elseif c_transform.ox == "left" then
+				x = 0
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2
+			elseif c_transform.oy == "bottom" then
+				y = y - h
 			end
 		end
 		c_colliderSprite.pos = vec2(x, y)
@@ -62,9 +66,15 @@ function Collision:entityAddedTo(e, pool)
 		if c_transform then
 			if c_transform.orig_ox == "center" then
 				x = x - w/2
+			elseif c_transform.ox == "right" then
+				x = x - w
+			elseif c_transform.ox == "left" then
+				x = 0
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2
+			elseif c_transform.oy == "bottom" then
+				y = y - h
 			end
 		end
 
@@ -106,6 +116,8 @@ function Collision:updatePosition()
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2
+			elseif c_transform.orig_oy == "bottom" then
+				y = y - h
 			end
 		end
 		c_colliderSprite.pos = vec2(x, y)
@@ -125,9 +137,13 @@ function Collision:updatePosition()
 				x = x - w/2
 			elseif c_transform.orig_ox == "right" then
 				x = x - w
+			elseif c_transform.ox == "left" then
+				x = 0
 			end
 			if c_transform.orig_oy == "center" then
 				y = y - h/2
+			elseif c_transform.orig_oy == "bottom" then
+				y = y - h
 			end
 		end
 		c_colliderBox.pos = vec2(x, y)

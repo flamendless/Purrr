@@ -51,6 +51,8 @@ function Transform:handleAnim(e)
 			c_transform.ox = c_anim.anim:getWidth()/2
 		elseif c_transform.ox == "right" then
 			c_transform.ox = c_anim.anim:getWidth()
+		elseif c_transform.ox == "left" then
+			c_transform.ox = 0
 		end
 		if c_transform.oy == "center" then
 			c_transform.oy = c_anim.anim:getHeight()/2

@@ -14,39 +14,7 @@ local inspect = require("modules.inspect.inspect")
 local opened_id
 
 function Event:init()
-	self.colors = {
-		cover = colors("flat", "black", "dark", 0.8)
-	}
-end
-
-function Event:setup()
-	self.windows = {
-		resourceManager:getImage("window_red"),
-		resourceManager:getImage("window_green"),
-		resourceManager:getImage("window_blue"),
-	}
-	self.images = {
-		accept = resourceManager:getImage("button_accept"),
-		accept_hovered = resourceManager:getImage("button_accept_hovered"),
-		cancel = resourceManager:getImage("button_cancel"),
-		cancel_hovered = resourceManager:getImage("button_cancel_hovered"),
-		back = resourceManager:getImage("button_back"),
-		back_hovered = resourceManager:getImage("button_back_hovered"),
-		items_base = resourceManager:getImage("items_base"),
-		items_base_hovered = resourceManager:getImage("items_base_hovered"),
-	}
-
-	self.fonts = {
-		title = resourceManager:getFont("upheaval_42"),
-		content = resourceManager:getFont("upheaval_36"),
-		items = resourceManager:getFont("trashhand_32")
-	}
-
-	self.settings = {
-		resourceManager:getImage("window_settings1"),
-		resourceManager:getImage("window_settings2"),
-		resourceManager:getImage("window_settings3"),
-	}
+	self.colors = { cover = colors("flat", "black", "dark", 0.8) }
 end
 
 function Event:showStore()

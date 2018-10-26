@@ -73,16 +73,11 @@ function GUI:onClick()
 	for _,e in ipairs(self.pool) do
 		local c_button = e[C.button]
 		local c_windowIndex = e[C.windowIndex]
+		local c_windowButton = e[C.windowButton]
 		local c_state = e[C.state]
 		if c_state.isDisabled then
 
 		else
-			if c_windowIndex then
-				if not (c_windowIndex.index == __window) then
-					return
-				end
-			end
-
 			if c_state.isHovered and not c_state.isClicked then
 				local bool
 				if love.system.getOS() == "Android" then
@@ -90,6 +85,16 @@ function GUI:onClick()
 				else bool = love.mouse.isDown(1)
 				end
 				if bool then
+					if c_windowIndex then
+						if not (c_windowIndex.index == __window) then
+							return
+						end
+					end
+					if c_windowButton then
+						if not (c_windowButton.index == __window) then
+							return
+						end
+					end
 					c_state.isClicked = true
 					soundManager:send("guiOnClick")
 					if e:has(C.onClick) then

@@ -3,7 +3,6 @@ local Gamestate = {
 	__previous,
 	__preloading,
 	__args = {},
-	__instances = {},
 }
 
 local log = require("modules.log.log")
@@ -11,30 +10,6 @@ local preload = require("src.preload")
 local assets = require("src.assets")
 local soundManager = require("src.sound_manager")
 local bgm = require("src.bgm")
-
-function Gamestate:addInstance(id, instance, ...)
-	instance.id = id
-	instance:load(...)
-	if self.__instances[id] then
-		error("Instance ID already exists")
-	end
-	self.__instances[id] = instance
-end
-
-function Gamestate:removeInstance(id)
-	if self.__instances[id] and self.__instances[id].exit then
-		self.__instances[id]:exit()
-	end
-	self.__instances[id] = nil
-end
-
-function Gamestate:send(msg)
-	for k,v in pairs(self.__instances) do
-		if v.listen then
-			v:listen(msg)
-		end
-	end
-end
 
 function Gamestate:start(state)
 	assert(state, "State must be passed")
@@ -80,21 +55,11 @@ function Gamestate:update(dt)
 	if self.__current.update and self.__current.isReady then
 		self.__current:update(dt)
 	end
-	for k,v in pairs(self.__instances) do
-		if v.update then
-			v:update(dt)
-		end
-	end
 end
 
 function Gamestate:draw()
 	if self.__current.draw and self.__current.isReady then
 		self.__current:draw()
-	end
-	for k,v in pairs(self.__instances) do
-		if v.draw then
-			v:draw()
-		end
 	end
 end
 
@@ -102,24 +67,11 @@ function Gamestate:keypressed(key)
 	if self.__current.keypressed and self.__current.isReady then
 		self.__current:keypressed(key)
 	end
-	for k,v in pairs(self.__instances) do
-		if v.keypressed then
-			v:keypressed(key)
-		end
-	end
-	if key == "space" then
-		bgm:skip()
-	end
 end
 
 function Gamestate:keyreleased(key)
 	if self.__current.keyreleased and self.__current.isReady then
 		self.__current:keyreleased(key)
-	end
-	for k,v in pairs(self.__instances) do
-		if v.keyreleased then
-			v:keyreleased(key)
-		end
 	end
 end
 
@@ -127,21 +79,11 @@ function Gamestate:mousepressed(mx, my, mb, istouch, count)
 	if self.__current.mousepressed and self.__current.isReady then
 		self.__current:mousepressed(mx, my, mb, istouch, count)
 	end
-	for k,v in pairs(self.__instances) do
-		if v.mousepressed then
-			v:mousepressed(mx, my, mb, istouch, count)
-		end
-	end
 end
 
 function Gamestate:mousereleased(mx, my, mb, istouch, count)
 	if self.__current.mousereleased and self.__current.isReady then
 		self.__current:mousereleased(mx, my, mb, istouch, count)
-	end
-	for k,v in pairs(self.__instances) do
-		if v.mousereleased then
-			v:mousereleased(mx, my, mb, istouch, count)
-		end
 	end
 end
 
@@ -149,21 +91,11 @@ function Gamestate:touchpressed(id, tx, ty, dx, dy, pressure)
 	if self.__current.touchpressed and self.__current.isReady then
 		self.__current:touchpressed(id, tx, ty, dx, dy, pressure)
 	end
-	for k,v in pairs(self.__instances) do
-		if v.touchpressed then
-			v:touchpressed(id, tx, ty, dx, dy, pressure)
-		end
-	end
 end
 
 function Gamestate:touchreleased(id, tx, ty, dx, dy, pressure)
 	if self.__current.touchreleased and self.__current.isReady then
 		self.__current:touchreleased(id, tx, ty, dx, dy, pressure)
-	end
-	for k,v in pairs(self.__instances) do
-		if v.touchreleased then
-			v:touchreleased(id, tx, ty, dx, dy, pressure)
-		end
 	end
 end
 
@@ -171,21 +103,11 @@ function Gamestate:touchmoved(id, tx, ty, dx, dy, pressure)
 	if self.__current.touchmoved and self.__current.isReady then
 		self.__current:touchmoved(id, tx, ty, dx, dy, pressure)
 	end
-	for k,v in pairs(self.__instances) do
-		if v.touchmoved then
-			v:touchmoved(id, tx, ty, dx, dy, pressure)
-		end
-	end
 end
 
 function Gamestate:textinput(t)
 	if self.__current.textinput and self.__current.isReady then
 		self.__current:textinput(t)
-	end
-	for k,v in pairs(self.__instances) do
-		if v.textinput then
-			v:textinput(t)
-		end
 	end
 end
 

@@ -22,6 +22,7 @@ local Systems = {
 	cat_fsm = req("cat_fsm"),
 	event_listener = req("event_listener"),
 	textinput = req("textinput"),
+	window_manager = req("window_manager"),
 }
 
 return Systems

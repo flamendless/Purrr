@@ -24,7 +24,8 @@ local assets = require("src.assets")
 
 local next_state = require("states.menu")
 local delay = 1
-if __debug then delay = 0 end
+local speed = 2
+if __debug then delay = 0 speed = 8 end
 
 function Splash:enter(previous, ...)
 	self.exiting = false
@@ -46,7 +47,7 @@ function Splash:enter(previous, ...)
 	self.entities.logo = ecs.entity()
 		:give(C.color, self.colors.logo)
 		:give(C.anim, "assets/anim/json/flamendless.json", self.images.flamendless, {
-				speed = 2,
+				speed = speed,
 				stopOnLast = true,
 			})
 		:give(C.pos, vec2(screen.x/2, screen.y/2 + 64))

@@ -76,8 +76,6 @@ function Preload:add(kind, data)
 end
 
 function Preload:start()
-	local gamestate = require("src.gamestate")
-	gamestate:addInstance("loading", require("ecs.instances.loading"))
 	self.preloaderDone = false
 	self.isActive = true
 	self.lily = lily.loadMulti(self.toLoad)
@@ -131,8 +129,6 @@ function Preload:complete()
 		self.n = 1
 		self.toLoad = {}
 		self.userdata = {}
-		local gamestate = require("src.gamestate")
-		gamestate:removeInstance("loading")
 	end)
 end
 
