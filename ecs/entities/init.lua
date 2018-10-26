@@ -22,6 +22,7 @@ local Entities = {
 	window_title = req("window_title"),
 	window_body = req("window_body"),
 	blur = req("blur"),
+	loading = req("loading"),
 }
 
 return Entities

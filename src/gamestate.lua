@@ -11,6 +11,16 @@ local assets = require("src.assets")
 local soundManager = require("src.sound_manager")
 local bgm = require("src.bgm")
 
+function Gamestate:enablePreloading()
+	self.__preloading = require("ecs.instances.loading")
+	self.__preloading:load()
+end
+
+function Gamestate:disablePreloading()
+	self.__preloading:exit()
+	self.__preloading = nil
+end
+
 function Gamestate:start(state)
 	assert(state, "State must be passed")
 	self.__current = state
@@ -34,6 +44,7 @@ function Gamestate:preload()
 	local a = assets:load(self.__current.__id)
 	if a then
 		preload:check(a)
+		self:enablePreloading()
 		self.isPreloading = true
 	end
 end
@@ -55,12 +66,14 @@ function Gamestate:update(dt)
 	if self.__current.update and self.__current.isReady then
 		self.__current:update(dt)
 	end
+	if self.__preloading then self.__preloading:update(dt) end
 end
 
 function Gamestate:draw()
 	if self.__current.draw and self.__current.isReady then
 		self.__current:draw()
 	end
+	if self.__preloading then self.__preloading:draw() end
 end
 
 function Gamestate:keypressed(key)

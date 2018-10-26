@@ -129,32 +129,6 @@ function Event:showEnergyInfo()
 		})
 end
 
-function Event:showSettings()
-	self.isOpen = true
-	local instance = gamestate:getCurrent().instance
-	local E = require("ecs.entities")
-	local spr_windows = {
-		resourceManager:getImage("window_settings1"),
-		resourceManager:getImage("window_settings2"),
-		resourceManager:getImage("window_settings3"),
-		resourceManager:getImage("window_settings4"),
-	}
-	local spr_window = lume.randomchoice(spr_windows)
-	local window = E.window(ecs.entity(), spr_window, 3, 3)
-	local blur = E.blur(ecs.entity(), window)
-	local button_back = E.button_back(ecs.entity(), window)
-	local button_volume = E.button_volume(ecs.entity(), window)
-	local button_twitter = E.button_twitter(ecs.entity(), window)
-	local button_erase = E.button_erase(ecs.entity(), window)
-
-	instance:addEntity(blur)
-	instance:addEntity(window)
-	instance:addEntity(button_volume)
-	instance:addEntity(button_twitter)
-	instance:addEntity(button_erase)
-	instance:addEntity(button_back)
-end
-
 function Event:showLock(msg)
 	if opened_id then return end
 	opened_id = "Window_ShowLock"
@@ -241,6 +215,32 @@ function Event:showExitConfirmation()
 	instance:addEntity(cancel)
 	instance:addEntity(title)
 	instance:addEntity(body)
+end
+
+function Event:showSettings()
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_settings1"),
+		resourceManager:getImage("window_settings2"),
+		resourceManager:getImage("window_settings3"),
+		resourceManager:getImage("window_settings4"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window, 3, 3)
+	local blur = E.blur(ecs.entity(), window)
+	local button_back = E.button_back(ecs.entity(), window)
+	local button_volume = E.button_volume(ecs.entity(), window)
+	local button_twitter = E.button_twitter(ecs.entity(), window)
+	local button_erase = E.button_erase(ecs.entity(), window)
+
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(button_volume)
+	instance:addEntity(button_twitter)
+	instance:addEntity(button_erase)
+	instance:addEntity(button_back)
 end
 
 function Event:showHomeConfirmation(arg)

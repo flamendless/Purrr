@@ -29,10 +29,6 @@ function Loading:load()
 		renderer = S.renderer(),
 		transform = S.transform(),
 		animation = S.animation(),
-		position = S.position(),
-		patrol = S.patrol(),
-		moveTo = S.moveTo(),
-		follow = S.follow(),
 	}
 
 	self.entities = {}
@@ -45,15 +41,8 @@ function Loading:load()
 
 	self.instance:addEntity(self.entities.loading)
 
-	self.instance:addSystem(self.systems.follow, "update")
-	self.instance:addSystem(self.systems.position)
-	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleAnim")
-	self.instance:addSystem(self.systems.patrol)
-	self.instance:addSystem(self.systems.patrol, "startPatrol")
-	self.instance:addSystem(self.systems.moveTo)
-	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.animation, "update")
 	self.instance:addSystem(self.systems.animation, "draw")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
@@ -65,6 +54,10 @@ end
 
 function Loading:draw()
 	self.instance:emit("draw")
+end
+
+function Loading:exit()
+	self.instance:clear()
 end
 
 return Loading

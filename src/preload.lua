@@ -1,5 +1,9 @@
 local Preload = {}
 
+local ecs = {
+	instance = require("modules.concord.lib.instance"),
+	entity = require("modules.concord.lib.entity"),
+}
 local lily = require("modules.lily.lily")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
@@ -14,7 +18,7 @@ local screen = require("src.screen")
 local colors = require("src.colors")
 
 local dur = 1.5
-if __debug then dur = 0.25 end
+-- if __debug then dur = 0.25 end
 
 function Preload:init()
 	self.colors = {
@@ -129,6 +133,8 @@ function Preload:complete()
 		self.n = 1
 		self.toLoad = {}
 		self.userdata = {}
+		local gamestate = require("src.gamestate")
+		gamestate:disablePreloading()
 	end)
 end
 
