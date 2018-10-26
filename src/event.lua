@@ -1,5 +1,9 @@
 local Event = {}
 local C = require("ecs.components")
+local ecs = {
+	instance = require("modules.concord.lib.instance"),
+	entity = require("modules.concord.lib.entity"),
+}
 
 local transition = require("src.transition")
 local resourceManager = require("src.resource_manager")
@@ -8,13 +12,13 @@ local gamestate = require("src.gamestate")
 local colors = require("src.colors")
 local screen = require("src.screen")
 local data = require("src.data")
+local pos = require("src.positions")
 local lume = require("modules.lume.lume")
 local inspect = require("modules.inspect.inspect")
 
-local opened_id
-
 function Event:init()
 	self.colors = { cover = colors("flat", "black", "dark", 0.8) }
+	self.isOpen = false
 end
 
 function Event:showStore()
@@ -126,69 +130,29 @@ function Event:showEnergyInfo()
 end
 
 function Event:showSettings()
-	if opened_id then return end
-	opened_id = "Window_ShowSettings"
-	local btn_volume, btn_volume_hovered
-	if data.data.volume == 1 then
-		btn_volume = resourceManager:getImage("button_volume")
-		btn_volume_hovered = resourceManager:getImage("button_volume_hovered")
-	elseif data.data.volume == 0 then
-		btn_volume = resourceManager:getImage("button_mute")
-		btn_volume_hovered = resourceManager:getImage("button_mute_hovered")
-	end
-	local spr_window = lume.randomchoice(self.settings)
-	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_ShowSettings", window,
-		{
-			spr_window = spr_window,
-			str_title = "SETTINGS",
-			font_title = self.fonts.title,
-			title_offset_y = 32,
-			sx = 3, sy = 3,
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_settings1"),
+		resourceManager:getImage("window_settings2"),
+		resourceManager:getImage("window_settings3"),
+		resourceManager:getImage("window_settings4"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window, 3, 3)
+	local blur = E.blur(ecs.entity(), window)
+	local button_back = E.button_back(ecs.entity(), window)
+	local button_volume = E.button_volume(ecs.entity(), window)
+	local button_twitter = E.button_twitter(ecs.entity(), window)
+	local button_erase = E.button_erase(ecs.entity(), window)
 
-			middleButton = {
-				id = "Back",
-				normal = self.images.back,
-				hovered = self.images.back_hovered,
-				onClick = function()
-					window:close()
-				end
-			},
-
-			insideButton = {
-				id = "Volume",
-				normal = btn_volume,
-				hovered = btn_volume_hovered,
-				onClick = function(system, e)
-					if data.data.volume == 1 then
-						data.data.volume = 0
-						system:changeSprite(e, resourceManager:getImage("button_mute"), resourceManager:getImage("button_mute_hovered"))
-					else
-						data.data.volume = 1
-						system:changeSprite(e, resourceManager:getImage("button_volume"), resourceManager:getImage("button_volume_hovered"))
-					end
-					data:save()
-				end
-			},
-
-			insideButton2 = {
-				id = "Star",
-				normal = resourceManager:getImage("button_star"),
-				hovered = resourceManager:getImage("button_star_hovered"),
-				onClick = function()
-					love.system.openURL(data.dev.playstore)
-				end
-			},
-
-			insideButton3 = {
-				id = "Twitter",
-				normal = resourceManager:getImage("button_twitter"),
-				hovered = resourceManager:getImage("button_twitter_hovered"),
-				onClick = function()
-					love.system.openURL(data.dev.twitter)
-				end
-			},
-		})
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(button_volume)
+	instance:addEntity(button_twitter)
+	instance:addEntity(button_erase)
+	instance:addEntity(button_back)
 end
 
 function Event:showLock(msg)
@@ -247,38 +211,36 @@ function Event:getName()
 end
 
 function Event:showExitConfirmation()
-	if opened_id then return end
-	opened_id = "Window_Exit"
-	local spr_window = lume.randomchoice(self.windows)
-	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_Exit", window,
-		{
-			spr_window = spr_window,
-			str_title = "CONFIRMATION",
-			font_title = self.fonts.title,
-			str_content = "Are you sure you want to quit?",
-			font_content = self.fonts.content,
-			button1 = {
-				id = "Accept",
-				normal = self.images.accept,
-				hovered = self.images.accept_hovered,
-				onClick = function()
-					window:close()
-					transition.color = colors("black")
-					transition:start(function()
-						love.event.quit()
-					end)
-				end
-			},
-			button2 = {
-				id = "Cancel",
-				normal = self.images.cancel,
-				hovered = self.images.cancel_hovered,
-				onClick = function()
-					window:close()
-				end
-			}
-		})
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_red"),
+		resourceManager:getImage("window_blue"),
+		resourceManager:getImage("window_green"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window,
+		(screen.x - pos.window.title_pad)/spr_window:getWidth(),
+		(screen.y - pos.window.title_pad)/spr_window:getHeight())
+	local accept = E.button_accept(ecs.entity(), window)
+		:give(C.onClick, function()
+			instance:emit("close")
+			transition:start(function() love.event.quit() end)
+		end)
+		:apply()
+	local cancel = E.button_cancel(ecs.entity(), window)
+		:give(C.onClick, function() instance:emit("close") end)
+		:apply()
+	local title = E.window_title(ecs.entity(), window, "Confirmation")
+	local body = E.window_body(ecs.entity(), window, "Are you sure you want to quit the game?")
+	local blur = E.blur(ecs.entity(), window)
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(accept)
+	instance:addEntity(cancel)
+	instance:addEntity(title)
+	instance:addEntity(body)
 end
 
 function Event:showHomeConfirmation(arg)

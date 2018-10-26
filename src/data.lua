@@ -71,4 +71,10 @@ function Data:save()
 	log.trace("File Saved!")
 end
 
+function Data:erase()
+	love.filesystem.remove(file_save)
+	self:init()
+	self:save()
+end
+
 return Data

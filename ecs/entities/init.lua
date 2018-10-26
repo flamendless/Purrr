@@ -14,8 +14,14 @@ local Entities = {
 	button_settings = req("button_settings"),
 	button_accept = req("button_accept"),
 	button_cancel = req("button_cancel"),
+	button_back = req("button_back"),
+	button_volume = req("button_volume"),
+	button_twitter = req("button_twitter"),
 	title = req("title"),
 	window = req("window"),
+	window_title = req("window_title"),
+	window_body = req("window_body"),
+	blur = req("blur"),
 }
 
 return Entities

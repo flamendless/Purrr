@@ -2,6 +2,7 @@ local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
 local flux = require("modules.flux.flux")
 local screen = require("src.screen")
+local event = require("src.event")
 
 local WindowManager = System({
 	C.window,
@@ -30,6 +31,7 @@ function WindowManager:close()
 			:ease("backin")
 			:oncomplete(function()
 				__window = 1
+				event.isOpen = false
 			end)
 	end
 end

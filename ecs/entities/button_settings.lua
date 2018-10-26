@@ -16,9 +16,7 @@ local ButtonSettings = function(e)
 		:give(C.pos, pos.screen.bottom:clone())
 		:give(C.maxScale, 2.5, 2.5)
 		:give(C.windowIndex, 1)
-		:give(C.onClick, function()
-			event:showSettings()
-		end)
+		:give(C.onClick, function() event:showSettings() end)
 		:apply()
 
 	return e

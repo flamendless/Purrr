@@ -29,7 +29,9 @@ function states.splash()
 		fonts = {
 			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
 			{ id = "bmdelico", path = "assets/fonts/bmdelico.ttf", sizes = { 18, 24, 32, 42 } },
-			{ id = "trashhand", path = "assets/fonts/trashhand.ttf", sizes = {18, 28, 32, 36, 42, 48} },
+			{ id = "trashhand", path = "assets/fonts/trashhand.ttf", sizes = { 18, 28, 32, 36, 42, 48 } },
+			{ id = "title", path = "assets/fonts/upheavalpro.ttf", sizes = { 36, 42, 48 } },
+			{ id = "body", path = "assets/fonts/upheavalpro.ttf", sizes = { 36, 42, 48 } },
 		}
 	}
 end
@@ -37,6 +39,7 @@ end
 function states.menu()
 	return {
 		images = {
+			{ id = "bg_space", path = "assets/images/title_space.png" },
 			{ id = "title", path = "assets/images/title.png" },
 			{ id = "btn_play", path = "assets/gui/play.png" },
 			{ id = "btn_play_hovered", path = "assets/gui/play_hovered.png" },
@@ -44,6 +47,12 @@ function states.menu()
 			{ id = "btn_leave_hovered", path = "assets/gui/leave_hovered.png" },
 			{ id = "button_settings", path = "assets/gui/button_settings.png" },
 			{ id = "button_settings_hovered", path = "assets/gui/button_settings_hovered.png" },
+			{ id = "button_mute", path = "assets/gui/button_mute.png" },
+			{ id = "button_mute_hovered", path = "assets/gui/button_mute_hovered.png" },
+			{ id = "button_volume", path = "assets/gui/button_volume.png" },
+			{ id = "button_volume_hovered", path = "assets/gui/button_volume_hovered.png" },
+			{ id = "button_twitter", path = "assets/gui/button_twitter.png" },
+			{ id = "button_twitter_hovered", path = "assets/gui/button_twitter_hovered.png" },
 			{ id = "window_red", path = "assets/gui/window_red.png" },
 			{ id = "window_green", path = "assets/gui/window_green.png" },
 			{ id = "window_blue", path = "assets/gui/window_blue.png" },
@@ -125,7 +134,6 @@ function states.customization()
 			{ id = "btn_pink", path = "assets/gui/button_pink.png" },
 			{ id = "btn_pink_hovered", path = "assets/gui/button_pink_hovered.png" },
 			{ id = "lock", path = "assets/images/lock.png" },
-			{ id = "bg_space", path = "assets/images/title_space.png" },
 			{ id = "window", path = "assets/gui/window.png" },
 			{ id = "header", path = "assets/gui/header.png" },
 			{ id = "sheet_cat_attack", path = "assets/anim/cat_attack.png" },
@@ -281,17 +289,10 @@ function states.lobby()
 			{ id = "button_store_hovered", path = "assets/gui/button_store_hovered.png" },
 			{ id = "button_home", path = "assets/gui/button_home.png" },
 			{ id = "button_home_hovered", path = "assets/gui/button_home_hovered.png" },
-			{ id = "button_settings_hovered", path = "assets/gui/button_settings_hovered.png" },
-			{ id = "button_mute", path = "assets/gui/button_mute.png" },
-			{ id = "button_mute_hovered", path = "assets/gui/button_mute_hovered.png" },
-			{ id = "button_volume", path = "assets/gui/button_volume.png" },
-			{ id = "button_volume_hovered", path = "assets/gui/button_volume_hovered.png" },
 			{ id = "button_cat", path = "assets/gui/button_cat.png" },
 			{ id = "button_cat_hovered", path = "assets/gui/button_cat_hovered.png" },
 			{ id = "button_star", path = "assets/gui/button_star.png" },
 			{ id = "button_star_hovered", path = "assets/gui/button_star_hovered.png" },
-			{ id = "button_twitter", path = "assets/gui/button_twitter.png" },
-			{ id = "button_twitter_hovered", path = "assets/gui/button_twitter_hovered.png" },
 			{ id = "button_forward", path = "assets/gui/button_forward.png" },
 			{ id = "button_forward_hovered", path = "assets/gui/button_forward_hovered.png" },
 		},

@@ -3,7 +3,7 @@ __debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1
-__version = require("modules.semver.semver")(0, 1, 2)
+__version = require("modules.semver.semver")(0, 1, 3)
 
 local debugging
 local font = love.graphics.newFont(16)

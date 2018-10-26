@@ -1,11 +1,12 @@
 local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
+local vec2 = require("modules.hump.timer")
 local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
 local event = require("src.event")
 
-local ButtonQuit = function(e)
+local ButtonQuit = function(e, play)
 		e:give(C.button, "Quit",
 			{
 				normal = resourceManager:getImage("btn_leave"),
@@ -16,6 +17,7 @@ local ButtonQuit = function(e)
 		:give(C.pos, pos.screen.bottom:clone())
 		:give(C.maxScale, 1.25, 1.25)
 		:give(C.windowIndex, 1)
+		:give(C.follow, play)
 		:give(C.onClick, function() event:showExitConfirmation() end)
 		:apply()
 

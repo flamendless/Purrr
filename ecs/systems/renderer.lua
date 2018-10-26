@@ -37,7 +37,10 @@ function Renderer:drawText()
 		local c_offset = e[C.offsetPos]
 		local c_color = e[C.color].color
 		local c_hoveredColor = e[C.hoveredColor]
-		if c_color then c_color:set() end
+		if c_color then
+			if c_color.set then c_color:set()
+			else love.graphics.setColor(c_color) end
+		end
 		if c_hoveredColor then c_hoveredColor.color:set() end
 		if c_text.font then love.graphics.setFont(c_text.font) end
 		local x = c_pos.x
@@ -79,7 +82,11 @@ function Renderer:drawSprite()
 		if c_hoveredSprite then
 			sprite = c_hoveredSprite.sprite
 		end
-		if c_color then c_color.color:set() end
+		if c_color then
+			if c_color.color.set then c_color.color:set()
+			else love.graphics.setColor(c_color.color)
+			end
+		end
 		if c_state then
 			if c_state.isDisabled then
 				love.graphics.setColor(0, 0, 0, 0.25)
@@ -101,7 +108,11 @@ function Renderer:drawRect()
 		local c_cornerRadius = e[C.cornerRadius]
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color]
-		if c_color then c_color.color:set() end
+		if c_color then
+			if c_color.set then c_color:set()
+			else love.graphics.setColor(c_color)
+			end
+		end
 		if c_rect.size.x > 0 then
 			love.graphics.rectangle(c_rect.mode, c_pos.x, c_pos.y, c_rect.size.x, c_rect.size.y, (c_cornerRadius and c_cornerRadius.size) or 0)
 		end
@@ -115,7 +126,11 @@ function Renderer:drawCircle()
 		local c_circle = e[C.circle]
 		local c_pos = e[C.pos].pos
 		local c_color = e[C.color]
-		if c_color then c_color.color:set() end
+		if c_color then
+			if c_color.set then c_color:set()
+			else love.graphics.setColor(c_color)
+			end
+		end
 		love.graphics.circle(c_circle.mode, c_pos.x, c_pos.y, c_circle.radius, c_circle.segments)
 	end
 end

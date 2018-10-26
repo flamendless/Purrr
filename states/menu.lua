@@ -3,6 +3,7 @@ local Menu = BaseState("Menu")
 
 local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
+local lume = require("modules.lume.lume")
 local ecs = {
 	instance = require("modules.concord.lib.instance"),
 	entity = require("modules.concord.lib.entity"),
@@ -22,30 +23,6 @@ local assets = require("src.assets")
 local pos = require("src.positions")
 
 local bg = {}
-
-function Menu:dummy()
-	self.entities.test = E.window(ecs.entity(),
-		resourceManager:getImage("window_red"),
-		(screen.x - 64)/self.images.window_red:getWidth(),
-		(screen.y - 64)/self.images.window_red:getHeight())
-	self.entities.accept = E.button_accept(ecs.entity(), self.entities.test)
-		:give(C.onClick, function()
-			self.instance:emit("close")
-			transition:start(function()
-				love.event.quit()
-			end)
-		end)
-		:apply()
-	self.entities.cancel = E.button_cancel(ecs.entity(), self.entities.test)
-		:give(C.onClick, function()
-			self.instance:emit("close")
-		end)
-		:apply()
-
-	self.instance:addEntity(self.entities.test)
-	self.instance:addEntity(self.entities.accept)
-	self.instance:addEntity(self.entities.cancel)
-end
 
 function Menu:enter(previous, ...)
 	self.colors = { bg = colors("flat", "black", "dark") }
@@ -88,6 +65,7 @@ function Menu:setupSystems()
 	self.instance:addSystem(self.systems.gui, "update", "onClick")
 	self.instance:addSystem(self.systems.gui, "onEnter")
 	self.instance:addSystem(self.systems.gui, "onExit")
+	self.instance:addSystem(self.systems.gui, "changeSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 	self.instance:addSystem(self.systems.collision, "draw", "draw")
@@ -102,10 +80,8 @@ function Menu:setupEntities()
 	end
 	self.entities = {}
 	self.entities.btn_play = E.button_play(ecs.entity(), next_state)
-	self.entities.btn_quit = E.button_quit(ecs.entity())
-		:give(C.follow, self.entities.btn_play)
-		:give(C.offsetPos, vec2(0, 148))
-		:apply()
+	self.entities.btn_quit = E.button_quit(ecs.entity(), self.entities.btn_play)
+		:give(C.offsetPos, vec2(0, 148)):apply()
 	self.entities.settings = E.button_settings(ecs.entity())
 	self.entities.title = E.title(ecs.entity())
 
@@ -143,10 +119,11 @@ end
 
 function Menu:keypressed(key)
 	if key == "escape" then
-		event:showExitConfirmation()
-	end
-	if key == "s" then
-		self:dummy()
+		if event.isOpen then
+			self.instance:emit("close")
+		else
+			event:showExitConfirmation()
+		end
 	end
 end
 
