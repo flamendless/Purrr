@@ -18,7 +18,7 @@ local screen = require("src.screen")
 local colors = require("src.colors")
 
 local dur = 1.5
--- if __debug then dur = 0.25 end
+if __debug then dur = 0.25 end
 
 function Preload:init()
 	self.colors = {
@@ -82,6 +82,7 @@ end
 function Preload:start()
 	self.preloaderDone = false
 	self.isActive = true
+	require("src.gamestate"):enablePreloading()
 	self.lily = lily.loadMulti(self.toLoad)
 		:setUserData(self.userdata)
 		:onLoaded(function(id, i, data)
@@ -133,8 +134,7 @@ function Preload:complete()
 		self.n = 1
 		self.toLoad = {}
 		self.userdata = {}
-		local gamestate = require("src.gamestate")
-		gamestate:disablePreloading()
+		require("src.gamestate"):disablePreloading()
 	end)
 end
 

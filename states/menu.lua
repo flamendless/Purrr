@@ -24,6 +24,9 @@ local pos = require("src.positions")
 
 local bg = {}
 
+function Menu:test()
+end
+
 function Menu:enter(previous, ...)
 	self.colors = { bg = colors("flat", "black", "dark") }
 	self.images = resourceManager:getAll("images")
@@ -81,7 +84,7 @@ function Menu:setupEntities()
 	self.entities = {}
 	self.entities.btn_play = E.button_play(ecs.entity(), next_state)
 	self.entities.btn_quit = E.button_quit(ecs.entity(), self.entities.btn_play)
-		:give(C.offsetPos, vec2(0, 148)):apply()
+		:give(C.offsetPos, pos.menu.quit:clone()):apply()
 	self.entities.settings = E.button_settings(ecs.entity())
 	self.entities.title = E.title(ecs.entity())
 

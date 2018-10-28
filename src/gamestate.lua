@@ -17,7 +17,9 @@ function Gamestate:enablePreloading()
 end
 
 function Gamestate:disablePreloading()
-	self.__preloading:exit()
+	if self.__preloading and self.__preloading.exit then
+		self.__preloading:exit()
+	end
 	self.__preloading = nil
 end
 
@@ -44,7 +46,6 @@ function Gamestate:preload()
 	local a = assets:load(self.__current.__id)
 	if a then
 		preload:check(a)
-		self:enablePreloading()
 		self.isPreloading = true
 	end
 end

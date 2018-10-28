@@ -5,13 +5,14 @@ local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
 local data = require("src.data")
+local event = require("src.event")
 
 local ButtonErase = function(e, window)
-		e:give(C.button, "Erase",
-			{
-				normal = resourceManager:getImage("button_erase"),
-				hovered = resourceManager:getImage("button_erase_hovered"),
-			})
+	e:give(C.button, "Erase",
+		{
+			normal = resourceManager:getImage("button_erase"),
+			hovered = resourceManager:getImage("button_erase_hovered"),
+		})
 		:give(C.color, colors("white"))
 		:give(C.transform, 0, 2, 2, "center", "center")
 		:give(C.pos, vec2())
@@ -19,7 +20,7 @@ local ButtonErase = function(e, window)
 		:give(C.windowButton)
 		:give(C.follow, window)
 		:give(C.offsetPos, pos.window.erase:clone())
-		:give(C.onClick, function() data:erase() end)
+		:give(C.onClick, function() event:showEraseConfirmation() end)
 		:apply()
 
 	return e

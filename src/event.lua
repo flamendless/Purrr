@@ -217,6 +217,39 @@ function Event:showExitConfirmation()
 	instance:addEntity(body)
 end
 
+function Event:showEraseConfirmation()
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_red"),
+		resourceManager:getImage("window_blue"),
+		resourceManager:getImage("window_green"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window,
+		(screen.x - pos.window.title_pad)/spr_window:getWidth(),
+		(screen.y - pos.window.title_pad)/spr_window:getHeight())
+	local accept = E.button_accept(ecs.entity(), window)
+		:give(C.onClick, function()
+			instance:emit("close")
+			data:erase()
+		end)
+		:apply()
+	local cancel = E.button_cancel(ecs.entity(), window)
+		:give(C.onClick, function() instance:emit("close") end)
+		:apply()
+	local title = E.window_title(ecs.entity(), window, "Confirmation")
+	local body = E.window_body(ecs.entity(), window, "Are you sure you want to reset your data?")
+	local blur = E.blur(ecs.entity(), window)
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(accept)
+	instance:addEntity(cancel)
+	instance:addEntity(title)
+	instance:addEntity(body)
+end
+
 function Event:showSettings()
 	self.isOpen = true
 	local instance = gamestate:getCurrent().instance
@@ -243,44 +276,37 @@ function Event:showSettings()
 	instance:addEntity(button_back)
 end
 
-function Event:showHomeConfirmation(arg)
-	if opened_id then return end
-	opened_id = "Window_Home"
-	local window = require("ecs.instances.window")
-	local spr_window = lume.randomchoice(self.windows)
-	local str_content = "Are you sure you want to return to menu screen?"
-	if arg == "lobby" then
-		str_content = "Are you sure you want to return to lobby?"
-	end
-	gamestate:addInstance( "Window_Home", window,
-		{
-			spr_window = spr_window,
-			str_title = "CONFIRMATION",
-			font_title = self.fonts.title,
-			str_content = str_content,
-			font_content = self.fonts.content,
-			button1 = {
-				id = "Accept",
-				normal = self.images.accept,
-				hovered = self.images.accept_hovered,
-				onClick = function()
-					window:close()
-					if arg == "lobby" then
-						transition:start( require("states.lobby") )
-					else
-						transition:start( require("states.menu") )
-					end
-				end
-			},
-			button2 = {
-				id = "Cancel",
-				normal = self.images.cancel,
-				hovered = self.images.cancel_hovered,
-				onClick = function()
-					window:close()
-				end
-			}
-		})
+function Event:showLobby(arg)
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_red"),
+		resourceManager:getImage("window_blue"),
+		resourceManager:getImage("window_green"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window,
+		(screen.x - pos.window.title_pad)/spr_window:getWidth(),
+		(screen.y - pos.window.title_pad)/spr_window:getHeight())
+	local accept = E.button_accept(ecs.entity(), window)
+		:give(C.onClick, function()
+			instance:emit("close")
+			transition:start(require("states.menu"))
+		end)
+		:apply()
+	local cancel = E.button_cancel(ecs.entity(), window)
+		:give(C.onClick, function() instance:emit("close") end)
+		:apply()
+	local title = E.window_title(ecs.entity(), window, "Confirmation")
+	local body = E.window_body(ecs.entity(), window, "Are you sure you want to return to lobby?")
+	local blur = E.blur(ecs.entity(), window)
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(accept)
+	instance:addEntity(cancel)
+	instance:addEntity(title)
+	instance:addEntity(body)
 end
 
 function Event:drawCover()

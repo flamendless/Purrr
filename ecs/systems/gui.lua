@@ -64,6 +64,7 @@ function GUI:update(dt)
 		if love.system.getOS() == "Android" then
 			if not touch:getTouch() then
 				c_state.isClicked = false
+				c_state.isHovered = false
 			end
 		end
 	end
