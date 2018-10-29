@@ -154,34 +154,48 @@ function Event:showLock(msg)
 end
 
 function Event:getName()
-	if opened_id then return end
-	opened_id = "Window_GetName"
-	local spr_window = lume.randomchoice(self.windows)
-	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_GetName", window,
-		{
-			uncloseable = true,
-			spr_window = spr_window,
-			str_title = "Choose Your Cat's Name",
-			font_title = self.fonts.title,
-			-- str_content = "Input Name:",
-			-- font_content = self.fonts.content,
-
-			button1 = {
-				disabled = true,
-				id = "Accept",
-				normal = self.images.accept,
-				hovered = self.images.accept_hovered,
-				onClick = function()
-					gamestate:send("saveName")
-					window:close()
+	self.isOpen = true
+	local str = "????"
+	if data.data.cat_name then str = data.data.cat_name end
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_red"),
+		resourceManager:getImage("window_blue"),
+		resourceManager:getImage("window_green"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window,
+		(screen.x - pos.window.title_pad)/spr_window:getWidth(),
+		(screen.y - pos.window.title_pad)/spr_window:getHeight())
+	local title = E.window_title(ecs.entity(), window, "Enter Cat's Name:")
+	local textinput = E.textinput(ecs.entity(), window, str)
+	local blur = E.blur(ecs.entity(), window)
+	local accept = E.button_accept(ecs.entity(), window, true)
+		:give(C.onClick, function()
+				instance:emit("close")
+				local text = textinput[C.textinput].buffer
+				data.data.cat_name = text
+				data.data.got_name = true
+				data:save()
+			end)
+		:give(C.onUpdate, function(e)
+				local text = textinput[C.textinput].buffer
+				if text then
+					if #text >= 3 then e[C.state].isDisabled = false
+					else e[C.state].isDisabled = true
+					end
 				end
-			},
-
-			textinput = {
-				font = self.fonts.title,
-			}
-		})
+			end)
+		:apply()
+	local cancel = E.button_cancel(ecs.entity(), window)
+		:give(C.onClick, function() instance:emit("close") end)
+		:apply()
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(title)
+	instance:addEntity(textinput)
+	instance:addEntity(accept)
 end
 
 function Event:showExitConfirmation()

@@ -23,6 +23,7 @@ local Entities = {
 	window_body = req("window_body"),
 	blur = req("blur"),
 	loading = req("loading"),
+	textinput = req("textinput"),
 }
 
 return Entities

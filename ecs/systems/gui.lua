@@ -56,6 +56,9 @@ function GUI:update(dt)
 		local c_collider
 		local c_button = e[C.button]
 		local c_state = e[C.state]
+		if e:has(C.onUpdate) then
+			local c_onUpdate = e[C.onUpdate].onUpdate(e)
+		end
 		if e:has(C.colliderBox) then c_collider = e[C.colliderBox] end
 		if e:has(C.colliderSprite) then c_collider = e[C.colliderSprite] end
 		if not c_state.isHovered then
@@ -64,7 +67,6 @@ function GUI:update(dt)
 		if love.system.getOS() == "Android" then
 			if not touch:getTouch() then
 				c_state.isClicked = false
-				c_state.isHovered = false
 			end
 		end
 	end

@@ -95,8 +95,6 @@ function Debug:keypressed(key)
 		self.modes.lines = not self.modes.lines
 	elseif key == "c" then
 		self.modes.collisions = not self.modes.collisions
-	elseif key == "h" then
-		event:showHomeConfirmation()
 	end
 end
 

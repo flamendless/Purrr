@@ -48,8 +48,12 @@ function Menu:setupSystems()
 		renderer = S.renderer(),
 		transform = S.transform(),
 		window_manager = S.window_manager(),
+		textinput = S.textinput(),
 	}
 
+	self.instance:addSystem(self.systems.textinput, "update")
+	self.instance:addSystem(self.systems.textinput, "textinput")
+	self.instance:addSystem(self.systems.textinput, "keypressed")
 	self.instance:addSystem(self.systems.window_manager, "close")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
@@ -121,6 +125,7 @@ function Menu:draw()
 end
 
 function Menu:keypressed(key)
+	self.instance:emit("keypressed", key)
 	if key == "escape" then
 		if event.isOpen then
 			self.instance:emit("close")
@@ -128,6 +133,10 @@ function Menu:keypressed(key)
 			event:showExitConfirmation()
 		end
 	end
+end
+
+function Menu:textinput(t)
+	self.instance:emit("textinput", t)
 end
 
 function Menu:exit()
