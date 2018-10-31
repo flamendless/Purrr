@@ -17,6 +17,9 @@ local Entities = {
 	button_back = req("button_back"),
 	button_volume = req("button_volume"),
 	button_twitter = req("button_twitter"),
+	button_forward = req("button_forward"),
+	lock = req("lock"),
+	notice = req("notice"),
 	title = req("title"),
 	window = req("window"),
 	window_title = req("window_title"),
@@ -24,6 +27,8 @@ local Entities = {
 	blur = req("blur"),
 	loading = req("loading"),
 	textinput = req("textinput"),
+	cat = req("cat"),
+	header = req("header"),
 }
 
 return Entities

@@ -7,8 +7,11 @@ local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local event = require("src.event")
 local data = require("src.data")
+local pos = require("src.positions")
 
-local ColorPicker = function(e, pal, id, btn_color, x, y)
+local ColorPicker = function(e, pal, id, btn_color)
+	local x = pos.color_picker[id]:clone().x
+	local y = pos.screen.bottom:clone().y
 	e:give(C.color, colors("white"))
 		:give(C.button, id, {
 				normal = resourceManager:getImage("btn_" .. btn_color),

@@ -23,6 +23,7 @@ local data = require("src.data")
 local transition = require("src.transition")
 local soundManager = require("src.sound_manager")
 local assets = require("src.assets")
+local pos = require("src.positions")
 
 local next_state
 local bg = {}
@@ -85,104 +86,35 @@ function Customization:setupSystems()
 end
 
 function Customization:setupEntities(tag)
-	self.entities = {}
-	self.entities.cat = ecs.entity()
-		:give(C.tag, "cat")
-		:give(C.cat)
-		:give(C.fsm, "blink", { "blink", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-		:give(C.transform, 0, 4, 4, "center", "center")
-		:apply()
-
-	self.entities.header = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x/2, -screen.y/2))
-		:give(C.transform, 0, 2, 2, "center", "center")
-		:give(C.button, "header", {
-				normal = self.images.header,
-				textColor = colors("flat", "white", "light"),
-				text = "COLOR YOUR CAT!",
-				font = self.fonts.header_42,
-			})
-		:apply()
-
-	self.entities.forward = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.button, "forward", {
-				normal = self.images.btn_forward,
-				hovered = self.images.btn_forward_hovered,
-				onClick = function(system)
-					self:forward()
-					soundManager:send("forward")
-				end
-			})
-		:give(C.transform, 0, 2, 2, "center", "center")
-		:give(C.pos, vec2(screen.x * 0.82, screen.y * 1.5))
-		:give(C.maxScale, 2.5, 2.5)
-		:apply()
-
-	self.entities.back = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.button, "back", {
-				normal = self.images.btn_back,
-				hovered = self.images.btn_back_hovered,
-				onClick = function(system)
-					self:back()
-					soundManager:send("back")
-				end
-			})
-		:give(C.transform, 0, 2, 2, "center", "center")
-		:give(C.maxScale, 2.5, 2.5)
-		:give(C.pos, vec2(screen.x * 0.18, screen.y * 1.5))
-		:apply()
-
-		local pos_x = {
-			[1] = screen.x * 0.2,
-			[2] = screen.x * 0.5,
-			[3] = screen.x * 0.8,
-		}
-		local pos_y = {
-			[1] = screen.y * 0.55,
-			[2] = screen.y * 0.65,
-			[3] = screen.y * 0.75,
-			[4] = screen.y * 0.85,
-		}
-
 	self.btns = {}
-	self.btns.default = E.color_picker(ecs.entity(),
-		"source", "default", "yellow", pos_x[1], pos_y[1])
-	self.btns.softmilk = E.color_picker(ecs.entity(),
-		"softmilk", "softmilk", "softmilk", pos_x[2], pos_y[1])
-	self.btns.grayscale = E.color_picker(ecs.entity(),
-		"grayscale", "grayscale", "grayscale", pos_x[3], pos_y[1])
-	self.btns.red = E.color_picker(ecs.entity(),
-		"red", "red", "red", pos_x[1], pos_y[2])
-	self.btns.green = E.color_picker(ecs.entity(),
-		"green", "green", "green", pos_x[2], pos_y[2])
-	self.btns.blue = E.color_picker(ecs.entity(),
-		"blue", "blue", "blue", pos_x[3], pos_y[2])
-	self.btns.purple = E.color_picker(ecs.entity(),
-		"purple", "purple", "purple", pos_x[1], pos_y[3])
-	self.btns.black = E.color_picker(ecs.entity(),
-		"black", "black", "black", pos_x[2], pos_y[3])
-	self.btns.white = E.color_picker(ecs.entity(),
-		"white", "white", "white", pos_x[3], pos_y[3])
-	self.btns.orange = E.color_picker(ecs.entity(),
-		"orange", "orange", "orange", pos_x[2], pos_y[4])
+	self.btns.default = E.color_picker(ecs.entity(), "source", "default", "yellow")
+	self.btns.softmilk = E.color_picker(ecs.entity(), "softmilk", "softmilk", "softmilk")
+	self.btns.grayscale = E.color_picker(ecs.entity(), "grayscale", "grayscale", "grayscale")
+	self.btns.red = E.color_picker(ecs.entity(), "red", "red", "red")
+	self.btns.green = E.color_picker(ecs.entity(), "green", "green", "green")
+	self.btns.blue = E.color_picker(ecs.entity(), "blue", "blue", "blue")
+	self.btns.purple = E.color_picker(ecs.entity(), "purple", "purple", "purple")
+	self.btns.black = E.color_picker(ecs.entity(), "black", "black", "black")
+	self.btns.white = E.color_picker(ecs.entity(), "white", "white", "white")
+	self.btns.orange = E.color_picker(ecs.entity(), "orange", "orange", "orange")
+
+	for k,v in pairs(self.btns) do self.instance:addEntity(v) end
+
+	self.entities = {}
+	self.entities.cat = E.cat(ecs.entity())
+	self.entities.header = E.header(ecs.entity(), "CUSTOMIZATION")
+	self.entities.forward = E.button_forward(ecs.entity())
+		:give(C.onClick, function() self:forward() end)
+		:give(C.pos, pos.customization.off_forward:clone())
+		:apply()
+	self.entities.back = E.button_back(ecs.entity())
+		:give(C.onClick, function() self:back() end)
+		:give(C.pos, pos.customization.off_back:clone())
+		:apply()
 
 	self.accessories = {}
-	self.accessories.notice = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x + 16, screen.y  * 0.55))
-		:give(C.text, "Accessories are currently unavailable! Do not worry, all is free", self.fonts.upheaval_32, "center", screen.x - 32)
-		:apply()
-	self.accessories.lock = ecs.entity()
-		:give(C.color, colors("white", 0.5))
-		:give(C.pos, vec2(-screen.x, screen.y  * 0.75))
-		:give(C.sprite, self.images.lock)
-		:give(C.transform, 0, 4, 3.5, "center", "center")
-		:apply()
+	self.accessories.notice = E.notice(ecs.entity())
+	self.accessories.lock = E.lock(ecs.entity())
 
 	self.instance:addEntity(self.accessories.notice)
 	self.instance:addEntity(self.accessories.lock)
@@ -193,22 +125,21 @@ function Customization:setupEntities(tag)
 end
 
 function Customization:start()
-	if not data.data.got_name then
-		event:getName()
-	end
+	if not data.data.got_name then event:getName() end
 	local dur = 0.8
 	self.entities.back[C.state].isDisabled = true
 	self.entities.forward[C.state].isDisabled = true
-	flux.to(self.entities.cat[C.pos].pos, dur, { y = screen.y  * 0.3 }):ease("backout")
-	flux.to(self.entities.header[C.pos].pos, dur, { y = 72 }):ease("backout")
-	flux.to(self.entities.back[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout")
-	flux.to(self.entities.forward[C.pos].pos, dur, { y = screen.y * 0.9 }):ease("backout")
+	flux.to(self.entities.cat[C.pos].pos, dur, { y = pos.customization.cat:clone().y }):ease("backout")
+	flux.to(self.entities.header[C.pos].pos, dur, { y = pos.customization.header:clone().y }):ease("backout")
+	flux.to(self.entities.back[C.pos].pos, dur, { y = pos.customization.back:clone().y }):ease("backout")
+	flux.to(self.entities.forward[C.pos].pos, dur, { y = pos.customization.forward:clone().y }):ease("backout")
 		:oncomplete(function()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-			for k,v in pairs(self.btns) do
-				self.instance:addEntity(v)
-			end
 		end)
+	for k,v in pairs(self.btns) do
+		local c_pos = v[C.pos].pos
+		flux.to(c_pos, dur, { y = pos.color_picker[k]:clone().y }):ease("backout")
+	end
 
 	bg.image = lume.randomchoice(self.patterns)
 	bg.sx = screen.x/bg.image:getWidth()
@@ -259,8 +190,8 @@ function Customization:hideEntities(ent)
 				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 				self.entities.back[C.state].isDisabled = false
 				if level == 2 then
-					flux.to(self.accessories.notice[C.pos].pos, 1, { x = 16 }):ease("backout")
-					flux.to(self.accessories.lock[C.pos].pos, 1, { x = screen.x/2 }):ease("backout")
+					flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.notice:clone().x }):ease("backout")
+					flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.lock:clone().x }):ease("backout")
 				end
 			end)
 	end
@@ -284,20 +215,20 @@ function Customization:forward()
 		self.instance:emit("changeState", "hurt")
 	elseif level == 2 then
 		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-		flux.to(self.accessories.notice[C.pos].pos, 1, { x = screen.x + 16 }):ease("backin")
-		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x }):ease("backin")
+		flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.notice:clone().x }):ease("backin")
+		flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.lock:clone().x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
 				self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 				flux.to(window, 1, { y = screen.y * 2 }):ease("backin")
-				flux.to(self.entities.back[C.pos].pos, 1, { y = screen.y * 1.5 }):ease("backin")
-				flux.to(self.entities.forward[C.pos].pos, 1, { y = screen.y * 1.5 }):ease("backin")
-				flux.to(self.entities.header[C.pos].pos, 1, { y = -screen.y/2 }):ease("backin")
+				flux.to(self.entities.back[C.pos].pos, 1, { y = pos.customization.off_back:clone().y }):ease("backin")
+				flux.to(self.entities.forward[C.pos].pos, 1, { y = pos.customization.off_forward:clone().y }):ease("backin")
+				flux.to(self.entities.header[C.pos].pos, 1, { y = pos.customization.off_header:clone().y }):ease("backin")
 					:oncomplete(function()
 						self.instance:emit("changeState", "blink")
 						timer.after(1, function()
 							self.instance:emit("changeState", "spin")
-							flux.to(self.entities.cat[C.pos].pos, 2, { y = screen.y * 1.5 }):ease("backin")
+							flux.to(self.entities.cat[C.pos].pos, 2, { y = data.customization.off_cat:clone().y }):ease("backin")
 								:oncomplete(function()
 									transition:start( require("states.lobby") )
 								end)
@@ -310,8 +241,8 @@ end
 function Customization:back()
 	if level == 2 then
 		level = 1
-		flux.to(self.accessories.notice[C.pos].pos, 1, { x = screen.x + 16 }):ease("backin")
-		flux.to(self.accessories.lock[C.pos].pos, 1, { x = -screen.x }):ease("backin")
+		flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.off_notice:clone().x }):ease("backin")
+		flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.off_lock:clone().x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
 				self:showEntities(self.btns)

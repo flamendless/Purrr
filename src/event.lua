@@ -278,6 +278,8 @@ function Event:showSettings()
 	local window = E.window(ecs.entity(), spr_window, 3, 3)
 	local blur = E.blur(ecs.entity(), window)
 	local button_back = E.button_back(ecs.entity(), window)
+		:give(C.onClick, function() gamestate:getCurrent().instance:emit("close") end)
+		:apply()
 	local button_volume = E.button_volume(ecs.entity(), window)
 	local button_twitter = E.button_twitter(ecs.entity(), window)
 	local button_erase = E.button_erase(ecs.entity(), window)
@@ -328,12 +330,6 @@ function Event:drawCover()
 	love.graphics.rectangle("fill", 0, 0, screen.x, screen.y)
 end
 
-function Event:reset()
-	opened_id = nil
-end
-
-function Event:getIfOpened()
-	return opened_id
-end
+function Event:getIfOpened() return opened_id end
 
 return Event

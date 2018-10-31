@@ -24,9 +24,6 @@ local pos = require("src.positions")
 
 local bg = {}
 
-function Menu:test()
-end
-
 function Menu:enter(previous, ...)
 	self.colors = { bg = colors("flat", "black", "dark") }
 	self.images = resourceManager:getAll("images")
@@ -100,9 +97,9 @@ end
 
 function Menu:start()
 	local dur = 1
-	flux.to(self.entities.title[C.pos].pos, dur, { y = pos.menu.title.y }):ease("backout")
-	flux.to(self.entities.settings[C.pos].pos, dur, { x = pos.menu.settings.x, y = pos.menu.settings.y })
-	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = pos.menu.play.y })
+	flux.to(self.entities.title[C.pos].pos, dur, { y = pos.menu.title:clone().y }):ease("backout")
+	flux.to(self.entities.settings[C.pos].pos, dur, { x = pos.menu.settings:clone().x, y = pos.menu.settings:clone().y })
+	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = pos.menu.play:clone().y })
 		:ease("backout")
 		:oncomplete(function()
 			self.entities.btn_quit:remove(C.follow):apply()
@@ -127,10 +124,8 @@ end
 function Menu:keypressed(key)
 	self.instance:emit("keypressed", key)
 	if key == "escape" then
-		if event.isOpen then
-			self.instance:emit("close")
-		else
-			event:showExitConfirmation()
+		if event.isOpen then self.instance:emit("close")
+		else event:showExitConfirmation()
 		end
 	end
 end
