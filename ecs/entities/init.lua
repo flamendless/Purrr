@@ -7,7 +7,7 @@ end
 local Entities = {
 	scene = req("scene"),
 	color_picker = req("color_picker"),
-	lobby_buttons = req("lobby_buttons"),
+	lobby_button = req("lobby_button"),
 	button_play = req("button_play"),
 	button_quit = req("button_quit"),
 	button_erase = req("button_erase"),
@@ -29,6 +29,7 @@ local Entities = {
 	textinput = req("textinput"),
 	cat = req("cat"),
 	header = req("header"),
+	lobby_window = req("lobby_window"),
 }
 
 return Entities

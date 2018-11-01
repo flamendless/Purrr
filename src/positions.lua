@@ -14,7 +14,7 @@ Positions.window.erase = vec2(-128, 0)
 Positions.screen = {}
 Positions.screen.top = vec2(screen.x/2, -screen.y/2)
 Positions.screen.bottom = vec2(screen.x/2, screen.y * 1.5)
-Positions.screen.light = vec2(0, screen.y * 0.3)
+Positions.screen.left = vec2(-screen.x/2)
 
 Positions.menu = {}
 Positions.menu.title = vec2(0, screen.y * 0.25)
@@ -47,5 +47,9 @@ Positions.color_picker.purple = vec2(screen.x * 0.2, screen.y * 0.75)
 Positions.color_picker.black = vec2(screen.x * 0.5, screen.y * 0.75)
 Positions.color_picker.white = vec2(screen.x * 0.8, screen.y * 0.75)
 Positions.color_picker.orange = vec2(screen.x * 0.5, screen.y * 0.85)
+
+Positions.lobby = {}
+Positions.lobby.off_window = vec2(screen.x/2, screen.y * 2)
+Positions.lobby.window = vec2(screen.x/2, screen.y)
 
 return Positions

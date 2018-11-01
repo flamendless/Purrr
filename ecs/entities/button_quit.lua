@@ -1,6 +1,5 @@
 local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
-local vec2 = require("modules.hump.timer")
 local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")

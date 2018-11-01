@@ -28,7 +28,6 @@ local pos = require("src.positions")
 local next_state
 local bg = {}
 local level = 1
-local orig_pos = {}
 local window = { y = screen.y - 16 }
 
 function Customization:enter(previous, ...)
@@ -181,45 +180,30 @@ function Customization:exit()
 	data:save()
 end
 
-function Customization:hideEntities(ent)
-	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-	for k,v in pairs(ent) do
-		orig_pos[k] = v[C.pos].pos.x
-		flux.to(v[C.pos].pos, 1, { x = -screen.x/2 }):ease("backin")
-			:oncomplete(function()
-				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-				self.entities.back[C.state].isDisabled = false
-				if level == 2 then
-					flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.notice:clone().x }):ease("backout")
-					flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.lock:clone().x }):ease("backout")
-				end
-			end)
-	end
-end
-
-function Customization:showEntities(ent)
-	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-	for k,v in pairs(ent) do
-		flux.to(v[C.pos].pos, 1, { x = orig_pos[k] }):ease("backout")
-			:oncomplete(function()
-				self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-			end)
-	end
-end
-
 function Customization:forward()
 	if level == 1 then
 		level = 2
 		log.trace(("Cat Name: %s -> Palette: %s"):format(data.data.palette, data.data.cat_name))
-		self:hideEntities(self.btns)
 		self.instance:emit("changeState", "hurt")
+		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+		for k,v in pairs(self.btns) do
+			flux.to(v[C.pos].pos, 1, { x = pos.screen.left:clone().x }):ease("backin")
+				:oncomplete(function()
+					self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+					self.entities.back[C.state].isDisabled = false
+					if level == 2 then
+						flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.notice:clone().x }):ease("backout")
+						flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.lock:clone().x }):ease("backout")
+					end
+				end)
+		end
+
 	elseif level == 2 then
 		self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-		flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.notice:clone().x }):ease("backin")
-		flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.lock:clone().x }):ease("backin")
+		flux.to(self.accessories.notice[C.pos].pos, 1, { x = pos.customization.off_notice:clone().x }):ease("backin")
+		flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.off_lock:clone().x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
-				self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 				flux.to(window, 1, { y = screen.y * 2 }):ease("backin")
 				flux.to(self.entities.back[C.pos].pos, 1, { y = pos.customization.off_back:clone().y }):ease("backin")
 				flux.to(self.entities.forward[C.pos].pos, 1, { y = pos.customization.off_forward:clone().y }):ease("backin")
@@ -228,7 +212,7 @@ function Customization:forward()
 						self.instance:emit("changeState", "blink")
 						timer.after(1, function()
 							self.instance:emit("changeState", "spin")
-							flux.to(self.entities.cat[C.pos].pos, 2, { y = data.customization.off_cat:clone().y }):ease("backin")
+							flux.to(self.entities.cat[C.pos].pos, 2, { y = pos.customization.off_cat:clone().y }):ease("backin")
 								:oncomplete(function()
 									transition:start( require("states.lobby") )
 								end)
@@ -245,7 +229,13 @@ function Customization:back()
 		flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.off_lock:clone().x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
-				self:showEntities(self.btns)
+				self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+				for k,v in pairs(self.btns) do
+					flux.to(v[C.pos].pos, 1, { x = pos.color_picker[k]:clone().x }):ease("backout")
+						:oncomplete(function()
+							self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+						end)
+				end
 			end)
 	end
 end
