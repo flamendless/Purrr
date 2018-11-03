@@ -20,6 +20,10 @@ local Renderer = System({
 	}, {
 		C.points,
 		"points",
+	}, {
+		C.pos,
+		C.bg,
+		"bg"
 	})
 
 function Renderer:entityAddedTo(e, pool)
@@ -96,6 +100,25 @@ function Renderer:drawSprite()
 			love.graphics.draw(sprite, c_pos.x, c_pos.y, c_transform.rot, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy)
 		else
 			love.graphics.draw(sprite, c_pos.x, c_pos.y)
+		end
+	end
+end
+
+function Renderer:drawBG()
+	for _,e in ipairs(self.bg) do
+		local c_bg = e[C.bg].sprite
+		local c_pos = e[C.pos].pos
+		local c_color = e[C.color]
+		local c_transform = e[C.transform]
+		if c_color then
+			if c_color.color.set then c_color.color:set()
+			else love.graphics.setColor(c_color.color)
+			end
+		end
+		if c_transform then
+			love.graphics.draw(c_bg, c_pos.x, c_pos.y, c_transform.rot, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy)
+		else
+			love.graphics.draw(c_bg, c_pos.x, c_pos.y)
 		end
 	end
 end

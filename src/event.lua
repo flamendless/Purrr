@@ -325,11 +325,6 @@ function Event:showLobby(arg)
 	instance:addEntity(body)
 end
 
-function Event:drawCover()
-	self.colors.cover:set()
-	love.graphics.rectangle("fill", 0, 0, screen.x, screen.y)
-end
-
 function Event:getIfOpened() return opened_id end
 
 return Event

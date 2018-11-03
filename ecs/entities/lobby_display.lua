@@ -1,16 +1,16 @@
 local C = require("ecs.components")
 local colors = require("src.colors")
-local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
+local pos = require("src.positions")
 
-local Title = function(e)
+local LobbyDisplay = function(e)
 	e:give(C.color, colors("white"))
-		:give(C.sprite, resourceManager:getImage("title"))
-		:give(C.pos, pos.screen.top:clone())
+		:give(C.pos, pos.screen.bottom:clone())
+		:give(C.sprite, resourceManager:getImage("display_lobby"))
 		:give(C.transform, 0, 1, 1, "center", "center")
 		:apply()
 
 	return e
 end
 
-return Title
+return LobbyDisplay

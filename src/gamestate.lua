@@ -23,6 +23,10 @@ function Gamestate:disablePreloading()
 	self.__preloading = nil
 end
 
+function Gamestate:restartCurrent()
+	self:switch(self.__current)
+end
+
 function Gamestate:start(state)
 	assert(state, "State must be passed")
 	self.__current = state

@@ -173,13 +173,13 @@ function CatFSM:update(dt)
 end
 
 function CatFSM:onClick(e)
-	if e:has(C.cat) then
-		self:changeState("heart")
-		if self.event == "lobby" then
-			gamestate:getCurrent():addCoin(10)
-			soundManager:send("tapOnCat")
-		end
-	end
+	-- if e:has(C.cat) then
+	-- 	self:changeState("heart")
+	-- 	if self.event == "lobby" then
+	-- 		gamestate:getCurrent():addCoin(10)
+	-- 		soundManager:send("tapOnCat")
+	-- 	end
+	-- end
 end
 
 function CatFSM:onEnter(e)

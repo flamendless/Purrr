@@ -1,10 +1,7 @@
-local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
-local vec2 = require("modules.hump.vector")
 local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
-local screen = require("src.screen")
 
 local Header = function(e, str)
 	e:give(C.color, colors("white"))

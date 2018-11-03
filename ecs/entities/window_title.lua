@@ -1,4 +1,3 @@
-local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
 local screen = require("src.screen")

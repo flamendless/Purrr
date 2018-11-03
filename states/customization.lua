@@ -26,15 +26,12 @@ local assets = require("src.assets")
 local pos = require("src.positions")
 
 local next_state
-local bg = {}
 local level = 1
 local window = { y = screen.y - 16 }
 
 function Customization:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	self.patterns = {}
-	for i = 1, 9 do self.patterns[i] = resourceManager:getImage("pattern" .. i) end
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
@@ -54,6 +51,7 @@ function Customization:setupSystems()
 		patrol = S.patrol(),
 	}
 
+	self.instance:addSystem(self.systems.renderer, "draw", "drawBG")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)
@@ -100,6 +98,7 @@ function Customization:setupEntities(tag)
 	for k,v in pairs(self.btns) do self.instance:addEntity(v) end
 
 	self.entities = {}
+	self.entities.bg = E.pattern(ecs.entity())
 	self.entities.cat = E.cat(ecs.entity())
 	self.entities.header = E.header(ecs.entity(), "CUSTOMIZATION")
 	self.entities.forward = E.button_forward(ecs.entity())
@@ -115,6 +114,7 @@ function Customization:setupEntities(tag)
 	self.accessories.notice = E.notice(ecs.entity())
 	self.accessories.lock = E.lock(ecs.entity())
 
+	self.instance:addEntity(self.entities.bg)
 	self.instance:addEntity(self.accessories.notice)
 	self.instance:addEntity(self.accessories.lock)
 	self.instance:addEntity(self.entities.forward)
@@ -139,10 +139,6 @@ function Customization:start()
 		local c_pos = v[C.pos].pos
 		flux.to(c_pos, dur, { y = pos.color_picker[k]:clone().y }):ease("backout")
 	end
-
-	bg.image = lume.randomchoice(self.patterns)
-	bg.sx = screen.x/bg.image:getWidth()
-	bg.sy = screen.y/bg.image:getHeight()
 end
 
 function Customization:update(dt)
@@ -150,11 +146,6 @@ function Customization:update(dt)
 end
 
 function Customization:draw()
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
-	love.graphics.draw(self.images.window, screen.x/2, window.y, 0,
-		2, 2.5,
-		self.images.window:getWidth()/2, self.images.window:getHeight())
 	self.instance:emit("draw")
 	if not (__window == 1) then
 		event:drawCover()

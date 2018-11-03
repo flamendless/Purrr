@@ -1,4 +1,3 @@
-local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
 local colors = require("src.colors")
 local pos = require("src.positions")

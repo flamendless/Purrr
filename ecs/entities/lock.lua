@@ -1,9 +1,7 @@
-local Entity = require("modules.concord.lib.entity")
 local C = require("ecs.components")
 local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
-local event = require("src.event")
 
 local Lock = function(e)
 	e:give(C.color, colors("white", 0.5))

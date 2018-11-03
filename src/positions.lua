@@ -23,7 +23,7 @@ Positions.menu.quit = vec2(0, 128)
 Positions.menu.settings = vec2(screen.x - 32, screen.y - 32)
 
 Positions.customization = {}
-Positions.customization.off_cat = vec2(screen.x/2, screen.y * 1.5)
+Positions.customization.off_cat = vec2(screen.x/2, -screen.y/2)
 Positions.customization.off_header = vec2(screen.x/2, -screen.y/2)
 Positions.customization.off_forward = vec2(screen.x * 0.82, screen.y * 1.5)
 Positions.customization.off_back = vec2(screen.x * 0.18, screen.y * 1.5)
@@ -49,7 +49,11 @@ Positions.color_picker.white = vec2(screen.x * 0.8, screen.y * 0.75)
 Positions.color_picker.orange = vec2(screen.x * 0.5, screen.y * 0.85)
 
 Positions.lobby = {}
-Positions.lobby.off_window = vec2(screen.x/2, screen.y * 2)
 Positions.lobby.window = vec2(screen.x/2, screen.y)
+Positions.lobby.settings = vec2(screen.x - 32, 32)
+Positions.lobby.home = vec2(screen.x - 112, 32)
+Positions.lobby.cat = vec2(0, screen.y/2)
+Positions.lobby.energy = vec2(112, 32)
+Positions.lobby.cat_info = vec2(32, 32)
 
 return Positions

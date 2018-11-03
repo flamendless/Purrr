@@ -18,6 +18,9 @@ local Entities = {
 	button_volume = req("button_volume"),
 	button_twitter = req("button_twitter"),
 	button_forward = req("button_forward"),
+	button_home = req("button_home"),
+	button_energy = req("button_energy"),
+	button_cat_info = req("button_cat_info"),
 	lock = req("lock"),
 	notice = req("notice"),
 	title = req("title"),
@@ -30,6 +33,8 @@ local Entities = {
 	cat = req("cat"),
 	header = req("header"),
 	lobby_window = req("lobby_window"),
+	pattern = req("pattern"),
+	lobby_display = req("lobby_display"),
 }
 
 return Entities

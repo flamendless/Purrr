@@ -88,7 +88,7 @@ function Debug:keypressed(key)
 	if key == "q" then
 		love.event.quit()
 	elseif key == "r" then
-		love.event.quit("restart")
+		gamestate:restartCurrent()
 	elseif key == "g" then
 		self.modes.graphs = not self.modes.graphs
 	elseif key == "l" then

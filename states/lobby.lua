@@ -20,15 +20,14 @@ local event = require("src.event")
 local transition = require("src.transition")
 local soundManager = require("src.sound_manager")
 local assets = require("src.assets")
+local pos = require("src.positions")
 
-local bg = {}
+local window_width, window_height
 
 function Lobby:enter(previous, ...)
 	self.instance = ecs.instance()
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
-	self.patterns = {}
-	for i = 1, 9 do self.patterns[i] = resourceManager:getImage("pattern" .. i) end
 	self:setupSystems()
 	self:setupEntities()
 	self:start()
@@ -46,8 +45,11 @@ function Lobby:setupSystems()
 		moveTo = S.moveTo(),
 		patrol = S.patrol(),
 		follow = S.follow(),
+		window_manager = S.window_manager(),
 	}
 
+	self.instance:addSystem(self.systems.renderer, "draw", "drawBG")
+	self.instance:addSystem(self.systems.window_manager, "close")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)
@@ -71,72 +73,48 @@ function Lobby:setupSystems()
 	self.instance:addSystem(self.systems.gui, "update", "onClick")
 	self.instance:addSystem(self.systems.gui, "onEnter")
 	self.instance:addSystem(self.systems.gui, "onExit")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 	self.instance:addSystem(self.systems.collision, "draw", "draw")
 	self.instance:addSystem(self.systems.animation, "update")
 	self.instance:addSystem(self.systems.animation, "draw")
 	self.instance:addSystem(self.systems.follow, "update")
 	self.instance:addSystem(self.systems.position, "update")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 end
 
 function Lobby:setupEntities()
-	local window_width = self.images.window:getWidth() * 2
-	local window_height = self.images.window:getHeight() * 1.25
+	window_width = self.images.window:getWidth() * 2
+	window_height = self.images.window:getHeight() * 1.25
 	self.entities = {}
+	self.entities.bg = E.pattern(ecs.entity())
 	self.entities.window = E.lobby_window(ecs.entity())
+	self.entities.home = E.button_home(ecs.entity())
+	self.entities.energy = E.button_energy(ecs.entity(), "energy", self.entities.window)
+	self.entities.cat_info = E.button_cat_info(ecs.entity())
+	self.entities.cat = E.cat(ecs.entity())
+	self.entities.display = E.lobby_display(ecs.entity())
+	self.entities.settings = E.button_settings(ecs.entity())
+		:give(C.pos, pos.screen.top:clone())
+		:give(C.transform, 0, 1.5, 1.5, "right")
+		:give(C.maxScale, 1.75, 1.75)
+		:give(C.onClick, function(e) event:showSettings() end)
+		:apply()
 
 	self.entities.play = E.lobby_button(ecs.entity(), "play", self.entities.window)
 		:give(C.offsetPos, vec2(0, -window_height/2))
-		:give(C.onClick, function(e)
-				self:gotoMap()
-			end)
+		:give(C.onClick, function(e) self:gotoMap() end)
 		:apply()
 
-	-- self.entities.bag = E.lobby_button(ecs.entity(), "bag", self.entities.window)
-	-- 	:give(C.offsetPos, vec2(window_width/3.5, -window_height/2))
-	-- 	:apply()
-  --
-	-- self.entities.settings = E.lobby_button(ecs.entity(), "settings", self.entities.window)
-	-- 	:give(C.pos, vec2(screen.x * 2 - 32, 32 + self.images.name:getHeight() * 2 + 8))
-	-- 	:give(C.transform, 0, 2, 2, "right")
-	-- 	:give(C.onClick, function(e) event:showSettings() end)
-	-- 	:apply()
+	self.entities.bag = E.lobby_button(ecs.entity(), "bag", self.entities.window)
+		:give(C.offsetPos, vec2(window_width/3.5, -window_height/2))
+		:give(C.onClick, function(e) event:showBag() end)
+		:apply()
 
-	-- self.entities.store = E.lobby_button(ecs.entity(), "store", self.entities.window)
-	-- 	:give(C.offsetPos, vec2(-window_width/3.5, -window_height/2))
-	-- 	:give(C.onClick, function(e)
-	-- 			event:showStore()
-	-- 		end)
-	-- 	:apply()
+	self.entities.store = E.lobby_button(ecs.entity(), "store", self.entities.window)
+		:give(C.offsetPos, vec2(-window_width/3.5, -window_height/2))
+		:give(C.onClick, function(e) event:showStore() end)
+		:apply()
 
-	-- self.entities.home = E.lobby_button(ecs.entity(), "home", self.entities.window)
-	-- 	:remove(C.pos):remove(C.transform):apply()
-	-- 	:give(C.pos, vec2(screen.x * 2 - 128, 32 + self.images.name:getHeight() * 2 + 8))
-	-- 	:give(C.transform, 0, 2, 2, "right")
-	-- 	:give(C.onClick, function(e) event:showHomeConfirmation() end)
-	-- 	:apply()
-  --
-	-- self.entities.cat_info = E.lobby_button(ecs.entity(),"cat", self.entities.window)
-	-- 	:remove(C.pos):remove(C.transform):apply()
-	-- 	:give(C.pos, vec2(-screen.x/2, 16))
-	-- 	:give(C.transform, 0, 2, 2)
-	-- 	:give(C.onClick, function(e) event:showCatInfo() end)
-	-- 	:apply()
-  --
-	-- self.entities.energy = ecs.entity()
-	-- 	:give(C.color, colors("white"))
-	-- 	:give(C.button, "energy", {
-	-- 			normal = self.images["energy_" .. data.data.energy],
-	-- 			hovered = self.images["energy_" .. data.data.energy]
-	-- 		})
-	-- 	:give(C.pos, vec2(-screen.x/2, 32 + self.images.name:getHeight() * 2 + 8))
-	-- 	:give(C.transform, 0, 2, 2)
-	-- 	:give(C.maxScale, 2.75, 2.75)
-	-- 	:give(C.windowIndex, 1)
-	-- 	:give(C.onClick, function(e) event:showEnergyInfo() end)
-	-- 	:apply()
-  --
 	-- self.entities.coins = ecs.entity()
 	-- 	:give(C.color, colors("flat", "red", "light"))
 	-- 	:give(C.pos, vec2(screen.x * 1.5, 48))
@@ -144,51 +122,35 @@ function Lobby:setupEntities()
 	-- 	:give(C.windowIndex, 1)
 	-- 	:apply()
 
-	-- self.entities.cat = ecs.entity()
-	-- 	:give(C.tag, "cat")
-	-- 	:give(C.cat)
-	-- 	:give(C.fsm, "blink", { "attack", "blink", "dizzy", "hurt", "heart", "mouth", "sleep", "snore", "spin"})
-	-- 	:give(C.color, colors("white"))
-	-- 	:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
-	-- 	:give(C.transform, 0, 4, 4, "center", "center")
-	-- 	:apply()
-
-	-- self.entities.display = ecs.entity()
-	-- 	:give(C.color, colors("white"))
-	-- 	:give(C.pos, vec2(-screen.x/2, screen.y - window_height - 48))
-	-- 	:give(C.sprite, self.images.display_lobby)
-	-- 	:give(C.transform, 0, 1, 1, "center", "center")
-	-- 	:apply()
-
+	self.instance:addEntity(self.entities.bg)
 	self.instance:addEntity(self.entities.window)
-	-- self.instance:addEntity(self.entities.display)
-	-- self.instance:addEntity(self.entities.store)
+	self.instance:addEntity(self.entities.display)
+	self.instance:addEntity(self.entities.store)
 	self.instance:addEntity(self.entities.play)
-	-- self.instance:addEntity(self.entities.bag)
-	-- self.instance:addEntity(self.entities.settings)
-	-- self.instance:addEntity(self.entities.home)
-	-- self.instance:addEntity(self.entities.energy)
-	-- self.instance:addEntity(self.entities.cat_info)
+	self.instance:addEntity(self.entities.bag)
+	self.instance:addEntity(self.entities.settings)
+	self.instance:addEntity(self.entities.home)
+	self.instance:addEntity(self.entities.energy)
+	self.instance:addEntity(self.entities.cat_info)
 	-- self.instance:addEntity(self.entities.coins)
-	-- self.instance:addEntity(self.entities.cat)
+	self.instance:addEntity(self.entities.cat)
 end
 
 function Lobby:start()
-	bg.image = lume.randomchoice(self.patterns)
-	bg.sx = screen.x/bg.image:getWidth()
-	bg.sy = screen.y/bg.image:getHeight()
 	local dur = 0.8
-	-- flux.to(self.entities.cat_info[C.pos].pos, dur, { x = 8 }):ease("backout")
+	flux.to(self.entities.cat_info[C.pos].pos, dur, { x = pos.lobby.cat_info:clone().x, y = pos.lobby.cat_info:clone().y }):ease("backout")
 	-- flux.to(self.entities.coins[C.pos].pos, dur, { x =  0  }):ease("backout")
-	-- flux.to(self.entities.energy[C.pos].pos, dur, { x = 8 }):ease("backout")
-	-- flux.to(self.entities.settings[C.pos].pos, dur, { x = screen.x - 8 }):ease("backout")
-	-- flux.to(self.entities.home[C.pos].pos, dur, { x = screen.x - 104 }):ease("backout")
-	-- flux.to(self.entities.window[C.pos].pos, dur, { y = screen.y }):ease("backout")
-	flux.to(self.entities.display[C.pos].pos, dur, { x = screen.x/2 }):ease("backout")
-	-- flux.to(self.entities.cat[C.pos].pos, dur * 2, { y = screen.y  * 0.5 }):ease("backout")
-	-- 	:oncomplete(function()
-	-- 		self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-	-- 	end)
+	flux.to(self.entities.energy[C.pos].pos, dur, { x = pos.lobby.energy:clone().x, y = pos.lobby.energy:clone().y }):ease("backout")
+	flux.to(self.entities.settings[C.pos].pos, dur, { x = pos.lobby.settings:clone().x, y = pos.lobby.settings:clone().y }):ease("backout")
+	flux.to(self.entities.home[C.pos].pos, dur, { x = pos.lobby.home:clone().x, y = pos.lobby.home:clone().y }):ease("backout")
+	flux.to(self.entities.window[C.pos].pos, dur, { y = screen.y }):ease("backout")
+	flux.to(self.entities.display[C.pos].pos, dur, { y = screen.y - window_height - 48 }):ease("backout")
+	flux.to(self.entities.cat[C.pos].pos, dur, { y = pos.lobby.cat:clone().y })
+		:onstart(function() self.instance:emit("changeState", "spin") end)
+		:oncomplete(function()
+			self.instance:emit("changeState", "blink")
+			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+		end)
 end
 
 function Lobby:gotoMap()
@@ -205,12 +167,7 @@ function Lobby:update(dt)
 end
 
 function Lobby:draw()
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
-	if not (__window == 1) then
-		event:drawCover()
-	end
 end
 
 function Lobby:buy(e, id, price)

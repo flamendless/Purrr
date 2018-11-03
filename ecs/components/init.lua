@@ -48,6 +48,7 @@ local Components = {
 	onUpdate = req("onUpdate"),
 	windowButton = req("windowButton"),
 	listenTo = req("listenTo"),
+	bg = req("bg"),
 }
 
 return Components

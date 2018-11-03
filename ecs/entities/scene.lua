@@ -1,12 +1,9 @@
-local Entity = require("modules.concord.lib.entity")
-
 local C = require("ecs.components")
 local vec2 = require("modules.hump.vector")
 local colors = require("src.colors")
 
 local Scene = function(e, json, sheet, tag, stopOnLast, speed, sx, sy)
-	e
-	:give(C.color, colors("white"))
+	e:give(C.color, colors("white"))
 	:give(C.anim, json, sheet, {
 			tag = tag or "default",
 			stopOnLast = stopOnLast,
