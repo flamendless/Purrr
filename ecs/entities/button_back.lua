@@ -18,6 +18,7 @@ local ButtonBack = function(e, window)
 		:give(C.maxScale, 2.25, 2.25)
 		:give(C.pos, vec2())
 		:give(C.offsetPos, vec2(0, screen.y * 0.25))
+		:give(C.onClick, function() gamestate:getCurrent().instance:emit("close") end)
 		:apply()
 
 	if window then

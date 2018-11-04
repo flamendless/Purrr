@@ -15,6 +15,7 @@ local data = require("src.data")
 local pos = require("src.positions")
 local lume = require("modules.lume.lume")
 local inspect = require("modules.inspect.inspect")
+local vec2 = require("modules.hump.vector")
 
 function Event:init()
 	self.colors = { cover = colors("flat", "black", "dark", 0.8) }
@@ -77,58 +78,6 @@ function Event:showStore()
 		})
 end
 
-function Event:showCatInfo()
-	if opened_id then return end
-	opened_id = "Window_ShowCatInfo"
-	local spr_window = lume.randomchoice(self.settings)
-	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_ShowCatInfo", window,
-		{
-			spr_window = spr_window,
-			str_title = "YOUR CAT",
-			font_title = self.fonts.title,
-			title_offset_y = 32,
-			str_content = ("NAME: %s\nCOLOUR: %s"):format(data.data.cat_name, data.data.palette),
-			content_offset_y = 128,
-			sx = 3, sy = 3,
-
-			middleButton = {
-				id = "Back",
-				normal = self.images.back,
-				hovered = self.images.back_hovered,
-				onClick = function()
-					window:close()
-				end
-			},
-		})
-end
-
-function Event:showEnergyInfo()
-	if opened_id then return end
-	opened_id = "Window_ShowEnergy"
-	local spr_window = lume.randomchoice(self.settings)
-	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_ShowEnergyInfo", window,
-		{
-			spr_window = spr_window,
-			str_title = "ENERGY",
-			font_title = self.fonts.title,
-			title_offset_y = 32,
-			str_content = ("ENERGY: %s"):format(data.data.energy),
-			content_offset_y = 128,
-			sx = 3, sy = 3,
-
-			middleButton = {
-				id = "Back",
-				normal = self.images.back,
-				hovered = self.images.back_hovered,
-				onClick = function()
-					window:close()
-				end
-			},
-		})
-end
-
 function Event:showLock(msg)
 	if opened_id then return end
 	opened_id = "Window_ShowLock"
@@ -178,6 +127,7 @@ function Event:getName()
 				data.data.cat_name = text
 				data.data.got_name = true
 				data:save()
+				gamestate:getCurrent():start()
 			end)
 		:give(C.onUpdate, function(e)
 				local text = textinput[C.textinput].buffer
@@ -189,8 +139,6 @@ function Event:getName()
 			end)
 		:apply()
 	local cancel = E.button_cancel(ecs.entity(), window)
-		:give(C.onClick, function() instance:emit("close") end)
-		:apply()
 	instance:addEntity(blur)
 	instance:addEntity(window)
 	instance:addEntity(title)
@@ -278,8 +226,6 @@ function Event:showSettings()
 	local window = E.window(ecs.entity(), spr_window, 3, 3)
 	local blur = E.blur(ecs.entity(), window)
 	local button_back = E.button_back(ecs.entity(), window)
-		:give(C.onClick, function() gamestate:getCurrent().instance:emit("close") end)
-		:apply()
 	local button_volume = E.button_volume(ecs.entity(), window)
 	local button_twitter = E.button_twitter(ecs.entity(), window)
 	local button_erase = E.button_erase(ecs.entity(), window)
@@ -289,6 +235,59 @@ function Event:showSettings()
 	instance:addEntity(button_volume)
 	instance:addEntity(button_twitter)
 	instance:addEntity(button_erase)
+	instance:addEntity(button_back)
+end
+
+function Event:showEnergyInfo()
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_settings1"),
+		resourceManager:getImage("window_settings2"),
+		resourceManager:getImage("window_settings3"),
+		resourceManager:getImage("window_settings4"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window, 3, 3)
+	local blur = E.blur(ecs.entity(), window)
+	local button_back = E.button_back(ecs.entity(), window)
+	local body = E.window_body(ecs.entity(), window, ("Energy: %s"):format(data.data.energy))
+		:give(C.offsetPos, pos.window.body2:clone())
+		:apply()
+
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(button_back)
+	instance:addEntity(body)
+end
+
+function Event:showCatInfo()
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_settings1"),
+		resourceManager:getImage("window_settings2"),
+		resourceManager:getImage("window_settings3"),
+		resourceManager:getImage("window_settings4"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window, 3, 3)
+	local blur = E.blur(ecs.entity(), window)
+	local button_back = E.button_back(ecs.entity(), window)
+	local title = E.window_title(ecs.entity(), window, "Cat Info:")
+		:give(C.offsetPos, pos.window.title2:clone())
+		:apply()
+	local body = E.window_body(ecs.entity(), window,
+		("NAME: %s\nCOLOUR: %s"):format(data.data.cat_name, data.data.palette))
+		:give(C.offsetPos, pos.window.body2:clone())
+		:apply()
+
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(title)
+	instance:addEntity(body)
 	instance:addEntity(button_back)
 end
 

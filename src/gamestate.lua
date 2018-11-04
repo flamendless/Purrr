@@ -24,7 +24,7 @@ function Gamestate:disablePreloading()
 end
 
 function Gamestate:restartCurrent()
-	self:switch(self.__current)
+	self:preload()
 end
 
 function Gamestate:start(state)

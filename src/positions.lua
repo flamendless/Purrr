@@ -7,7 +7,9 @@ Positions.window.pad = 32
 Positions.window.title_pad = 64
 Positions.window.body_pad = 86
 Positions.window.title = vec2(-(screen.x - Positions.window.title_pad)/2, -screen.y * 0.35)
+Positions.window.title2 = vec2(-(screen.x - Positions.window.title_pad)/2, -screen.y * 0.2)
 Positions.window.body = vec2(-(screen.x - Positions.window.body_pad)/2, -screen.y * 0.1)
+Positions.window.body2 = vec2(-(screen.x - Positions.window.body_pad)/2)
 Positions.window.twitter = vec2(128, 0)
 Positions.window.erase = vec2(-128, 0)
 

@@ -97,7 +97,6 @@ function Lobby:setupEntities()
 		:give(C.pos, pos.screen.top:clone())
 		:give(C.transform, 0, 1.5, 1.5, "right")
 		:give(C.maxScale, 1.75, 1.75)
-		:give(C.onClick, function(e) event:showSettings() end)
 		:apply()
 
 	self.entities.play = E.lobby_button(ecs.entity(), "play", self.entities.window)

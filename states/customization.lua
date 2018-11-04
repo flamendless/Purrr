@@ -27,7 +27,6 @@ local pos = require("src.positions")
 
 local next_state
 local level = 1
-local window = { y = screen.y - 16 }
 
 function Customization:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
@@ -35,7 +34,12 @@ function Customization:enter(previous, ...)
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
-	self:start()
+	if not data.data.got_name then
+		event:getName()
+		self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
+	else
+		self:start()
+	end
 end
 
 function Customization:setupSystems()
@@ -49,8 +53,17 @@ function Customization:setupSystems()
 		customize_cat = S.customize_cat(),
 		moveTo = S.moveTo(),
 		patrol = S.patrol(),
+		window_manager = S.window_manager(),
+		textinput = S.textinput(),
+		follow = S.follow(),
 	}
 
+	self.instance:addSystem(self.systems.follow, "update")
+	self.instance:addSystem(self.systems.position, "update")
+	self.instance:addSystem(self.systems.textinput, "update")
+	self.instance:addSystem(self.systems.textinput, "textinput")
+	self.instance:addSystem(self.systems.textinput, "keypressed")
+	self.instance:addSystem(self.systems.window_manager, "close")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawBG")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
@@ -75,11 +88,11 @@ function Customization:setupSystems()
 	self.instance:addSystem(self.systems.gui, "update", "onClick")
 	self.instance:addSystem(self.systems.gui, "onEnter")
 	self.instance:addSystem(self.systems.gui, "onExit")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 	self.instance:addSystem(self.systems.collision, "draw", "draw")
 	self.instance:addSystem(self.systems.animation, "update")
 	self.instance:addSystem(self.systems.animation, "draw")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
+	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
 end
 
 function Customization:setupEntities(tag)
@@ -94,7 +107,6 @@ function Customization:setupEntities(tag)
 	self.btns.black = E.color_picker(ecs.entity(), "black", "black", "black")
 	self.btns.white = E.color_picker(ecs.entity(), "white", "white", "white")
 	self.btns.orange = E.color_picker(ecs.entity(), "orange", "orange", "orange")
-
 	for k,v in pairs(self.btns) do self.instance:addEntity(v) end
 
 	self.entities = {}
@@ -124,8 +136,8 @@ function Customization:setupEntities(tag)
 end
 
 function Customization:start()
-	if not data.data.got_name then event:getName() end
 	local dur = 0.8
+	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 	self.entities.back[C.state].isDisabled = true
 	self.entities.forward[C.state].isDisabled = true
 	flux.to(self.entities.cat[C.pos].pos, dur, { y = pos.customization.cat:clone().y }):ease("backout")
@@ -147,20 +159,18 @@ end
 
 function Customization:draw()
 	self.instance:emit("draw")
-	if not (__window == 1) then
-		event:drawCover()
-	end
 end
 
 function Customization:keypressed(key)
-	if key == "escape" then
-		event:showHomeConfirmation()
-	end
 	self.instance:emit("keypressed", key)
 end
 
 function Customization:touchreleased(id, tx, ty, dx, dy, pressure)
 	self.instance:emit("touchreleased", id, tx, ty, dx, dy, pressure)
+end
+
+function Customization:textinput(t)
+	self.instance:emit("textinput", t)
 end
 
 function Customization:exit()
@@ -195,7 +205,6 @@ function Customization:forward()
 		flux.to(self.accessories.lock[C.pos].pos, 1, { x = pos.customization.off_lock:clone().x }):ease("backin")
 			:oncomplete(function()
 				self.instance:emit("changeState", "blink")
-				flux.to(window, 1, { y = screen.y * 2 }):ease("backin")
 				flux.to(self.entities.back[C.pos].pos, 1, { y = pos.customization.off_back:clone().y }):ease("backin")
 				flux.to(self.entities.forward[C.pos].pos, 1, { y = pos.customization.off_forward:clone().y }):ease("backin")
 				flux.to(self.entities.header[C.pos].pos, 1, { y = pos.customization.off_header:clone().y }):ease("backin")

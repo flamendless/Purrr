@@ -72,7 +72,6 @@ end
 
 function Intro:keypressed(key)
 	if __debug and key == "space" then
-		data.data.new_game = false
 		transition:start(next_state)
 	end
 end
