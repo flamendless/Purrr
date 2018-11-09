@@ -5,7 +5,6 @@ local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
 local touch = require("src.touch")
-local soundManager = require("src.sound_manager")
 
 local GUI = System({
 		C.button,
@@ -57,7 +56,7 @@ function GUI:update(dt)
 		local c_button = e[C.button]
 		local c_state = e[C.state]
 		if e:has(C.onUpdate) then
-			local c_onUpdate = e[C.onUpdate].onUpdate(e)
+			e[C.onUpdate].onUpdate(e)
 		end
 		if e:has(C.colliderBox) then c_collider = e[C.colliderBox] end
 		if e:has(C.colliderSprite) then c_collider = e[C.colliderSprite] end
@@ -72,20 +71,19 @@ function GUI:update(dt)
 	end
 end
 
-function GUI:onClick()
+function GUI:mousepressed(mx, my, mb)
 	for _,e in ipairs(self.pool) do
 		local c_button = e[C.button]
 		local c_windowIndex = e[C.windowIndex]
 		local c_windowButton = e[C.windowButton]
 		local c_state = e[C.state]
 		if c_state.isDisabled then
-
 		else
 			if c_state.isHovered and not c_state.isClicked then
 				local bool
 				if love.system.getOS() == "Android" then
 					bool = touch:getTouch()
-				else bool = love.mouse.isDown(1)
+				else bool = mb == 1
 				end
 				if bool then
 					if c_windowIndex then
@@ -99,15 +97,12 @@ function GUI:onClick()
 						end
 					end
 					c_state.isClicked = true
-					soundManager:send("guiOnClick")
 					if e:has(C.onClick) then
 						e[C.onClick].onClick(self, e)
-						soundManager:send("guiClicked_" .. c_button.id)
 						log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 					else
 						if c_button.args and c_button.args.onClick then
 							c_button.args.onClick(self, e)
-							soundManager:send("guiClicked_" .. c_button.id)
 							log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 						end
 					end
@@ -132,7 +127,6 @@ function GUI:onEnter(e)
 	local c_transform = e[C.transform]
 	if not c_button then return end
 	if c_button.args and c_button.args.hovered then
-		soundManager:send("guiOnEnter")
 		e:give(C.hoveredSprite, c_button.args.hovered)
 			:give(C.patrol, { vec2(0, -8), vec2(0, 8) }, true)
 			:give(C.speed, vec2(0, 32))
@@ -145,6 +139,9 @@ function GUI:onEnter(e)
 		if c_transform then
 			self:getInstance():emit("changeScale", e, c_transform.sx + 0.25, c_transform.sy + 0.25, 0.25)
 		end
+		if e:has(C.onHover) then
+			e[C.onHover].onHover(e)
+		end
 	end
 end
 
@@ -154,7 +151,6 @@ function GUI:onExit(e)
 	local c_button = e[C.button]
 	local c_transform = e[C.transform]
 	if not c_button then return end
-	soundManager:send("guiOnExit")
 	c_button.isClicked = false
 	e:remove(C.hoveredSprite)
 		:remove(C.patrol)
@@ -165,6 +161,9 @@ function GUI:onExit(e)
 	end
 	if c_transform then
 		self:getInstance():emit("changeScale", e, nil, nil, 0.25)
+	end
+	if e:has(C.onExit) then
+		e[C.onExit].onExit(e)
 	end
 end
 

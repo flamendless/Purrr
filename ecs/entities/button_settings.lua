@@ -2,6 +2,7 @@ local C = require("ecs.components")
 local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
+local gamestate = require("src.gamestate")
 local event = require("src.event")
 
 local ButtonSettings = function(e)

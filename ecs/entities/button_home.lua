@@ -15,7 +15,7 @@ local ButtonHome = function(e)
 		:give(C.pos, pos.screen.top:clone())
 		:give(C.maxScale, 1.75, 1.75)
 		:give(C.windowIndex, 1)
-		:give(C.onClick, function() event:showHome() end)
+		:give(C.onClick, function() event:showTitleConfirmation() end)
 		:apply()
 
 	return e

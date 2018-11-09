@@ -22,62 +22,6 @@ function Event:init()
 	self.isOpen = false
 end
 
-function Event:showStore()
-	if opened_id then return end
-	opened_id = "Window_ShowStore"
-	local spr_window = lume.randomchoice(self.windows)
-	local window = require("ecs.instances.window")
-	gamestate:addInstance( "Window_ShowStore", window,
-		{
-			spr_window = spr_window,
-			str_title = "STORE",
-			font_title = self.fonts.title,
-
-			middleButton = {
-				id = "Back",
-				normal = self.images.back,
-				hovered = self.images.back_hovered,
-				onClick = function()
-					window:close()
-				end
-			},
-
-			insideButton = {
-				id = "item_walk",
-				normal = self.images.items_base,
-				hovered = self.images.items_base_hovered,
-				text = "WALK pp1000",
-				font = self.fonts.items,
-				color = colors("white"),
-				onClick = function(system, e)
-					gamestate:getCurrent():buy(e, "walk", 1000)
-				end
-			},
-
-			insideButton2 = {
-				id = "item_jump",
-				normal = self.images.items_base,
-				hovered = self.images.items_base_hovered,
-				text = "JUMP pp2000",
-				font = self.fonts.items,
-				onClick = function(system, e)
-					gamestate:getCurrent():buy(e, "jump", 2000)
-				end
-			},
-
-			insideButton3 = {
-				id = "item_attack",
-				text = "ATTACK pp3000",
-				font = self.fonts.items,
-				normal = self.images.items_base,
-				hovered = self.images.items_base_hovered,
-				onClick = function(system, e)
-					gamestate:getCurrent():buy(e, "attack", 3000)
-				end
-			},
-		})
-end
-
 function Event:showLock(msg)
 	if opened_id then return end
 	opened_id = "Window_ShowLock"
@@ -166,8 +110,6 @@ function Event:showExitConfirmation()
 		end)
 		:apply()
 	local cancel = E.button_cancel(ecs.entity(), window)
-		:give(C.onClick, function() instance:emit("close") end)
-		:apply()
 	local title = E.window_title(ecs.entity(), window, "Confirmation")
 	local body = E.window_body(ecs.entity(), window, "Are you sure you want to quit the game?")
 	local blur = E.blur(ecs.entity(), window)
@@ -199,8 +141,6 @@ function Event:showEraseConfirmation()
 		end)
 		:apply()
 	local cancel = E.button_cancel(ecs.entity(), window)
-		:give(C.onClick, function() instance:emit("close") end)
-		:apply()
 	local title = E.window_title(ecs.entity(), window, "Confirmation")
 	local body = E.window_body(ecs.entity(), window, "Are you sure you want to reset your data?")
 	local blur = E.blur(ecs.entity(), window)
@@ -229,6 +169,10 @@ function Event:showSettings()
 	local button_volume = E.button_volume(ecs.entity(), window)
 	local button_twitter = E.button_twitter(ecs.entity(), window)
 	local button_erase = E.button_erase(ecs.entity(), window)
+	local title = E.window_title(ecs.entity(), window, "SETTINGS")
+		:give(C.offsetPos, pos.window.title2:clone())
+		:give(C.windowTitle)
+		:apply()
 
 	instance:addEntity(blur)
 	instance:addEntity(window)
@@ -236,6 +180,7 @@ function Event:showSettings()
 	instance:addEntity(button_twitter)
 	instance:addEntity(button_erase)
 	instance:addEntity(button_back)
+	instance:addEntity(title)
 end
 
 function Event:showEnergyInfo()
@@ -307,15 +252,45 @@ function Event:showLobby(arg)
 	local accept = E.button_accept(ecs.entity(), window)
 		:give(C.onClick, function()
 			instance:emit("close")
+			transition:start(require("states.lobby"))
+		end)
+		:apply()
+	local cancel = E.button_cancel(ecs.entity(), window)
+	local title = E.window_title(ecs.entity(), window, "Confirmation")
+	local body = E.window_body(ecs.entity(), window, "Are you sure you want to return to lobby?")
+	local blur = E.blur(ecs.entity(), window)
+	instance:addEntity(blur)
+	instance:addEntity(window)
+	instance:addEntity(accept)
+	instance:addEntity(cancel)
+	instance:addEntity(title)
+	instance:addEntity(body)
+end
+
+function Event:showTitleConfirmation()
+	self.isOpen = true
+	local instance = gamestate:getCurrent().instance
+	local E = require("ecs.entities")
+	local spr_windows = {
+		resourceManager:getImage("window_red"),
+		resourceManager:getImage("window_blue"),
+		resourceManager:getImage("window_green"),
+	}
+	local spr_window = lume.randomchoice(spr_windows)
+	local window = E.window(ecs.entity(), spr_window,
+		(screen.x - pos.window.title_pad)/spr_window:getWidth(),
+		(screen.y - pos.window.title_pad)/spr_window:getHeight())
+	local accept = E.button_accept(ecs.entity(), window)
+		:give(C.onClick, function()
+			instance:emit("close")
 			transition:start(require("states.menu"))
 		end)
 		:apply()
 	local cancel = E.button_cancel(ecs.entity(), window)
-		:give(C.onClick, function() instance:emit("close") end)
-		:apply()
 	local title = E.window_title(ecs.entity(), window, "Confirmation")
-	local body = E.window_body(ecs.entity(), window, "Are you sure you want to return to lobby?")
+	local body = E.window_body(ecs.entity(), window, "Are you sure you want to go to title screen?")
 	local blur = E.blur(ecs.entity(), window)
+
 	instance:addEntity(blur)
 	instance:addEntity(window)
 	instance:addEntity(accept)

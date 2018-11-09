@@ -50,6 +50,7 @@ function Lobby:setupSystems()
 
 	self.instance:addSystem(self.systems.renderer, "draw", "drawBG")
 	self.instance:addSystem(self.systems.window_manager, "close")
+	self.instance:addSystem(self.systems.window_manager, "changeWindowTitle")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
 	self.instance:addSystem(self.systems.patrol)
@@ -70,7 +71,7 @@ function Lobby:setupSystems()
 	self.instance:addSystem(self.systems.transform, "handleAnim")
 	self.instance:addSystem(self.systems.transform, "changeScale")
 	self.instance:addSystem(self.systems.gui, "update")
-	self.instance:addSystem(self.systems.gui, "update", "onClick")
+	self.instance:addSystem(self.systems.gui, "mousepressed")
 	self.instance:addSystem(self.systems.gui, "onEnter")
 	self.instance:addSystem(self.systems.gui, "onExit")
 	self.instance:addSystem(self.systems.collision, "draw", "draw")
@@ -106,12 +107,12 @@ function Lobby:setupEntities()
 
 	self.entities.bag = E.lobby_button(ecs.entity(), "bag", self.entities.window)
 		:give(C.offsetPos, vec2(window_width/3.5, -window_height/2))
-		:give(C.onClick, function(e) event:showBag() end)
+		:give(C.onClick, function(e) self:gotoBag() end)
 		:apply()
 
 	self.entities.store = E.lobby_button(ecs.entity(), "store", self.entities.window)
 		:give(C.offsetPos, vec2(-window_width/3.5, -window_height/2))
-		:give(C.onClick, function(e) event:showStore() end)
+		:give(C.onClick, function(e) self:gotoShop() end)
 		:apply()
 
 	-- self.entities.coins = ecs.entity()
@@ -137,8 +138,8 @@ end
 
 function Lobby:start()
 	local dur = 0.8
-	flux.to(self.entities.cat_info[C.pos].pos, dur, { x = pos.lobby.cat_info:clone().x, y = pos.lobby.cat_info:clone().y }):ease("backout")
 	-- flux.to(self.entities.coins[C.pos].pos, dur, { x =  0  }):ease("backout")
+	flux.to(self.entities.cat_info[C.pos].pos, dur, { x = pos.lobby.cat_info:clone().x, y = pos.lobby.cat_info:clone().y }):ease("backout")
 	flux.to(self.entities.energy[C.pos].pos, dur, { x = pos.lobby.energy:clone().x, y = pos.lobby.energy:clone().y }):ease("backout")
 	flux.to(self.entities.settings[C.pos].pos, dur, { x = pos.lobby.settings:clone().x, y = pos.lobby.settings:clone().y }):ease("backout")
 	flux.to(self.entities.home[C.pos].pos, dur, { x = pos.lobby.home:clone().x, y = pos.lobby.home:clone().y }):ease("backout")
@@ -155,10 +156,20 @@ end
 function Lobby:gotoMap()
 	self.instance:emit("changeState", "spin")
 	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-	flux.to(self.entities.cat[C.pos].pos, 1, { y = screen.y * 1.5 }):ease("backin")
+	flux.to(self.entities.cat[C.pos].pos, 1, { y = pos.screen.bottom:clone().y }):ease("backin")
 		:oncomplete(function()
 			transition:start(require("states.map"))
 		end)
+end
+
+function Lobby:gotoBag()
+	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+	transition:start(require("states.bag"))
+end
+
+function Lobby:gotoShop()
+	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
+	transition:start(require("states.shop"))
 end
 
 function Lobby:update(dt)
@@ -169,21 +180,8 @@ function Lobby:draw()
 	self.instance:emit("draw")
 end
 
-function Lobby:buy(e, id, price)
-	if data.data.coins >= price then
-		soundManager:send("buy")
-		data.data.coins = data.data.coins - price
-		data.data.skills[id] = true
-		e[C.state].isDisabled = true
-		self.entities.coins[C.text].text = data.data.coins
-	else
-		soundManager:send("lock")
-	end
-end
-
-function Lobby:addCoin(inc)
-	data.data.coins = data.data.coins + inc
-	self.entities.coins[C.text].text = data.data.coins
+function Lobby:mousepressed(mx, my, mb)
+	self.instance:emit("mousepressed", mx, my, mb)
 end
 
 function Lobby:touchpressed(id, tx, ty, dx, dy, pressure)
@@ -192,12 +190,6 @@ end
 
 function Lobby:touchreleased(id, tx, ty, dx, dy, pressure)
 	self.instance:emit("touchreleased", id, tx, ty, dx, dy, pressure)
-end
-
-function Lobby:keypressed(key)
-	if key == "escape" then
-		event:showHomeConfirmation()
-	end
 end
 
 function Lobby:exit()

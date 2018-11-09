@@ -85,7 +85,7 @@ function Customization:setupSystems()
 	self.instance:addSystem(self.systems.transform, "handleAnim")
 	self.instance:addSystem(self.systems.transform, "changeScale")
 	self.instance:addSystem(self.systems.gui, "update")
-	self.instance:addSystem(self.systems.gui, "update", "onClick")
+	self.instance:addSystem(self.systems.gui, "mousepressed")
 	self.instance:addSystem(self.systems.gui, "onEnter")
 	self.instance:addSystem(self.systems.gui, "onExit")
 	self.instance:addSystem(self.systems.collision, "draw", "draw")
@@ -163,6 +163,10 @@ end
 
 function Customization:keypressed(key)
 	self.instance:emit("keypressed", key)
+end
+
+function Customization:mousepressed(mx, my, mb)
+	self.instance:emit("mousepressed", mx, my, mb)
 end
 
 function Customization:touchreleased(id, tx, ty, dx, dy, pressure)

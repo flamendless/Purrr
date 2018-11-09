@@ -3,6 +3,7 @@ local C = require("ecs.components")
 local flux = require("modules.flux.flux")
 local screen = require("src.screen")
 local event = require("src.event")
+local gamestate = require("src.gamestate")
 
 local WindowManager = System({
 	C.window,
@@ -11,6 +12,9 @@ local WindowManager = System({
 	C.windowButton,
 	C.button,
 	"buttons"
+}, {
+	C.windowTitle,
+	"title"
 })
 
 local dur = 0.75
@@ -19,6 +23,8 @@ function WindowManager:entityAddedTo(e, pool)
 	__window = 2
 	if pool.name == "buttons" then
 		e[C.windowButton].index = __window
+	elseif pool.name == "title" then
+		self.window_title = e
 	else
 		flux.to(e[C.pos].pos, dur, { y = screen.y/2 })
 			:ease("backout")
@@ -34,6 +40,10 @@ function WindowManager:close()
 				event.isOpen = false
 			end)
 	end
+end
+
+function WindowManager:changeWindowTitle(str)
+	self.window_title[C.text].text = str
 end
 
 return WindowManager

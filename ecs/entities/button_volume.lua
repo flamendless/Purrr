@@ -33,6 +33,8 @@ local ButtonVolume = function(e, window)
 				end
 				data:save()
 			end)
+		:give(C.onHover, function(e) gamestate:getCurrent().instance:emit("changeWindowTitle", "Toggle Volume") end)
+		:give(C.onExit, function(e) gamestate:getCurrent().instance:emit("changeWindowTitle", "SETTINGS") end)
 		:apply()
 
 	return e

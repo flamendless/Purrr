@@ -4,6 +4,7 @@ local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
 local event = require("src.event")
+local gamestate = require("src.gamestate")
 
 local ButtonErase = function(e, window)
 	e:give(C.button, "Erase",
@@ -19,6 +20,8 @@ local ButtonErase = function(e, window)
 		:give(C.follow, window)
 		:give(C.offsetPos, pos.window.erase:clone())
 		:give(C.onClick, function() event:showEraseConfirmation() end)
+		:give(C.onHover, function(e) gamestate:getCurrent().instance:emit("changeWindowTitle", "Erase Data") end)
+		:give(C.onExit, function(e) gamestate:getCurrent().instance:emit("changeWindowTitle", "SETTINGS") end)
 		:apply()
 
 	return e

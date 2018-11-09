@@ -22,10 +22,7 @@ local gamestate = require("src.gamestate")
 local assets = require("src.assets")
 local pos = require("src.positions")
 
-local bg = {}
-
 function Menu:enter(previous, ...)
-	self.colors = { bg = colors("flat", "black", "dark") }
 	self.images = resourceManager:getAll("images")
 	self.fonts = resourceManager:getAll("fonts")
 	self.instance = ecs.instance()
@@ -48,10 +45,12 @@ function Menu:setupSystems()
 		textinput = S.textinput(),
 	}
 
+	self.instance:addSystem(self.systems.renderer, "draw", "drawBG")
 	self.instance:addSystem(self.systems.textinput, "update")
 	self.instance:addSystem(self.systems.textinput, "textinput")
 	self.instance:addSystem(self.systems.textinput, "keypressed")
 	self.instance:addSystem(self.systems.window_manager, "close")
+	self.instance:addSystem(self.systems.window_manager, "changeWindowTitle")
 	self.instance:addSystem(self.systems.position, "update")
 	self.instance:addSystem(self.systems.moveTo)
 	self.instance:addSystem(self.systems.moveTo, "update")
@@ -66,7 +65,7 @@ function Menu:setupSystems()
 	self.instance:addSystem(self.systems.transform, "handleSprite")
 	self.instance:addSystem(self.systems.transform, "changeScale")
 	self.instance:addSystem(self.systems.gui, "update")
-	self.instance:addSystem(self.systems.gui, "update", "onClick")
+	self.instance:addSystem(self.systems.gui, "mousepressed")
 	self.instance:addSystem(self.systems.gui, "onEnter")
 	self.instance:addSystem(self.systems.gui, "onExit")
 	self.instance:addSystem(self.systems.gui, "changeSprite")
@@ -83,12 +82,14 @@ function Menu:setupEntities()
 		end
 	end
 	self.entities = {}
+	self.entities.bg = E.title_bg(ecs.entity())
 	self.entities.btn_play = E.button_play(ecs.entity(), next_state)
 	self.entities.btn_quit = E.button_quit(ecs.entity(), self.entities.btn_play)
 		:give(C.offsetPos, pos.menu.quit:clone()):apply()
 	self.entities.settings = E.button_settings(ecs.entity())
 	self.entities.title = E.title(ecs.entity())
 
+	self.instance:addEntity(self.entities.bg)
 	self.instance:addEntity(self.entities.btn_play)
 	self.instance:addEntity(self.entities.btn_quit)
 	self.instance:addEntity(self.entities.title)
@@ -105,9 +106,6 @@ function Menu:start()
 			self.entities.btn_quit:remove(C.follow):apply()
 			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
 		end)
-	bg.image = self.images.bg
-	bg.sx = screen.x/bg.image:getWidth()
-	bg.sy = screen.y/bg.image:getHeight()
 end
 
 function Menu:update(dt)
@@ -115,9 +113,6 @@ function Menu:update(dt)
 end
 
 function Menu:draw()
-	self.colors.bg:setBG()
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(bg.image, 0, 0, 0, bg.sx, bg.sy)
 	self.instance:emit("draw")
 end
 
@@ -128,6 +123,10 @@ function Menu:keypressed(key)
 		else event:showExitConfirmation()
 		end
 	end
+end
+
+function Menu:mousepressed(mx, my, mb)
+	self.instance:emit("mousepressed", mx, my, mb)
 end
 
 function Menu:textinput(t)

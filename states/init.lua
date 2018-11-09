@@ -11,6 +11,8 @@ local States = {
 	intro = req("intro"),
 	customization = req("customization"),
 	map = req("map"),
+	bag = req("bag"),
+	store = req("store"),
 }
 
 return States

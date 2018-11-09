@@ -46,9 +46,12 @@ local Components = {
 	textinput = req("textinput"),
 	onClick = req("onClick"),
 	onUpdate = req("onUpdate"),
+	onHover = req("onHover"),
+	onExit = req("onExit"),
 	windowButton = req("windowButton"),
 	listenTo = req("listenTo"),
 	bg = req("bg"),
+	windowTitle = req("windowTitle"),
 }
 
 return Components

@@ -34,6 +34,7 @@ local Entities = {
 	header = req("header"),
 	lobby_window = req("lobby_window"),
 	pattern = req("pattern"),
+	title_bg = req("title_bg"),
 	lobby_display = req("lobby_display"),
 }
 

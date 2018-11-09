@@ -4,6 +4,7 @@ local colors = require("src.colors")
 local pos = require("src.positions")
 local resourceManager = require("src.resource_manager")
 local data = require("src.data")
+local gamestate = require("src.gamestate")
 
 local ButtonTwitter = function(e, window)
 	local img = resourceManager:getImage("button_twitter")
@@ -20,6 +21,8 @@ local ButtonTwitter = function(e, window)
 		:give(C.follow, window)
 		:give(C.offsetPos, pos.window.twitter:clone())
 		:give(C.onClick, function() love.system.openURL(data.dev.twitter) end)
+		:give(C.onHover, function(e) gamestate:getCurrent().instance:emit("changeWindowTitle", "Follow Us") end)
+		:give(C.onExit, function(e) gamestate:getCurrent().instance:emit("changeWindowTitle", "SETTINGS") end)
 		:apply()
 
 	return e
