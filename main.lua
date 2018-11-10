@@ -1,5 +1,5 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
-__debug = true
+__debug = (love.system.getOS() == "Android") or true
 __filter = "nearest"
 __window = 1
 __scale = 1
@@ -13,7 +13,6 @@ if __debug then
 	love.audio.setVolume(0)
 end
 
-local semver = require("modules.semver.semver")
 local log = require("modules.log.log")
 local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
@@ -40,6 +39,8 @@ print(("Game: %s x %s"):format(screen.x, screen.y))
 print("Scale: " .. __scale)
 
 function love.load(args)
+	-- if __debug then log.level = "warn" end
+	log.outfile = "log"
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:init() end
@@ -75,11 +76,6 @@ function love.draw()
 	gamestate:draw()
 	transition:draw()
 	if __debug then debugging:draw() end
-	if __version < semver(1, 0, 0) then
-		love.graphics.setColor(1, 0, 0, 1)
-		love.graphics.setFont(font)
-		love.graphics.print("BETA v" .. tostring(__version))
-	end
 	love.graphics.pop()
 end
 

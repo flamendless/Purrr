@@ -12,11 +12,13 @@ local soundManager = require("src.sound_manager")
 local bgm = require("src.bgm")
 
 function Gamestate:enablePreloading()
+	log.info("Preloading enabled!")
 	self.__preloading = require("ecs.instances.loading")
 	self.__preloading:load()
 end
 
 function Gamestate:disablePreloading()
+	log.info("Preloading disabled!")
 	if self.__preloading and self.__preloading.exit then
 		self.__preloading:exit()
 	end
@@ -24,16 +26,19 @@ function Gamestate:disablePreloading()
 end
 
 function Gamestate:restartCurrent()
+	log.info("Restarting current state...")
 	self:preload()
+	log.info("Restarted current state!")
 end
 
 function Gamestate:start(state)
-	assert(state, "State must be passed")
+	assert(state, "A state must be passed")
 	self.__current = state
 	self:preload()
 end
 
 function Gamestate:switch(state, ...)
+	log.info("Switching to " .. state.__id)
 	self:exit()
 	self.__previous = self.__current
 	self.__current = state
@@ -42,20 +47,23 @@ function Gamestate:switch(state, ...)
 end
 
 function Gamestate:reload()
+	log.info("Reloading .." .. self.__current.__id)
 	self:switch(self.__current)
+	log.info("Reloaded .." .. self.__current.__id)
 end
 
 function Gamestate:preload()
-	log.trace("Preload started!")
+	log.info("Preload checking...")
 	local a = assets:load(self.__current.__id)
 	if a then
+		log.info("Preload started")
 		preload:check(a)
 		self.isPreloading = true
 	end
 end
 
 function Gamestate:enter(previous, ...)
-	log.trace(("State %s Entered!"):format(self.__current.__id))
+	log.info(("State %s Entered!"):format(self.__current.__id))
 	bgm:set(self.__current, previous)
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
@@ -131,7 +139,9 @@ end
 
 function Gamestate:exit()
 	if self.__current and self.__current.exit then
+		log.info("Exiting...")
 		self.__current:exit()
+		log.info("Exited!")
 	end
 	bgm:reset()
 end

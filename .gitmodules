@@ -7,9 +7,6 @@
 [submodule "modules/lily"]
 	path = modules/lily
 	url = git@github.com:MikuAuahDark/lily.git
-[submodule "modules/log"]
-	path = modules/log
-	url = git@github.com:rxi/log.lua.git
 [submodule "modules/flux"]
 	path = modules/flux
 	url = git@github.com:rxi/flux.git

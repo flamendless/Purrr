@@ -119,8 +119,10 @@ end
 function Menu:keypressed(key)
 	self.instance:emit("keypressed", key)
 	if key == "escape" then
-		if event.isOpen then self.instance:emit("close")
-		else event:showExitConfirmation()
+		if event.isOpen then
+			self.instance:emit("close")
+		else
+			event:showExitConfirmation()
 		end
 	end
 end

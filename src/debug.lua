@@ -3,7 +3,7 @@ local lurker = require("modules.lurker.lurker")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
 local inspect = require("modules.inspect.inspect")
-
+local semver = require("modules.semver.semver")
 local screen = require("src.screen")
 local time = require("src.time")
 local colors = require("src.colors")
@@ -25,6 +25,8 @@ local Debug = {
 	},
 }
 
+local _ver = semver(1, 0, 0)
+
 lurker.preswap = function(filename)
 	return filename == "save.lua"
 end
@@ -37,32 +39,38 @@ end
 function Debug:init()
 	self.colors.line = colors(1, 0, 0, 0.5)
 	self.colors.graph = colors(1, 0, 0, 1)
-	log.trace("Load")
-	log.trace("Setting Graphs")
-	self.graphs.fps = debugGraph:new('fps', 0, 0)
-  self.graphs.mem = debugGraph:new('mem', 0, 30)
-  self.graphs.uptime = debugGraph:new('custom', 64, 0)
-  self.graphs.state = debugGraph:new('custom', 0, 60)
-  self.graphs.version = debugGraph:new('custom', 0, 90)
-  self.graphs.preload = debugGraph:new('custom', 0, 120)
-  self.graphs.transition = debugGraph:new('custom', 0, 150)
-	self.graphs.fps.font = self.font
-	self.graphs.mem.font = self.font
-	self.graphs.uptime.font = self.font
-	self.graphs.state.font = self.font
-	self.graphs.version.font = self.font
-	self.graphs.preload.font = self.font
-	self.graphs.transition.font = self.font
+
+	local x = 8
+	local y = 60
+	local graphs = { "state", "preload", "transition" }
+
+	self.graphs.fps = debugGraph:new('fps', x, 0)
+  self.graphs.mem = debugGraph:new('mem', x, 30)
+
+	if __version < _ver then
+  	self.graphs.beta = debugGraph:new('custom', x, screen.y - 64)
+		self.graphs.beta.font = self.font
+	end
+
+	for i = 1, #graphs do
+		local k = graphs[i]
+		self.graphs[k] = debugGraph:new('custom', x, y + (30 * (i-1)))
+	end
+
+	for k,v in pairs(self.graphs) do
+		v.font = self.font
+	end
 end
 
 function Debug:update(dt)
 	if not (love.system.getOS() == "Android") then lurker.update(dt) end
 	for k,v in pairs(self.graphs) do v:update(dt) end
-	self.graphs.uptime.label = ("Uptime: %i"):format(time.uptime)
 	self.graphs.state.label = ("Gamestate: %s"):format(gamestate:getCurrent().__id)
-	self.graphs.version.label = ("Version: %s"):format(__version)
 	self.graphs.preload.label = ("Preload: %s"):format(tostring(preload:getState()))
 	self.graphs.transition.label = ("Transition: %s"):format(tostring(transition:getState()))
+	if self.graphs.beta then
+		self.graphs.beta.label = ("BETA v" .. tostring(__version))
+	end
 	touch:update(dt)
 end
 
