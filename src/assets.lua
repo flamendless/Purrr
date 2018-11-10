@@ -1,4 +1,6 @@
 local Assets = {}
+local log = require("modules.log.log")
+
 local states = {}
 
 function states.splash()
@@ -364,7 +366,12 @@ function states.map()
 end
 
 function Assets:load(state)
-	return states[string.lower(state)]()
+	local str = string.lower(state)
+	if states[str] then
+		return states[string.lower(state)]()
+	else
+		log.warn(("%s does not exist!"):format(str))
+	end
 end
 
 return Assets

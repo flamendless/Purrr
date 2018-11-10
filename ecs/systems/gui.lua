@@ -11,6 +11,8 @@ local GUI = System({
 		C.pos,
 	})
 
+local checkIfClicked, checkForWindow
+
 function GUI:init()
 	self.text = {}
 end
@@ -19,6 +21,9 @@ function GUI:entityAdded(e)
 	local c_button = e[C.button]
 	if c_button.args then
 		local args = c_button.args
+		if args.onClick and e:has(C.onClick) then
+			error(("%s button has two onClick events! Check the entity's button and onClick components!"):format(c_button.id))
+		end
 		if args.normal then
 			e:give(C.sprite, args.normal):apply()
 		else
@@ -74,28 +79,14 @@ end
 function GUI:mousepressed(mx, my, mb)
 	for _,e in ipairs(self.pool) do
 		local c_button = e[C.button]
-		local c_windowIndex = e[C.windowIndex]
-		local c_windowButton = e[C.windowButton]
 		local c_state = e[C.state]
 		if c_state.isDisabled then
+			log.warn(("Clicked on: %s which is disabled"):format(c_button.id))
 		else
 			if c_state.isHovered and not c_state.isClicked then
-				local bool
-				if love.system.getOS() == "Android" then
-					bool = touch:getTouch()
-				else bool = mb == 1
-				end
-				if bool then
-					if c_windowIndex then
-						if not (c_windowIndex.index == __window) then
-							return
-						end
-					end
-					if c_windowButton then
-						if not (c_windowButton.index == __window) then
-							return
-						end
-					end
+				local bool = checkIfClicked(mb)
+				local safe = checkForWindow(e)
+				if bool and safe then
 					c_state.isClicked = true
 					if e:has(C.onClick) then
 						e[C.onClick].onClick(self, e)
@@ -164,6 +155,27 @@ function GUI:onExit(e)
 	end
 	if e:has(C.onExit) then
 		e[C.onExit].onExit(e)
+	end
+end
+
+function checkIfClicked(mb)
+	local bool
+	if love.system.getOS() == "Android" then
+		bool = touch:getTouch()
+	else
+		bool = mb == 1
+	end
+	return bool
+end
+
+function checkForWindow(e)
+	local c_windowIndex = e[C.windowIndex]
+	local c_windowButton = e[C.windowButton]
+	if c_windowIndex then
+		return c_windowIndex.index == __window
+	end
+	if c_windowButton then
+		return c_windowButton.index == __window
 	end
 end
 

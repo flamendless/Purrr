@@ -11,6 +11,7 @@ local ButtonCatInfo = function(e)
 		:give(C.transform, 0, 1.5, 1.5)
 		:give(C.maxScale, 1.75, 1.75)
 		:give(C.pos, pos.screen.top:clone())
+		:give(C.windowIndex, 1)
 		:give(C.button, "cat_info", {
 				normal = spr,
 				hovered = spr_hovered,

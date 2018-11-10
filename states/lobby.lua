@@ -158,18 +158,18 @@ function Lobby:gotoMap()
 	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
 	flux.to(self.entities.cat[C.pos].pos, 1, { y = pos.screen.bottom:clone().y }):ease("backin")
 		:oncomplete(function()
-			transition:start(require("states.map"))
+			transition:start(require("states").map)
 		end)
 end
 
 function Lobby:gotoBag()
 	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-	transition:start(require("states.bag"))
+	transition:start(require("states").bag)
 end
 
 function Lobby:gotoShop()
 	self.instance:disableSystem(self.systems.collision, "update", "checkPoint")
-	transition:start(require("states.shop"))
+	transition:start(require("states").shop)
 end
 
 function Lobby:update(dt)
