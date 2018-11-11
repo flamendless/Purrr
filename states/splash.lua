@@ -23,19 +23,18 @@ local resourceManager = require("src.resource_manager")
 local assets = require("src.assets")
 
 local next_state = require("states.menu")
-local delay = 1
-local speed = 2
-if __debug then delay = 0 speed = 8 end
+local delay = 0.5
+local dur = 0.75
 
 function Splash:enter(previous, ...)
 	self.exiting = false
-	self.colors = {
-		bg = colors("black"),
-		logo = colors("white"),
-		text = colors("flat", "white", "light"),
-	}
+	self.colors = { bg = colors("flat", "blue", "dark") }
 	self.instance = ecs.instance()
-	self.images = resourceManager:getAll("images")
+	self.images = {
+		love_logo = resourceManager:getImage("love_logo"),
+		love_text = resourceManager:getImage("love_text"),
+		love_made_with = resourceManager:getImage("love_made_with"),
+	}
 	self.fonts = resourceManager:getAll("fonts")
 	self.systems = {
 		renderer = S.renderer(),
@@ -44,36 +43,30 @@ function Splash:enter(previous, ...)
 	}
 
 	self.entities = {}
-	self.entities.logo = ecs.entity()
-		:give(C.color, self.colors.logo)
-		:give(C.anim, "assets/anim/json/flamendless.json", self.images.flamendless, {
-				speed = speed,
-				stopOnLast = true,
-			})
-		:give(C.pos, vec2(screen.x/2, screen.y/2 + 64))
-		:give(C.transform, 0, 4, 4, "center", "bottom")
-		:give(C.anim_callback, {
-				onComplete = function()
-					flux.to(self.colors.logo, delay, { [4] = 0 })
-					flux.to(self.colors.text, delay, { [4] = 0 })
-					timer.after(delay, function()
-						if not self.exiting then
-							self.exiting = true
-							transition:start(next_state)
-						end
-					end)
-				end
-			})
+	self.entities.love_made_with = ecs.entity()
+		:give(C.color, colors("white"))
+		:give(C.pos, vec2(screen.x/2, -screen.y/2))
+		:give(C.sprite, self.images.love_made_with)
+		:give(C.transform, 0, 0.75, 0.75, "center", "center")
 		:apply()
 
-	self.entities.text = ecs.entity()
-		:give(C.color, self.colors.text)
-		:give(C.text, "flamendless", self.fonts.bmdelico_42, "center", screen.x)
-		:give(C.pos, vec2(0, screen.y/2 + 128))
+	self.entities.love_logo = ecs.entity()
+		:give(C.color, colors("white"))
+		:give(C.pos, vec2(-screen.x, screen.y/2))
+		:give(C.sprite, self.images.love_logo)
+		:give(C.transform, 0, 0.75, 0.75, "center", "center")
 		:apply()
 
-	self.instance:addEntity(self.entities.logo)
-	self.instance:addEntity(self.entities.text)
+	self.entities.love_text = ecs.entity()
+		:give(C.color, colors("white"))
+		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
+		:give(C.sprite, self.images.love_text)
+		:give(C.transform, 0, 0.75, 0.75, "center", "center")
+		:apply()
+
+	self.instance:addEntity(self.entities.love_made_with)
+	self.instance:addEntity(self.entities.love_logo)
+	self.instance:addEntity(self.entities.love_text)
 
 	self.instance:addSystem(self.systems.transform)
 	self.instance:addSystem(self.systems.transform, "handleSprite")
@@ -82,6 +75,18 @@ function Splash:enter(previous, ...)
 	self.instance:addSystem(self.systems.animation, "draw")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
 	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
+
+	flux.to(self.entities.love_made_with[C.pos].pos, dur, { y = screen.y * 0.15 }):ease("backout")
+	flux.to(self.entities.love_logo[C.pos].pos, dur, { x = screen.x/2 }):ease("backout")
+	flux.to(self.entities.love_text[C.pos].pos, dur, { y = screen.y * 0.85 }):ease("backout")
+		:oncomplete(function()
+			flux.to(self.entities.love_made_with[C.pos].pos, dur, { y = screen.y * 1.5 }):ease("backin"):delay(delay)
+			flux.to(self.entities.love_logo[C.pos].pos, dur, { x = screen.x * 1.5 }):ease("backin"):delay(delay)
+			flux.to(self.entities.love_text[C.pos].pos, dur, { y = -screen.y/2 }):ease("backin"):delay(delay)
+				:oncomplete(function()
+					transition:start(next_state)
+				end)
+		end)
 end
 
 function Splash:update(dt)

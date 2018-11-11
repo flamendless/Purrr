@@ -6,7 +6,9 @@ local states = {}
 function states.splash()
 	return {
 		images = {
-			{ id = "flamendless", path = "assets/anim/flamendless.png" },
+			{ id = "love_logo", path = "assets/images/love-logo.png" },
+			{ id = "love_text", path = "assets/images/love-text.png" },
+			{ id = "love_made_with", path = "assets/images/love-made-with.png" },
 		},
 		sources = {
 			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },

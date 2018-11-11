@@ -44,3 +44,6 @@
 [submodule "modules/semver"]
 	path = modules/semver
 	url = git@github.com:kikito/semver.lua.git
+[submodule "modules/log"]
+	path = modules/log
+	url = git@github.com:flamendless/log.lua.git

@@ -39,8 +39,9 @@ print(("Game: %s x %s"):format(screen.x, screen.y))
 print("Scale: " .. __scale)
 
 function love.load(args)
-	-- if __debug then log.level = "warn" end
-	log.outfile = "log"
+	if __debug then log.level = "info" end
+	log.outfile = "log.log"
+	log.lovesave = true
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:init() end
@@ -49,8 +50,8 @@ function love.load(args)
 	event:init()
 	transition:init()
 	preload:init()
-	-- gamestate:start( require("states").splash )
-	gamestate:start( require("states").menu )
+	gamestate:start( require("states").splash )
+	-- gamestate:start( require("states").menu )
 	-- gamestate:start( require("states").intro )
 	-- gamestate:start( require("states").customization )
 	-- gamestate:start( require("states").lobby )
