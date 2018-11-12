@@ -10,9 +10,6 @@
 [submodule "modules/flux"]
 	path = modules/flux
 	url = git@github.com:rxi/flux.git
-[submodule "modules/baton"]
-	path = modules/baton
-	url = git@github.com:tesselode/baton.git
 [submodule "modules/hump"]
 	path = modules/hump
 	url = git@github.com:vrld/hump.git
@@ -29,15 +26,9 @@
 	path = modules/lurker
 	url = git@github.com:rxi/lurker.git
 	ignore = dirty
-[submodule "modules/draft"]
-	path = modules/draft
-	url = git@github.com:pelevesque/draft.git
 [submodule "modules/peachy"]
 	path = modules/peachy
 	url = git@github.com:flamendless/peachy.git
-[submodule "modules/coil"]
-	path = modules/coil
-	url = git@github.com:rxi/coil.git
 [submodule "modules/knife"]
 	path = modules/knife
 	url = git@github.com:airstruck/knife.git
