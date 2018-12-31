@@ -3,7 +3,7 @@ __debug = (love.system.getOS() == "Android") or true
 __filter = "nearest"
 __window = 1
 __scale = 1
-__version = require("modules.semver.semver")(0, 1, 3)
+__version = require("modules.semver.semver")(0, 1, 4)
 
 local debugging
 local font = love.graphics.newFont(16)

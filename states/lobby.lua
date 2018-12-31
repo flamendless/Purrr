@@ -132,8 +132,8 @@ function Lobby:setupEntities()
 	self.instance:addEntity(self.entities.home)
 	self.instance:addEntity(self.entities.energy)
 	self.instance:addEntity(self.entities.cat_info)
-	-- self.instance:addEntity(self.entities.coins)
 	self.instance:addEntity(self.entities.cat)
+	-- self.instance:addEntity(self.entities.coins)
 end
 
 function Lobby:start()
