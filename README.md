@@ -4,7 +4,7 @@ Made with [löve](https://love2d.org)
 ## Libraries Used:
 * [Classic](https://github.com/rxi/classic) - For Class
 * [Concord](https://github.com/Tjakka5/Concord) - For ECS
-* [Love-Debug-Graph](https://github.com/Mechazawa/Love-Debug-Graph) - For Debug Statistics/Info
+* [DearImGui](https://github.com/camchenry/love-imgui) - Love bindings for dearimgui
 * [Flux](https://github.com/rxi/flux) - For Tweening
 * [Hump](https://github.com/vrld/hump) - For Gamestates, Timer, Vector
 * [Inspect](http://github.com/kikito/inspect.lua) - For Printing Tables
