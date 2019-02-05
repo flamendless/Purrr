@@ -75,6 +75,7 @@ function love.draw()
 	preload:draw()
 	gamestate:draw()
 	transition:draw()
+	touch:draw()
 	if __debug then debugging:draw() end
 	love.graphics.pop()
 end
@@ -92,11 +93,21 @@ end
 function love.mousepressed(mx, my, mb, istouch, count)
 	gamestate:mousepressed(mx, my, mb, istouch, count)
 	touch:simulateTouchPressed(mx, my)
+	if __debug and debugging.mousepressed then debugging:mousepressed(mx, my, mb, istouch, count) end
 end
 
 function love.mousereleased(mx, my, mb, istouch, count)
 	gamestate:mousereleased(mx, my, mb, istouch, count)
 	touch:simulateTouchReleased(mx, my)
+	if __debug and debugging.mousereleased then debugging:mousereleased(mx, my, mb, istouch, count) end
+end
+
+function love.wheelmoved(wx, wy)
+	if __debug and debugging.wheelmoved then debugging:wheelmoved(wx, wy) end
+end
+
+function love.mousemoved(mx, my)
+	if __debug and debugging.mousemoved then debugging:mousemoved(mx, my) end
 end
 
 function love.touchpressed(id, tx, ty, dx, dy, pressure)
@@ -122,6 +133,7 @@ end
 
 function love.textinput(t)
 	gamestate:textinput(t)
+	if __debug and debugging.textinput then debugging:textinput(t) end
 end
 
 love.errhand = require("src.errorhandler").errhand
@@ -130,4 +142,5 @@ function love.quit()
 	log.trace("Love Quit")
 	data:save()
 	lily.quit()
+	if __debug and debugging.quit then debugging:quit() end
 end
