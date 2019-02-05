@@ -9,6 +9,7 @@ function states.splash()
 			{ id = "love_logo", path = "assets/images/love-logo.png" },
 			{ id = "love_text", path = "assets/images/love-text.png" },
 			{ id = "love_made_with", path = "assets/images/love-made-with.png" },
+			{ id = "touch_particle", path = "assets/images/touch_particle.png" },
 		},
 		sources = {
 			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },

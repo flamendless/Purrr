@@ -4,21 +4,24 @@ __filter = "nearest"
 __window = 1
 __scale = 1
 __version = require("modules.semver.semver")(0, 1, 4)
-
-local debugging
-local font = love.graphics.newFont(16)
-if __debug then
-	io.stdout:setvbuf("no")
-	debugging = require("src.debug")
-	love.audio.setVolume(0)
-end
-
 local log = require("modules.log.log")
 local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
 local inspect = require("modules.inspect.inspect")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
+local font = love.graphics.newFont(16)
+
+local debugging
+log.outfile = "log.log"
+log.level = "trace"
+log.lovesave = true
+if __debug then
+	require("imgui")
+	io.stdout:setvbuf("no")
+	debugging = require("src.debug")
+	love.audio.setVolume(0)
+end
 
 local assets = require("src.assets")
 local data = require("src.data")
@@ -33,18 +36,16 @@ local soundManager = require("src.sound_manager")
 local bgm = require("src.bgm")
 
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
-print(("Device: %s x %s"):format(love.graphics.getDimensions()))
-print(("Game: %s x %s"):format(screen.x, screen.y))
-print("Scale: " .. __scale)
+log.info(("Device: %s x %s"):format(love.graphics.getDimensions()))
+log.info(("Game: %s x %s"):format(screen.x, screen.y))
+log.info("Scale: " .. __scale)
 
 function love.load(args)
-	if __debug then log.level = "info" end
-	log.outfile = "log.log"
-	log.lovesave = true
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug then debugging:init() end
 	math.randomseed(os.time())
+	touch:init()
 	data:init()
 	event:init()
 	transition:init()
@@ -90,10 +91,12 @@ end
 
 function love.mousepressed(mx, my, mb, istouch, count)
 	gamestate:mousepressed(mx, my, mb, istouch, count)
+	touch:simulateTouchPressed(mx, my)
 end
 
 function love.mousereleased(mx, my, mb, istouch, count)
 	gamestate:mousereleased(mx, my, mb, istouch, count)
+	touch:simulateTouchReleased(mx, my)
 end
 
 function love.touchpressed(id, tx, ty, dx, dy, pressure)

@@ -15,6 +15,7 @@ local resourceManager = require("src.resource_manager")
 local touch = require("src.touch")
 
 local Debug = {
+	showAll = false,
 	graphs = {},
 	colors = {},
 	font = love.graphics.newFont(12),
@@ -39,6 +40,7 @@ end
 function Debug:init()
 	self.colors.line = colors(1, 0, 0, 0.5)
 	self.colors.graph = colors(1, 0, 0, 1)
+	self.showAll = true
 
 	local x = 8
 	local y = 60
@@ -75,6 +77,9 @@ function Debug:update(dt)
 end
 
 function Debug:draw()
+	if not self.showAll then
+		return
+	end
 	if self.modes.graphs then
 		self.colors.graph:set()
 		for k,v in pairs(self.graphs) do v:draw() end
@@ -103,6 +108,8 @@ function Debug:keypressed(key)
 		self.modes.lines = not self.modes.lines
 	elseif key == "c" then
 		self.modes.collisions = not self.modes.collisions
+	elseif key == "`" then
+		self.showAll = not self.showAll
 	end
 end
 

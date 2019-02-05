@@ -21,6 +21,7 @@ local transition = require("src.transition")
 local gamestate = require("src.gamestate")
 local resourceManager = require("src.resource_manager")
 local assets = require("src.assets")
+local touch = require("src.touch")
 
 local next_state = require("states.menu")
 local delay = 0.5
@@ -34,7 +35,9 @@ function Splash:enter(previous, ...)
 		love_logo = resourceManager:getImage("love_logo"),
 		love_text = resourceManager:getImage("love_text"),
 		love_made_with = resourceManager:getImage("love_made_with"),
+		touch_particle = resourceManager:getImage("touch_particle"),
 	}
+	touch:setup(self.images.touch_particle)
 	self.fonts = resourceManager:getAll("fonts")
 	self.systems = {
 		renderer = S.renderer(),
@@ -96,13 +99,6 @@ end
 function Splash:draw()
 	self.colors.bg:setBG()
 	self.instance:emit("draw")
-end
-
-function Splash:mousepressed(mx, my, mb)
-	if not self.exiting then
-		self.exiting = true
-		transition:start(next_state)
-	end
 end
 
 return Splash

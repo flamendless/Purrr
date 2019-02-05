@@ -19,9 +19,6 @@
 [submodule "modules/classic"]
 	path = modules/classic
 	url = git@github.com:rxi/classic.git
-[submodule "modules/debug-graph"]
-	path = modules/debug-graph
-	url = git@github.com:Mechazawa/Love-Debug-Graph.git
 [submodule "modules/lurker"]
 	path = modules/lurker
 	url = git@github.com:rxi/lurker.git
