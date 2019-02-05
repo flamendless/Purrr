@@ -12,6 +12,8 @@ local gamestate = require("src.gamestate")
 local event = require("src.event")
 local resourceManager = require("src.resource_manager")
 
+local C = require("ecs.components")
+
 local Debug = {
 	showAll = false,
 	show_demo = false,
@@ -21,6 +23,7 @@ local Debug = {
 		info = true,
 		collisions = true,
 		lines = true,
+		selected = false,
 	}
 }
 
@@ -53,6 +56,10 @@ function Debug:draw()
 	if not self.showAll then
 		return
 	end
+	self:drawMenuBar()
+	if self.windows.info then self:drawInfo() end
+	if self.windows.selected then self:drawSelected() end
+	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	if self.windows.lines then
 		self.colors.line:set()
 		love.graphics.line(0, screen.y/2, screen.x, screen.y/2) --middle-horizontal
@@ -63,9 +70,6 @@ function Debug:draw()
 		love.graphics.line(screen.x - 32, 0, screen.x - 32, screen.y) --right
 	end
 	love.graphics.setColor(1, 1, 1, 1)
-	self:drawMenuBar()
-	if self.windows.info then self:drawInfo() end
-	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	imgui.Render()
 	stats = love.graphics.getStats(stats)
 end
@@ -113,6 +117,46 @@ function Debug:drawInfo()
 	imgui.End()
 end
 
+function Debug:drawSelected()
+	imgui.Begin("Entity", nil, flags)
+	local c_id, c_kind
+	local c_button = self.selected[C.button]
+	if c_button then
+		c_id = c_button.id
+		c_kind = "GUI"
+	end
+	imgui.Text("ID: " .. c_id)
+	imgui.Text("Kind: " .. c_kind)
+
+	--POSITION
+	local c_pos = self.selected[C.pos]
+	if c_pos and imgui.TreeNode("Position") then
+		local x, status_x = imgui.SliderInt("x", c_pos.pos.x, 0, love.graphics.getWidth())
+		local y, status_y = imgui.SliderInt("y", c_pos.pos.y, 0, love.graphics.getHeight())
+		if status_x or status_y then
+			c_pos.pos.x = x
+			c_pos.pos.y = y
+		end
+		imgui.TreePop()
+	end
+
+	--COLOR
+	local c_color = self.selected[C.color]
+	if c_color and imgui.TreeNode("Color") then
+		local r, g, b, a = unpack(c_color.color)
+		local slider_r, slider_status_r = imgui.SliderInt("R", r * 255, 0, 255)
+		local slider_g, slider_status_g = imgui.SliderInt("G", g * 255, 0, 255)
+		local slider_b, slider_status_b = imgui.SliderInt("B", b * 255, 0, 255)
+		local slider_a, slider_status_a = imgui.SliderInt("A", a * 255, 0, 255)
+		c_color.color[1] = slider_r/255
+		c_color.color[2] = slider_g/255
+		c_color.color[3] = slider_b/255
+		c_color.color[4] = slider_a/255
+		imgui.TreePop()
+	end
+	imgui.End()
+end
+
 function Debug:keypressed(key)
 	if key == "`" then
 		self.showAll = not self.showAll
@@ -133,5 +177,10 @@ function Debug:mousereleased(mx, my, mb) imgui.MouseReleased(mb) end
 function Debug:mousemoved(mx, my) imgui.MouseMoved(mx, my) end
 function Debug:wheelmoved(x, y) imgui.WheelMoved(y) end
 function Debug:quit() imgui.ShutDown() end
+
+function Debug:onEntitySelect(e)
+	self.selected = e
+	self.windows.selected = true
+end
 
 return Debug

@@ -43,7 +43,11 @@ log.info("Scale: " .. __scale)
 function love.load(args)
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
-	if __debug then debugging:init() end
+	if __debug then
+		love.window.setMode(960, love.graphics.getHeight())
+		love.window.setPosition(1280 - love.graphics.getWidth(), 0)
+		debugging:init()
+	end
 	math.randomseed(os.time())
 	touch:init()
 	data:init()

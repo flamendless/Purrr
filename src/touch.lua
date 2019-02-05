@@ -9,6 +9,8 @@ local log = require("modules.log.log")
 local screen = require("src.screen")
 local colors = require("src.colors")
 
+local rad = math.rad
+
 function Touch:init()
 	if not (love.system.getOS() == "Android") then
 		log.info("Touch initialized... using mouse simulation")
@@ -18,14 +20,13 @@ function Touch:init()
 end
 
 function Touch:setup(img)
+	local speed = 60
 	self.ps = love.graphics.newParticleSystem(img, 8)
 	self.ps:setParticleLifetime(1, 3)
 	self.ps:setSizeVariation(1)
-	self.ps:setSpin(0, 0.5)
-	self.ps:setSpinVariation(1)
-	self.ps:setLinearAcceleration(-20, -20, 20, 20)
-	self.ps:setSpread(30)
-	self.ps:setEmissionArea("normal", 8, 8, 45, true)
+	self.ps:setLinearAcceleration(-speed, -speed, speed, speed)
+	self.ps:setSpread(rad(90))
+	self.ps:setEmissionArea("normal", 16, 16, 45, true)
 	local color1 = colors:flat("blue", "light")
 	local color2 = colors:flat("teal", "light")
 	local color3 = colors:flat("violet", "light")

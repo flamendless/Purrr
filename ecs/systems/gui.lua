@@ -5,6 +5,7 @@ local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
 local touch = require("src.touch")
+local debugging = require("src.debug")
 
 local GUI = System({
 		C.button,
@@ -77,7 +78,7 @@ function GUI:update(dt)
 end
 
 function GUI:mousepressed(mx, my, mb)
-	for _,e in ipairs(self.pool) do
+	for _, e in ipairs(self.pool) do
 		local c_button = e[C.button]
 		local c_state = e[C.state]
 		if c_state.isDisabled then
@@ -97,6 +98,9 @@ function GUI:mousepressed(mx, my, mb)
 							log.trace(("GUI Button '%s' clicked!"):format(c_button.id))
 						end
 					end
+				end
+				if __debug and mb == 2 then
+					debugging:onEntitySelect(e)
 				end
 			end
 		end
