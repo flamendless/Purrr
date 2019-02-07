@@ -40,52 +40,45 @@ function Splash:enter(previous, ...)
 	touch:setup(self.images.touch_particle)
 	self.fonts = resourceManager:getAll("fonts")
 	self.systems = {
-		renderer = S.renderer(),
-		transform = S.transform(),
 		animation = S.animation(),
+		renderer_sprite = S.renderer.sprite(),
+		renderer_animation = S.renderer.animation(),
 	}
 
 	self.entities = {}
 	self.entities.love_made_with = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x/2, -screen.y/2))
+		:give(C.color)
 		:give(C.sprite, self.images.love_made_with)
-		:give(C.transform, 0, 0.75, 0.75, "center", "center")
+		:give(C.transform, vec2(screen.x/2, -screen.y/2), 0, 0.75, 0.75, self.images.love_made_with:getWidth()/2, self.images.love_made_with:getHeight()/2)
 		:apply()
 
 	self.entities.love_logo = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(-screen.x, screen.y/2))
+		:give(C.color)
 		:give(C.sprite, self.images.love_logo)
-		:give(C.transform, 0, 0.75, 0.75, "center", "center")
+		:give(C.transform, vec2(-screen.x, screen.y/2), 0, 0.75, 0.75, self.images.love_logo:getWidth()/2, self.images.love_logo:getHeight()/2)
 		:apply()
 
 	self.entities.love_text = ecs.entity()
-		:give(C.color, colors("white"))
-		:give(C.pos, vec2(screen.x/2, screen.y * 1.5))
+		:give(C.color)
 		:give(C.sprite, self.images.love_text)
-		:give(C.transform, 0, 0.75, 0.75, "center", "center")
+		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 0.75, 0.75, self.images.love_text:getWidth()/2, self.images.love_text:getHeight()/2)
 		:apply()
 
 	self.instance:addEntity(self.entities.love_made_with)
 	self.instance:addEntity(self.entities.love_logo)
 	self.instance:addEntity(self.entities.love_text)
 
-	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.transform, "handleSprite")
-	self.instance:addSystem(self.systems.transform, "handleAnim")
 	self.instance:addSystem(self.systems.animation, "update")
-	self.instance:addSystem(self.systems.animation, "draw")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
+	self.instance:addSystem(self.systems.renderer_sprite, "draw")
+	self.instance:addSystem(self.systems.renderer_animation, "draw")
 
-	flux.to(self.entities.love_made_with[C.pos].pos, dur, { y = screen.y * 0.15 }):ease("backout")
-	flux.to(self.entities.love_logo[C.pos].pos, dur, { x = screen.x/2 }):ease("backout")
-	flux.to(self.entities.love_text[C.pos].pos, dur, { y = screen.y * 0.85 }):ease("backout")
+	flux.to(self.entities.love_made_with[C.transform].pos, dur, { y = screen.y * 0.15 }):ease("backout")
+	flux.to(self.entities.love_logo[C.transform].pos, dur, { x = screen.x/2 }):ease("backout")
+	flux.to(self.entities.love_text[C.transform].pos, dur, { y = screen.y * 0.85 }):ease("backout")
 		:oncomplete(function()
-			flux.to(self.entities.love_made_with[C.pos].pos, dur, { y = screen.y * 1.5 }):ease("backin"):delay(delay)
-			flux.to(self.entities.love_logo[C.pos].pos, dur, { x = screen.x * 1.5 }):ease("backin"):delay(delay)
-			flux.to(self.entities.love_text[C.pos].pos, dur, { y = -screen.y/2 }):ease("backin"):delay(delay)
+			flux.to(self.entities.love_made_with[C.transform].pos, dur, { y = screen.y * 1.5 }):ease("backin"):delay(delay)
+			flux.to(self.entities.love_logo[C.transform].pos, dur, { x = screen.x * 1.5 }):ease("backin"):delay(delay)
+			flux.to(self.entities.love_text[C.transform].pos, dur, { y = -screen.y/2 }):ease("backin"):delay(delay)
 				:oncomplete(function()
 					transition:start(next_state)
 				end)

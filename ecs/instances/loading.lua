@@ -1,11 +1,10 @@
-local ecs = {
-	instance = require("modules.concord.lib.instance"),
-	entity = require("modules.concord.lib.entity"),
-}
+local Instance = require("modules.concord.lib.instance")
+local Entity = require("modules.concord.lib.entity")
 
 local S = require("ecs.systems")
 local C = require("ecs.components")
 
+local peachy = require("modules.peachy.peachy")
 local vec2 = require("modules.hump.vector")
 local colors = require("src.colors")
 local screen = require("src.screen")
@@ -14,38 +13,30 @@ local resourceManager = require("src.resource_manager")
 local Loading = {}
 
 function Loading:load()
-	self.colors = { loading = colors("random-flat") }
-	self.images = {}
+	self.color = colors("random-flat")
 	if not resourceManager:check("images", "loading") then
-		self.images.cat = love.graphics.newImage("assets/anim/preload.png")
-		resourceManager:add("images", "cat", self.images.cat)
-		for k,v in pairs(self.images) do v:setFilter("nearest", "nearest") end
+		self.image = love.graphics.newImage("assets/anim/preload.png")
+		self.image:setFilter("nearest", "nearest")
+		resourceManager:add("images", "loading", self.image)
 	else
-		self.images = resourceManager:getAll("images")
+		self.image = resourceManager:getImage("loading")
 	end
-
-	self.instance = ecs.instance()
+	self.instance = Instance()
 	self.systems = {
-		renderer = S.renderer(),
-		transform = S.transform(),
 		animation = S.animation(),
+		renderer_animation = S.renderer.animation(),
 	}
 
-	self.entities = {}
-	self.entities.loading = ecs.entity()
-		:give(C.color, self.colors.loading)
-		:give(C.anim, "assets/anim/json/preload.json", self.images.cat)
-		:give(C.pos, vec2(screen.x/2, screen.y/2))
-		:give(C.transform, 0, 2, 2, "center", "center")
+	local obj_anim = peachy.new("assets/anim/json/preload.json", self.image, "default")
+	self.ent_loading = Entity()
+		:give(C.color, self.color)
+		:give(C.animation, obj_anim)
+		:give(C.transform, vec2(screen.x/2, screen.y/2), 0, 2, 2, obj_anim:getWidth()/2, obj_anim:getHeight()/2)
 		:apply()
 
-	self.instance:addEntity(self.entities.loading)
-
-	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.transform, "handleAnim")
+	self.instance:addEntity(self.ent_loading)
 	self.instance:addSystem(self.systems.animation, "update")
-	self.instance:addSystem(self.systems.animation, "draw")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
+	self.instance:addSystem(self.systems.renderer_animation, "draw")
 end
 
 function Loading:update(dt)
@@ -57,7 +48,7 @@ function Loading:draw()
 end
 
 function Loading:exit()
-	self.instance:clear()
+	self.instance:emit("exit")
 end
 
 return Loading

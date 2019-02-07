@@ -90,19 +90,22 @@ end
 function Touch:createObject(mx, my)
 	local a = {
 		color = {0, 0, 0.8, 0.3},
-		x = mx, y = my, radius = 32,
+		x = mx, y = my, radius = 16,
 		fillType = "line"
 	}
 	local b = {
 		color = {0, 0, 0.8, 0.3},
-		x = mx, y = my, radius = 28,
+		x = mx, y = my, radius = 8,
 		fillType = "fill"
 	}
 	local obj = { a, b }
+	local t = 0.5
 
-	flux.to(b, 0.5, { radius = 0 }):ease("backin")
-	flux.to(a, 0.5, { radius = 0 })
-		:ease("backin")
+	flux.to(a.color, t * 4, { [4] = 0 }):ease("backout")
+	flux.to(b.color, t * 4, { [4] = 0 }):ease("backout")
+
+	flux.to(b, t, { radius = 32 }):ease("backout")
+	flux.to(a, t, { radius = 28 }):ease("backout")
 		:oncomplete(function()
 			for i = #self.list, 1, -1 do
 				local current = self.list[i]

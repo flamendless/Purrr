@@ -29,6 +29,7 @@ local Debug = {
 
 local stats = {}
 local flags = {"ImGuiWindowFlags_AlwaysAutoResize"}
+local flags_tree = {"ImGuiTreeNodeFlags_DefaultOpen"}
 
 lurker.preswap = function(filename)
 	return filename == "save.lua"
@@ -102,7 +103,7 @@ function Debug:drawInfo()
 	imgui.Text("GAME SIZE: " .. ("%ix%i"):format(love.graphics.getDimensions()))
 	imgui.Text("FPS:" .. love.timer.getFPS())
 	if stats.drawcalls then
-		if imgui.TreeNode("more") then
+		if imgui.TreeNodeEx("more", flags_tree) then
 			imgui.Text("CANVASES: " .. stats.canvases)
 			imgui.Text("CANVAS SWITCHES: " .. stats.canvasswitches)
 			imgui.Text("DRAW CALLS: " .. stats.drawcalls)
@@ -119,18 +120,19 @@ end
 
 function Debug:drawSelected()
 	imgui.Begin("Entity", nil, flags)
-	local c_id, c_kind
-	local c_button = self.selected[C.button]
-	if c_button then
-		c_id = c_button.id
-		c_kind = "GUI"
+	if self.selected:has(C.tag) then
+		local c_tag = self.selected[C.tag]
+		imgui.Text("ID: " .. c_tag.tag)
 	end
-	imgui.Text("ID: " .. c_id)
-	imgui.Text("Kind: " .. c_kind)
+	if self.selected:has(C.button) then
+		local c_button = self.selected[C.button]
+		imgui.Text("ID: " .. c_button.id)
+		imgui.Text("Kind: GUI")
+	end
 
 	--POSITION
-	local c_pos = self.selected[C.pos]
-	if c_pos and imgui.TreeNode("Position") then
+	if self.selected:has(C.pos) and imgui.TreeNodeEx("Position", flags_tree) then
+		local c_pos = self.selected[C.pos]
 		local x, status_x = imgui.SliderInt("x", c_pos.pos.x, 0, love.graphics.getWidth())
 		local y, status_y = imgui.SliderInt("y", c_pos.pos.y, 0, love.graphics.getHeight())
 		if status_x or status_y then
@@ -141,19 +143,20 @@ function Debug:drawSelected()
 	end
 
 	--COLOR
-	local c_color = self.selected[C.color]
-	if c_color and imgui.TreeNode("Color") then
+	if self.selectes:has(C.color) and imgui.TreeNodeEx("Color", flags_tree) then
+		local c_color = self.selected[C.color]
 		local r, g, b, a = unpack(c_color.color)
-		local slider_r, slider_status_r = imgui.SliderInt("R", r * 255, 0, 255)
-		local slider_g, slider_status_g = imgui.SliderInt("G", g * 255, 0, 255)
-		local slider_b, slider_status_b = imgui.SliderInt("B", b * 255, 0, 255)
-		local slider_a, slider_status_a = imgui.SliderInt("A", a * 255, 0, 255)
-		c_color.color[1] = slider_r/255
-		c_color.color[2] = slider_g/255
-		c_color.color[3] = slider_b/255
-		c_color.color[4] = slider_a/255
+		local slider_r, slider_status_r = imgui.SliderFloat("R", r, 0, 1)
+		local slider_g, slider_status_g = imgui.SliderFloat("G", g, 0, 1)
+		local slider_b, slider_status_b = imgui.SliderFloat("B", b, 0, 1)
+		local slider_a, slider_status_a = imgui.SliderFloat("A", a, 0, 1)
+		c_color.color[1] = slider_r
+		c_color.color[2] = slider_g
+		c_color.color[3] = slider_b
+		c_color.color[4] = slider_a
 		imgui.TreePop()
 	end
+
 	imgui.End()
 end
 
