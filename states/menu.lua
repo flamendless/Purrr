@@ -33,79 +33,69 @@ end
 
 function Menu:setupSystems()
 	self.systems = {
-		collision = S.collision(),
-		follow = S.follow(),
+		renderer_bg = S.renderer.bg(),
+		renderer_sprite = S.renderer.sprite(),
+		collider = S.collider(),
 		gui = S.gui(),
-		moveTo = S.moveTo(),
-		patrol = S.patrol(),
-		position = S.position(),
-		renderer = S.renderer(),
-		transform = S.transform(),
-		window_manager = S.window_manager(),
-		textinput = S.textinput(),
 	}
-
-	self.instance:addSystem(self.systems.renderer, "draw", "drawBG")
-	self.instance:addSystem(self.systems.textinput, "update")
-	self.instance:addSystem(self.systems.textinput, "textinput")
-	self.instance:addSystem(self.systems.textinput, "keypressed")
-	self.instance:addSystem(self.systems.window_manager, "close")
-	self.instance:addSystem(self.systems.window_manager, "changeWindowTitle")
-	self.instance:addSystem(self.systems.position, "update")
-	self.instance:addSystem(self.systems.moveTo)
-	self.instance:addSystem(self.systems.moveTo, "update")
-	self.instance:addSystem(self.systems.patrol)
-	self.instance:addSystem(self.systems.patrol, "startPatrol")
-	self.instance:addSystem(self.systems.follow, "update")
-	self.instance:addSystem(self.systems.collision)
-	self.instance:addSystem(self.systems.collision, "update", "updatePosition")
-	self.instance:addSystem(self.systems.collision, "update", "updateSize")
-	self.instance:addSystem(self.systems.collision, "update", "checkPoint", false)
-	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.transform, "handleSprite")
-	self.instance:addSystem(self.systems.transform, "changeScale")
+	self.instance:addSystem(self.systems.renderer_bg, "draw")
+	self.instance:addSystem(self.systems.renderer_sprite, "draw")
+	self.instance:addSystem(self.systems.collider, "mousepressed")
 	self.instance:addSystem(self.systems.gui, "update")
 	self.instance:addSystem(self.systems.gui, "mousepressed")
-	self.instance:addSystem(self.systems.gui, "onEnter")
-	self.instance:addSystem(self.systems.gui, "onExit")
-	self.instance:addSystem(self.systems.gui, "changeSprite")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawText")
-	self.instance:addSystem(self.systems.collision, "draw", "draw")
+
+	if __debug then
+		self.instance:addSystem(self.systems.collider, "draw")
+	end
 end
 
 function Menu:setupEntities()
-	if data.data.new_game then next_state = require("states.intro")
-	else
-		if data.data.customization then next_state = require("states.customization")
-		else next_state = require("states.lobby")
-		end
-	end
 	self.entities = {}
-	self.entities.bg = E.title_bg(ecs.entity())
-	self.entities.btn_play = E.button_play(ecs.entity(), next_state)
-	self.entities.btn_quit = E.button_quit(ecs.entity(), self.entities.btn_play)
-		:give(C.offsetPos, pos.menu.quit:clone()):apply()
-	self.entities.settings = E.button_settings(ecs.entity())
-	self.entities.title = E.title(ecs.entity())
+	self.entities.bg = ecs.entity():give(C.background, self.images.bg):apply()
+	self.entities.title = ecs.entity()
+		:give(C.tag, "title")
+		:give(C.sprite, self.images.title)
+		:give(C.transform, vec2(screen.x/2, -screen.y/2), 0, 1, 1, self.images.title:getWidth()/2, self.images.title:getHeight()/2)
+		:give(C.collider_sprite)
+		:apply()
+
+	self.entities.btn_play = ecs.entity()
+		:give(C.tag, "btn_play")
+		:give(C.gui_button)
+		:give(C.gui_onClick, function()
+				gamestate:switch( require("states").splash )
+			end)
+		:give(C.onHoveredSprite, self.images.btn_play_hovered)
+		:give(C.sprite, self.images.btn_play)
+		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 3, 3, self.images.btn_play:getWidth()/2, self.images.btn_play:getHeight()/2)
+		:give(C.collider_sprite)
+		:apply()
+
+	self.entities.btn_leave = ecs.entity()
+		:give(C.tag, "btn_leave")
+		:give(C.gui_button)
+		:give(C.gui_onClick, function()
+				love.event.quit()
+			end)
+		:give(C.onHoveredSprite, self.images.btn_leave_hovered)
+		:give(C.sprite, self.images.btn_leave)
+		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 2, 2, self.images.btn_leave:getWidth()/2, self.images.btn_leave:getHeight()/2)
+		:give(C.collider_sprite)
+		:apply()
 
 	self.instance:addEntity(self.entities.bg)
-	self.instance:addEntity(self.entities.btn_play)
-	self.instance:addEntity(self.entities.btn_quit)
 	self.instance:addEntity(self.entities.title)
-	self.instance:addEntity(self.entities.settings)
+	self.instance:addEntity(self.entities.btn_play)
+	self.instance:addEntity(self.entities.btn_leave)
 end
 
 function Menu:start()
-	local dur = 1
-	flux.to(self.entities.title[C.pos].pos, dur, { y = pos.menu.title:clone().y }):ease("backout")
-	flux.to(self.entities.settings[C.pos].pos, dur, { x = pos.menu.settings:clone().x, y = pos.menu.settings:clone().y })
-	flux.to(self.entities.btn_play[C.pos].pos, dur, { y = pos.menu.play:clone().y })
-		:ease("backout")
-		:oncomplete(function()
-			self.entities.btn_quit:remove(C.follow):apply()
-			self.instance:enableSystem(self.systems.collision, "update", "checkPoint")
-		end)
+	local title_y = self.entities.title[C.transform].oy + 32
+	local btn_play_y = self.entities.btn_play[C.transform].oy + 455
+	local btn_leave = self.entities.btn_leave[C.transform].oy + 620
+	flux.to(self.entities.title[C.transform].pos, 1, { y = title_y }):ease("backout")
+	flux.to(self.entities.btn_play[C.transform].pos, 1, { y = btn_play_y }):ease("backout")
+	flux.to(self.entities.btn_leave[C.transform].pos, 1, { y = btn_leave }):ease("backout")
 end
 
 function Menu:update(dt)
@@ -118,13 +108,6 @@ end
 
 function Menu:keypressed(key)
 	self.instance:emit("keypressed", key)
-	if key == "escape" then
-		if event.isOpen then
-			self.instance:emit("close")
-		else
-			event:showExitConfirmation()
-		end
-	end
 end
 
 function Menu:mousepressed(mx, my, mb)

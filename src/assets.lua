@@ -44,7 +44,6 @@ end
 function states.menu()
 	return {
 		images = {
-			{ id = "bg_space", path = "assets/images/title_space.png" },
 			{ id = "title", path = "assets/images/title.png" },
 			{ id = "btn_play", path = "assets/gui/play.png" },
 			{ id = "btn_play_hovered", path = "assets/gui/play_hovered.png" },

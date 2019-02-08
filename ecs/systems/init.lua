@@ -5,8 +5,10 @@ local req = function(id)
 end
 
 local Systems = {
-	renderer = req("renderer"),
 	animation = req("animation"),
+	collider = req("collider"),
+	renderer = req("renderer"),
+	gui = req("gui"),
 }
 
 return Systems
