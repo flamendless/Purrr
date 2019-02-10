@@ -10,6 +10,7 @@ local preload = require("src.preload")
 local assets = require("src.assets")
 local soundManager = require("src.sound_manager")
 local bgm = require("src.bgm")
+local resourceManager = require("src.resource_manager")
 
 function Gamestate:enablePreloading()
 	log.info("Preloading enabled!")
@@ -143,6 +144,7 @@ function Gamestate:exit()
 		self.__current:exit()
 		log.info("Exited!")
 	end
+	resourceManager:flush()
 	bgm:reset()
 end
 

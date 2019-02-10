@@ -13,6 +13,14 @@ function ResourceManager:add(kind, id, data)
 	self.__assets[kind][id] = data
 end
 
+function ResourceManager:flush()
+	for _, kind in pairs(self.__assets) do
+		for k, v in pairs(kind) do
+			kind[k] = nil
+		end
+	end
+end
+
 function ResourceManager:check(kind, id)
 	if kind == "fonts" then
 		return self.__font_cache[id]
