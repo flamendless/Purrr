@@ -4,6 +4,9 @@ __filter = "nearest"
 __window = 1
 __scale = 1
 __version = require("modules.semver.semver")(0, 1, 4)
+__isDesktop = love.system.getOS() == "Windows" or love.system.getOS() == "Linux"
+__isMobile = love.system.getOS() == "Android"
+
 local log = require("modules.log.log")
 local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
@@ -43,7 +46,7 @@ log.info("Scale: " .. __scale)
 function love.load(args)
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
-	if __debug then
+	if __debug and __isDesktop then
 		love.window.setMode(960, love.graphics.getHeight())
 		love.window.setPosition(1280 - love.graphics.getWidth(), 0)
 		debugging:init()
