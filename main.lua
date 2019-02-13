@@ -1,5 +1,5 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
-__debug = (love.system.getOS() == "Android") or true
+__debug = true
 __filter = "nearest"
 __window = 1
 __scale = 1
@@ -23,6 +23,7 @@ if __debug then
 	require("imgui")
 	io.stdout:setvbuf("no")
 	debugging = require("src.debug")
+	__inspect = require("modules.inspect.inspect")
 end
 
 local assets = require("src.assets")

@@ -10,10 +10,13 @@ local preload = require("src.preload")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
 local resourceManager = require("src.resource_manager")
+local utils = require("src.utils")
 
 local C = require("ecs.components")
 
 local Debug = {
+	components = nil,
+	selected = nil,
 	showAll = false,
 	show_demo = false,
 	colors = {},
@@ -23,6 +26,7 @@ local Debug = {
 		collisions = true,
 		lines = true,
 		selected = false,
+		components = false,
 	}
 }
 
@@ -62,6 +66,7 @@ function Debug:draw()
 	self:drawMenuBar()
 	if self.windows.info then self:drawInfo() end
 	if self.windows.selected then self:drawSelected() end
+	if self.windows.components then self:drawComponents() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	if self.windows.lines then
 		self.colors.line:set()
@@ -116,6 +121,14 @@ function Debug:drawInfo()
 			imgui.Text("TEXTURE MEMORY: " .. stats.texturememory)
 			imgui.TreePop()
 		end
+	end
+	imgui.End()
+end
+
+function Debug:drawComponents()
+	imgui.Begin("Components", nil, flags)
+	for _, c_id in ipairs(self.components) do
+		imgui.Text(c_id)
 	end
 	imgui.End()
 end
@@ -196,6 +209,13 @@ function Debug:quit() imgui.ShutDown() end
 function Debug:onEntitySelect(e)
 	self.selected = e
 	self.windows.selected = true
+	self.windows.components = true
+	self.components = {}
+	for c_id, component in pairs(C) do
+		if e:has(component) then
+			table.insert(self.components, c_id)
+		end
+	end
 end
 
 return Debug
