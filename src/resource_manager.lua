@@ -1,16 +1,26 @@
 local ResourceManager = {
 	__assets = { images = {}, fonts = {}, ImageData = {}, sources = {} },
+	__persistent = {},
 	__font_cache = {},
 	__ref = {},
 }
 
-function ResourceManager:add(kind, id, data)
+function ResourceManager:getPersistent(id)
+	return self.__persistent[id]
+end
+
+function ResourceManager:add(kind, id, data, container)
 	if kind == "fonts" then
 		local index = id:match("^.*()_")
 		local str = id:sub(1, index-1)
 		self.__font_cache[str] = true
 	end
-	self.__assets[kind][id] = data
+
+	if container == "Base" then
+		self.__persistent[id] = data
+	else
+		self.__assets[kind][id] = data
+	end
 end
 
 function ResourceManager:flush()

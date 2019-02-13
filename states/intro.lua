@@ -17,53 +17,78 @@ local transition = require("src.transition")
 local screen = require("src.screen")
 local colors = require("src.colors")
 local resourceManager = require("src.resource_manager")
-local next_state = require("states.customization")
+local next_state = require("states.menu")
 
 function Intro:init()
 end
 
 function Intro:enter(previous, ...)
 	self.images = {
-		spritesheet = resourceManager:getImage("spritesheet")
+		spritesheet_intro = resourceManager:getImage("spritesheet_intro")
 	}
+	self.sources = resourceManager:getAll("sources")
+	self.font = resourceManager:getFont("fnt_skip_24")
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
+	self.sources.bgm_intro:play()
 end
 
 function Intro:setupSystems()
 	self.systems = {
-		renderer = S.renderer(),
-		transform = S.transform(),
 		animation = S.animation(),
-		position = S.position(),
+		alpha_fade = S.alpha_fade(),
+		renderer_animation = S.renderer.animation(),
+		renderer_text = S.renderer.text(),
+		collider = S.collider(),
 	}
-	self.instance:addSystem(self.systems.position)
-	self.instance:addSystem(self.systems.position, "update")
-	self.instance:addSystem(self.systems.transform)
-	self.instance:addSystem(self.systems.transform, "handleAnim")
+
+	if __isDesktop then self.instance:addSystem(self.systems.collider, "mousepressed")
+	elseif __isMobile then self.instance:addSystem(self.systems.collider, "touchpressed")
+	end
+	self.instance:addSystem(self.systems.alpha_fade)
 	self.instance:addSystem(self.systems.animation, "update")
-	self.instance:addSystem(self.systems.animation, "draw")
-	self.instance:addSystem(self.systems.renderer, "draw", "drawSprite")
+	self.instance:addSystem(self.systems.renderer_animation, "draw")
+	self.instance:addSystem(self.systems.renderer_text, "draw")
+
+	if __debug then
+		self.instance:addSystem(self.systems.collider, "draw")
+	end
 end
 
 function Intro:setupEntities()
 	local sx = screen.x/100
 	local sy = screen.y/180
-	local json = "assets/anim/json/space.json"
-	local sheet = self.images.spritesheet
+	local obj_anim = peachy.new("assets/anim/json/space.json", self.images.spritesheet_intro, "default")
+	obj_anim:onLoop(function()
+		obj_anim:stop(true)
+		timer.after(1, function()
+			transition:start(next_state)
+		end)
+	end)
+	local str_skip
+	if __isDesktop then str_skip = "Press Space To Skip"
+	elseif __isMobile then str_skip = "Touch To Skip"
+	end
 	self.entities = {}
-	self.entities.intro = E.scene(ecs.entity(),
-		json, sheet, "default", true, nil, sx, sy)
-		:give(C.anim_callback, {
-			onComplete = function()
-				timer.after(1, function()
-					data.data.new_game = false
-					transition:start(next_state)
-				end)
-			end }, true)
+	self.entities.intro = ecs.entity()
+		:give(C.color)
+		:give(C.animation, obj_anim)
+		:give(C.transform, vec2(), 0, sx, sy)
 		:apply()
+
+	self.entities.text = ecs.entity()
+		:give(C.color, {1, 0, 0, 1})
+		:give(C.text, str_skip)
+		:give(C.font, self.font)
+		:give(C.transform, vec2(screen.x/2 - self.font:getWidth(str_skip)/2, screen.y - 32 - self.font:getHeight(str_skip)))
+		:give(C.alpha_fade, true)
+		:give(C.fade_state, "out", 1)
+		:give(C.collider_rect, vec2(self.font:getWidth(str_skip), self.font:getHeight(str_skip)))
+		:apply()
+
 	self.instance:addEntity(self.entities.intro)
+	self.instance:addEntity(self.entities.text)
 end
 
 function Intro:update(dt)
@@ -76,11 +101,20 @@ function Intro:keypressed(key)
 	end
 end
 
+function Intro:touchpressed(id, tx, ty, dx, dy, pressure)
+	self.instance:emit("touchpressed", id, tx, ty, dx, dy, pressure)
+end
+
+function Intro:mousepressed(mx, my, mb)
+	self.instance:emit("mousepressed", mx, my, mb)
+end
+
 function Intro:draw()
 	self.instance:emit("draw")
 end
 
 function Intro:exit()
+	self.sources.bgm_intro:stop()
 	if self.instance then self.instance:clear() end
 end
 

@@ -9,7 +9,6 @@ local colors = require("src.colors")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
-local event = require("src.event")
 local resourceManager = require("src.resource_manager")
 
 local C = require("ecs.components")

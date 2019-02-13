@@ -14,7 +14,6 @@ local S = require("ecs.systems")
 
 local data = require("src.data")
 local transition = require("src.transition")
-local event = require("src.event")
 local colors = require("src.colors")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
@@ -38,9 +37,11 @@ function Menu:setupSystems()
 		collider = S.collider(),
 		gui = S.gui(),
 	}
+	if __isDesktop then self.instance:addSystem(self.systems.collider, "mousepressed")
+	elseif __isMobile then self.instance:addSystem(self.systems.collider, "touchpressed")
+	end
 	self.instance:addSystem(self.systems.renderer_bg, "draw")
 	self.instance:addSystem(self.systems.renderer_sprite, "draw")
-	self.instance:addSystem(self.systems.collider, "mousepressed")
 	self.instance:addSystem(self.systems.gui, "update")
 	self.instance:addSystem(self.systems.gui, "mousepressed")
 
@@ -112,6 +113,10 @@ end
 
 function Menu:mousepressed(mx, my, mb)
 	self.instance:emit("mousepressed", mx, my, mb)
+end
+
+function Menu:touchpressed(id, tx, ty, dx, dy, pressure)
+	self.instance:emit("touchpressed", id, tx, ty, dx, dy, pressure)
 end
 
 function Menu:textinput(t)

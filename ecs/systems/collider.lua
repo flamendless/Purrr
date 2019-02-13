@@ -28,6 +28,17 @@ function Collider:draw()
 			c_sprite:getWidth() * c_transform.sx,
 			c_sprite:getHeight() * c_transform.sy)
 	end
+
+	for _, e in ipairs(self.rect) do
+		local c_collider_rect = e[C.collider_rect]
+		local c_transform = e[C.transform]
+		love.graphics.setColor(1, 0, 0, 1)
+		love.graphics.rectangle("line",
+			c_transform.pos.x - c_transform.ox * c_transform.sx,
+			c_transform.pos.y - c_transform.oy * c_transform.sy,
+			c_collider_rect.size.x * c_transform.sx,
+			c_collider_rect.size.y * c_transform.sy)
+	end
 end
 
 function Collider:mousepressed(mx, my, mb)
@@ -35,6 +46,17 @@ function Collider:mousepressed(mx, my, mb)
 		local c_collider_sprite = e[C.collider_sprite]
 		local c_transform = e[C.transform]
 		local c_sprite = e[C.sprite].sprite
+		local onMouseEnter = utils:checkOnMouseEnter(e)
+		if onMouseEnter then
+			if mb == 2 and __debug then
+				debugger:onEntitySelect(e)
+			end
+		end
+	end
+
+	for _, e in ipairs(self.rect) do
+		local c_collider_rect = e[C.collider_rect]
+		local c_transform = e[C.transform]
 		local onMouseEnter = utils:checkOnMouseEnter(e)
 		if onMouseEnter then
 			if mb == 2 and __debug then

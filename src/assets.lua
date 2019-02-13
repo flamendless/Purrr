@@ -3,6 +3,17 @@ local log = require("modules.log.log")
 
 local states = {}
 
+function states.base()
+	return {
+		images = {
+			{ id = "loading", path = "assets/anim/preload.png" },
+		},
+		sources = {
+			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
+		},
+	}
+end
+
 function states.splash()
 	return {
 		images = {
@@ -10,26 +21,6 @@ function states.splash()
 			{ id = "love_text", path = "assets/images/love-text.png" },
 			{ id = "love_made_with", path = "assets/images/love-made-with.png" },
 			{ id = "touch_particle", path = "assets/images/touch_particle.png" },
-		},
-		sources = {
-			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
-			{ id = "sfx_alert", path = "assets/sounds/sfx/alert.ogg", kind = "static" },
-			{ id = "sfx_back", path = "assets/sounds/sfx/back.ogg", kind = "static" },
-			{ id = "sfx_forward", path = "assets/sounds/sfx/forward.ogg", kind = "static" },
-			{ id = "sfx_hover1", path = "assets/sounds/sfx/hover1.ogg", kind = "static" },
-			{ id = "sfx_click1", path = "assets/sounds/sfx/click1.ogg", kind = "static" },
-			{ id = "sfx_click2", path = "assets/sounds/sfx/click2.ogg", kind = "static" },
-			{ id = "sfx_click3", path = "assets/sounds/sfx/click3.ogg", kind = "static" },
-			{ id = "sfx_click4", path = "assets/sounds/sfx/click4.ogg", kind = "static" },
-			{ id = "sfx_click5", path = "assets/sounds/sfx/click5.ogg", kind = "static" },
-			{ id = "sfx_wrong", path = "assets/sounds/sfx/wrong.ogg", kind = "static" },
-			{ id = "sfx_page_turn", path = "assets/sounds/sfx/page_turn.ogg", kind = "static" },
-			{ id = "sfx_buy", path = "assets/sounds/sfx/buy.ogg", kind = "static" },
-			{ id = "sfx_coins1", path = "assets/sounds/sfx/coins1.ogg", kind = "static" },
-			{ id = "sfx_coins2", path = "assets/sounds/sfx/coins2.ogg", kind = "static" },
-			{ id = "sfx_coins3", path = "assets/sounds/sfx/coins3.ogg", kind = "static" },
-			{ id = "cat_purrr", path = "assets/sounds/cat/cat_purrr.ogg", kind = "static" },
-			{ id = "cat_snore", path = "assets/sounds/cat/cat_snore.ogg", kind = "static" },
 		},
 		fonts = {
 			{ id = "vera", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
@@ -112,11 +103,14 @@ end
 function states.intro()
 	return {
 		images = {
-			{ id = "spritesheet", path = "assets/anim/space.png" }
+			{ id = "spritesheet_intro", path = "assets/anim/space.png" }
 		},
 		sources = {
 			{ id = "bgm_intro", path = "assets/sounds/bgm/intro.ogg", kind = "stream" },
 		},
+		fonts = {
+			{ id = "fnt_skip", path = "assets/fonts/vera.ttf", sizes = { 18, 24, 32 } },
+		}
 	}
 end
 

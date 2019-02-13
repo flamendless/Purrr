@@ -13,6 +13,11 @@ local Animation = System({
 		C.transform,
 	})
 
+local Text = System({
+		C.text,
+		C.transform,
+	})
+
 local BG = System({
 		C.background,
 	})
@@ -47,6 +52,18 @@ function Animation:draw()
 	end
 end
 
+function Text:draw()
+	for _, e in ipairs(self.pool) do
+		local c_text = e[C.text].text
+		local c_transform = e[C.transform]
+		local c_color = e[C.color]
+		local c_font = e[C.font]
+		if c_color then love.graphics.setColor(c_color.color) end
+		if c_font then love.graphics.setFont(c_font.font) end
+		love.graphics.print(c_text, c_transform.pos.x, c_transform.pos.y, c_transform.rotation, c_transform.sx, c_transform.sy, c_transform.ox, c_transform.oy, c_transform.kx, c_transform.ky)
+	end
+end
+
 function BG:draw()
 	for _, e in ipairs(self.pool) do
 		local c_bg = e[C.background].bg
@@ -58,5 +75,6 @@ end
 return {
 	sprite = Sprite,
 	animation = Animation,
+	text = Text,
 	bg = BG,
 }

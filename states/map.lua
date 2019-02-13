@@ -18,8 +18,6 @@ local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
-local soundManager = require("src.sound_manager")
-local event = require("src.event")
 local assets = require("src.assets")
 
 local max_view = 4

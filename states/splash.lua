@@ -18,12 +18,11 @@ local colors = require("src.colors")
 local preload = require("src.preload")
 local screen = require("src.screen")
 local transition = require("src.transition")
-local gamestate = require("src.gamestate")
 local resourceManager = require("src.resource_manager")
 local assets = require("src.assets")
 local touch = require("src.touch")
 
-local next_state = require("states.menu")
+local next_state = require("states.intro")
 local delay = 0.5
 local dur = 0.75
 

@@ -26,19 +26,19 @@ function Preload:init()
 		text = colors("flat", "white", "dark"),
 	}
 
-	self.font = love.graphics.newFont("assets/fonts/vera.ttf", 24)
+	self.current_state = nil
 	self.toLoad = {}
 	self.userdata = {}
 	self.n = 1
 	self.isActive = false
-	self.percent = 0
 end
 
-function Preload:check(t_assets)
+function Preload:check(t_assets, current_state)
 	for kind, t in pairs(t_assets) do
 		for i, v in pairs(t) do
 			if not resourceManager:check(kind, v.id) then
 				self:add(kind, v)
+				self.current_state = current_state
 			else
 				log.trace(("%s - already loaded!"):format(v.id))
 			end
@@ -95,7 +95,7 @@ function Preload:start()
 					kind = data:type()
 				end
 				log.trace(("Loaded: %s - %s"):format(kind, id[i]))
-				resourceManager:add(kind, id[i], data)
+				resourceManager:add(kind, id[i], data, self.current_state)
 			end
 		end)
 		:onComplete(function()
@@ -103,24 +103,9 @@ function Preload:start()
 		end)
 end
 
-function Preload:update(dt)
-	if self.isActive then
-		if self.lily then
-			local nLoaded = self.lily:getLoadedCount()
-			local nTotal = self.lily:getCount()
-			if nLoaded ~= 0 then
-				self.percent = nLoaded/nTotal * 100
-			end
-		end
-	end
-end
-
 function Preload:draw()
 	if self.isActive then
 		self.colors.bg:setBG()
-		-- self.colors.text:set()
-		-- love.graphics.setFont(self.font)
-		-- love.graphics.printf(("LOADING %i%%"):format(self.percent), 0, screen.y/2 + 128, screen.x, "center")
 	end
 end
 
@@ -130,7 +115,6 @@ function Preload:complete()
 	flux.to(self.colors.text, 1, { [4] = 0 })
 	timer.after(dur, function()
 		self.isActive = false
-		self.percent = 0
 		self.n = 1
 		self.toLoad = {}
 		self.userdata = {}

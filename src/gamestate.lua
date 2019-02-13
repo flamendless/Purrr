@@ -8,8 +8,6 @@ local Gamestate = {
 local log = require("modules.log.log")
 local preload = require("src.preload")
 local assets = require("src.assets")
-local soundManager = require("src.sound_manager")
-local bgm = require("src.bgm")
 local resourceManager = require("src.resource_manager")
 
 function Gamestate:enablePreloading()
@@ -58,14 +56,13 @@ function Gamestate:preload()
 	local a = assets:load(self.__current.__id)
 	if a then
 		log.info("Preload started")
-		preload:check(a)
+		preload:check(a, self.__current.__id)
 		self.isPreloading = true
 	end
 end
 
 function Gamestate:enter(previous, ...)
 	log.info(("State %s Entered!"):format(self.__current.__id))
-	bgm:set(self.__current, previous)
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
 end
@@ -145,7 +142,6 @@ function Gamestate:exit()
 		log.info("Exited!")
 	end
 	resourceManager:flush()
-	bgm:reset()
 end
 
 function Gamestate:getCurrent() return self.__current end
