@@ -75,6 +75,7 @@ function Intro:setupEntities()
 		:give(C.color)
 		:give(C.animation, obj_anim)
 		:give(C.transform, vec2(), 0, sx, sy)
+		:give(C.collider_rect, vec2(obj_anim:getWidth() * 100, obj_anim:getHeight() * 180))
 		:apply()
 
 	self.entities.text = ecs.entity()

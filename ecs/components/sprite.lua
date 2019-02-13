@@ -6,17 +6,17 @@ local Sprite = Component(function(e, sprite, path)
 	e.path = path
 end)
 
-local flags_tree = {"ImGuiTreeNodeFlags_DefaultOpen"}
+local sx = 0.5
 
 function Sprite:debug()
-	if imgui.TreeNodeEx("Sprite", flags_tree) then
+	if imgui.TreeNodeEx("Sprite", __flags_tree) then
+		local width, height = self.sprite:getDimensions()
 		if self.path then
 			imgui.Text("Path: " .. self.path)
 		end
-		if imgui.TreeNode("Texture") then
-			imgui.Image(self.sprite, self.sprite:getWidth()/2, self.sprite:getHeight()/2)
-			imgui.TreePop()
-		end
+		imgui.Text("Size: " .. ("%ix%i"):format(width, height))
+		sx = imgui.SliderFloat("Zoom", sx, 0.0, 1)
+		imgui.Image(self.sprite, width * sx, height * sx)
 		imgui.TreePop()
 	end
 end

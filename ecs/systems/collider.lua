@@ -43,9 +43,6 @@ end
 
 function Collider:mousepressed(mx, my, mb)
 	for _, e in ipairs(self.sprite) do
-		local c_collider_sprite = e[C.collider_sprite]
-		local c_transform = e[C.transform]
-		local c_sprite = e[C.sprite].sprite
 		local onMouseEnter = utils:checkOnMouseEnter(e)
 		if onMouseEnter then
 			if mb == 2 and __debug then
@@ -55,8 +52,6 @@ function Collider:mousepressed(mx, my, mb)
 	end
 
 	for _, e in ipairs(self.rect) do
-		local c_collider_rect = e[C.collider_rect]
-		local c_transform = e[C.transform]
 		local onMouseEnter = utils:checkOnMouseEnter(e)
 		if onMouseEnter then
 			if mb == 2 and __debug then

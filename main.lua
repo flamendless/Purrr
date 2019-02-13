@@ -24,6 +24,7 @@ if __debug then
 	io.stdout:setvbuf("no")
 	debugging = require("src.debug")
 	__inspect = require("modules.inspect.inspect")
+	__flags_tree = {}
 end
 
 local assets = require("src.assets")

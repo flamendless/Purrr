@@ -14,12 +14,11 @@ local Transform = Component(function(e, pos, rotation, sx, sy, ox, oy, kx, ky)
 	e.ky = ky or 0
 end)
 
-local flags_tree = {"ImGuiTreeNodeFlags_DefaultOpen"}
 local rad = math.rad
 local rad_360 = rad(360)
 
 function Transform:debug()
-	if imgui.TreeNodeEx("Position", flags_tree) then
+	if imgui.TreeNodeEx("Transform", __flags_tree) then
 		local x, status_x = imgui.SliderInt("x", self.pos.x, 0, love.graphics.getWidth())
 		local y, status_y = imgui.SliderInt("y", self.pos.y, 0, love.graphics.getHeight())
 		local rotation, status_rotation = imgui.SliderInt("rotation", self.rotation, 0, rad_360)

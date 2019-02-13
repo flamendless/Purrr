@@ -132,29 +132,22 @@ end
 
 function Debug:drawSelected()
 	imgui.Begin("Entity", nil, flags)
+
 	--TAG
 	if self.selected:has(C.tag) then
 		local c_tag = self.selected[C.tag]
 		c_tag:debug()
 	end
 
-	--TRANSFORM
-	if self.selected:has(C.transform) then
-		local c_transform = self.selected[C.transform]
-		c_transform:debug()
+	for _, c_id in ipairs(self.components) do
+		if not (c_id == "tag") then
+			if self.selected:has(C[c_id]) then
+				local c = self.selected[C[c_id]]
+				if c.debug then c:debug() end
+			end
+		end
 	end
 
-	--COLOR
-	if self.selected:has(C.color) then
-		local c_color = self.selected[C.color]
-		c_color:debug()
-	end
-
-	--SPRITE
-	if self.selected:has(C.sprite) then
-		local c_sprite = self.selected[C.sprite]
-		c_sprite:debug()
-	end
 	imgui.End()
 end
 
