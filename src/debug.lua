@@ -27,15 +27,12 @@ local Debug = {
 		lines = true,
 		selected = false,
 		components = false,
-	}
+	},
 }
 
 local stats = {}
 local flags = {"ImGuiWindowFlags_AlwaysAutoResize"}
 local flags_tree = {"ImGuiTreeNodeFlags_DefaultOpen"}
-
-local rad = math.rad
-local rad_360 = rad(360)
 
 lurker.preswap = function(filename)
 	return filename == "save.lua"
@@ -135,53 +132,29 @@ end
 
 function Debug:drawSelected()
 	imgui.Begin("Entity", nil, flags)
+	--TAG
 	if self.selected:has(C.tag) then
 		local c_tag = self.selected[C.tag]
-		imgui.Text("ID: " .. c_tag.tag)
+		c_tag:debug()
 	end
 
 	--TRANSFORM
-	if self.selected:has(C.transform) and imgui.TreeNodeEx("Position", flags_tree) then
+	if self.selected:has(C.transform) then
 		local c_transform = self.selected[C.transform]
-		local x, status_x = imgui.SliderInt("x", c_transform.pos.x, 0, love.graphics.getWidth())
-		local y, status_y = imgui.SliderInt("y", c_transform.pos.y, 0, love.graphics.getHeight())
-		local rotation, status_rotation = imgui.SliderInt("rotation", c_transform.rotation, 0, rad_360)
-		local sx, status_sx = imgui.SliderInt("sx", c_transform.sx, 0, 10)
-		local sy, status_sy = imgui.SliderInt("sy", c_transform.sy, 0, 10)
-		imgui.Text("Offset X: " .. c_transform.ox)
-		imgui.Text("Offset Y: " .. c_transform.oy)
-		if imgui.TreeNode("Original") then
-			imgui.Text("Position X: " .. c_transform.pos.x - c_transform.ox)
-			imgui.Text("Position Y: " .. c_transform.pos.y - c_transform.oy)
-			imgui.TreePop()
-		end
-		if status_x or status_y then
-			c_transform.pos.x = x
-			c_transform.pos.y = y
-		end
-		if status_rotation then c_transform.rotation = rotation end
-		if status_sx or status_sy then
-			c_transform.sx = sx
-			c_transform.sy = sy
-		end
-		imgui.TreePop()
+		c_transform:debug()
 	end
 
 	--COLOR
-	if self.selected:has(C.color) and imgui.TreeNodeEx("Color", flags_tree) then
+	if self.selected:has(C.color) then
 		local c_color = self.selected[C.color]
-		local r, g, b, a = unpack(c_color.color)
-		local slider_r, slider_status_r = imgui.SliderFloat("R", r, 0, 1)
-		local slider_g, slider_status_g = imgui.SliderFloat("G", g, 0, 1)
-		local slider_b, slider_status_b = imgui.SliderFloat("B", b, 0, 1)
-		local slider_a, slider_status_a = imgui.SliderFloat("A", a, 0, 1)
-		c_color.color[1] = slider_r
-		c_color.color[2] = slider_g
-		c_color.color[3] = slider_b
-		c_color.color[4] = slider_a
-		imgui.TreePop()
+		c_color:debug()
 	end
 
+	--SPRITE
+	if self.selected:has(C.sprite) then
+		local c_sprite = self.selected[C.sprite]
+		c_sprite:debug()
+	end
 	imgui.End()
 end
 

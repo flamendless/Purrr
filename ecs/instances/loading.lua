@@ -19,6 +19,9 @@ function Loading:load()
 		self.source:play()
 	end
 	self.image = resourceManager:getPersistent("loading")
+	if self.image then
+		self.image:setFilter("nearest", "nearest")
+	end
 	self.instance = Instance()
 	self.systems = {
 		animation = S.animation(),

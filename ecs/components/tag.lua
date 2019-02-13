@@ -5,4 +5,10 @@ local Tag = Component(function(e, tag)
 	e.tag = tag
 end)
 
+local flags_tree = {"ImGuiTreeNodeFlags_DefaultOpen"}
+
+function Tag:debug()
+	imgui.Text("Tag: " .. self.tag)
+end
+
 return Tag
