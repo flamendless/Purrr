@@ -10,6 +10,7 @@ local preload = require("src.preload")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
 local resourceManager = require("src.resource_manager")
+local bgm = require("src.bgm")
 local utils = require("src.utils")
 
 local C = require("ecs.components")
@@ -69,11 +70,12 @@ function Debug:draw()
 		self.colors.line:set()
 		love.graphics.line(0, screen.y/2, screen.x, screen.y/2) --middle-horizontal
 		love.graphics.line(screen.x/2, 0, screen.x/2, screen.y) --middle-vertical
-		love.graphics.line(0, 32, screen.x, 32) --top
-		love.graphics.line(0, screen.y - 32, screen.x, screen.y - 32) --bottom
-		love.graphics.line(32, 0, 32, screen.y) --left
-		love.graphics.line(screen.x - 32, 0, screen.x - 32, screen.y) --right
+		love.graphics.line(0, screen.pad, screen.x, screen.pad) --top
+		love.graphics.line(0, screen.y - screen.pad, screen.x, screen.y - screen.pad) --bottom
+		love.graphics.line(screen.pad, 0, screen.pad, screen.y) --left
+		love.graphics.line(screen.x - screen.pad, 0, screen.x - screen.pad, screen.y) --right
 	end
+	self:drawMedia()
 	love.graphics.setColor(1, 1, 1, 1)
 	imgui.Render()
 	stats = love.graphics.getStats(stats)
@@ -148,6 +150,32 @@ function Debug:drawSelected()
 		end
 	end
 
+	imgui.End()
+end
+
+function Debug:drawMedia()
+	imgui.Begin("Media", nil, flags)
+	local text = ""
+	local pos = 0
+	local duration = 0
+	if bgm.data.text then text = bgm.data.text end
+	if bgm.data.pos then pos = bgm.data.pos end
+	if bgm.data.duration then duration = bgm.data.duration end
+	local v, status = imgui.SliderFloat(text, pos, 0, duration)
+	if status then
+		if bgm.current then bgm.current:seek(v, "seconds") end
+	end
+	if imgui.Button("Play") then
+		if bgm.current then bgm.current:play() end
+	end
+	imgui.SameLine()
+	if imgui.Button("Pause") then
+		if bgm.current then bgm.current:pause() end
+	end
+	imgui.SameLine()
+	if imgui.Button("Stop") then
+		if bgm.current then bgm.current:stop() end
+	end
 	imgui.End()
 end
 

@@ -4,14 +4,14 @@ local Menu = BaseState("Menu")
 local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
 local lume = require("modules.lume.lume")
-local ecs = {
-	instance = require("modules.concord.lib.instance"),
-	entity = require("modules.concord.lib.entity"),
-}
+
+local Instance = require("modules.concord.lib.instance")
+local Entity = require("modules.concord.lib.entity")
 local E = require("ecs.entities")
 local C = require("ecs.components")
 local S = require("ecs.systems")
 
+local bgm = require("src.bgm")
 local data = require("src.data")
 local transition = require("src.transition")
 local colors = require("src.colors")
@@ -23,11 +23,14 @@ local pos = require("src.positions")
 
 function Menu:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
+	self.sources = resourceManager:getAll("sources")
 	self.fonts = resourceManager:getAll("fonts")
-	self.instance = ecs.instance()
+	self.instance = Instance()
 	self:setupSystems()
 	self:setupEntities()
 	self:start()
+
+	bgm:start(self.sources.bgm_menu)
 end
 
 function Menu:setupSystems()
@@ -52,8 +55,8 @@ end
 
 function Menu:setupEntities()
 	self.entities = {}
-	self.entities.bg = ecs.entity():give(C.background, self.images.bg):apply()
-	self.entities.title = ecs.entity()
+	self.entities.bg = Entity():give(C.background, self.images.bg):apply()
+	self.entities.title = Entity()
 		:give(C.tag, "title")
 		:give(C.color)
 		:give(C.sprite, self.images.title)
@@ -61,20 +64,21 @@ function Menu:setupEntities()
 		:give(C.collider_sprite)
 		:apply()
 
-	self.entities.btn_play = ecs.entity()
-		:give(C.tag, "btn_play")
+	self.entities.btn_start = Entity()
+		:give(C.tag, "btn_start")
 		:give(C.color)
 		:give(C.gui_button)
 		:give(C.gui_onClick, function()
+				--TODO replace splash
 				gamestate:switch( require("states").splash )
 			end)
-		:give(C.onHoveredSprite, self.images.btn_play_hovered)
-		:give(C.sprite, self.images.btn_play)
-		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 3, 3, self.images.btn_play:getWidth()/2, self.images.btn_play:getHeight()/2)
+		:give(C.onHoveredSprite, self.images.btn_start_hovered)
+		:give(C.sprite, self.images.btn_start)
+		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 3, 3, self.images.btn_start:getWidth()/2, self.images.btn_start:getHeight()/2)
 		:give(C.collider_sprite)
 		:apply()
 
-	self.entities.btn_leave = ecs.entity()
+	self.entities.btn_leave = Entity()
 		:give(C.tag, "btn_leave")
 		:give(C.color)
 		:give(C.gui_button)
@@ -87,19 +91,34 @@ function Menu:setupEntities()
 		:give(C.collider_sprite)
 		:apply()
 
+	self.entities.btn_settings = Entity()
+		:give(C.tag, "btn_settings")
+		:give(C.color)
+		:give(C.gui_button)
+		:give(C.gui_onClick, function()
+			end)
+		:give(C.onHoveredSprite, self.images.btn_settings_hovered)
+		:give(C.sprite, self.images.btn_settings)
+		:give(C.transform, vec2(screen.x - 32, screen.y * 1.5), 0, 2, 2, self.images.btn_settings:getWidth(), self.images.btn_settings:getHeight())
+		:give(C.collider_sprite)
+		:apply()
+
 	self.instance:addEntity(self.entities.bg)
 	self.instance:addEntity(self.entities.title)
-	self.instance:addEntity(self.entities.btn_play)
+	self.instance:addEntity(self.entities.btn_start)
 	self.instance:addEntity(self.entities.btn_leave)
+	self.instance:addEntity(self.entities.btn_settings)
 end
 
 function Menu:start()
 	local title_y = self.entities.title[C.transform].oy + 32
-	local btn_play_y = self.entities.btn_play[C.transform].oy + 455
+	local btn_start_y = self.entities.btn_start[C.transform].oy + 455
 	local btn_leave = self.entities.btn_leave[C.transform].oy + 620
+	local btn_settings = screen.y - screen.pad
 	flux.to(self.entities.title[C.transform].pos, 1, { y = title_y }):ease("backout")
-	flux.to(self.entities.btn_play[C.transform].pos, 1, { y = btn_play_y }):ease("backout")
+	flux.to(self.entities.btn_start[C.transform].pos, 1, { y = btn_start_y }):ease("backout")
 	flux.to(self.entities.btn_leave[C.transform].pos, 1, { y = btn_leave }):ease("backout")
+	flux.to(self.entities.btn_settings[C.transform].pos, 1, { y = btn_settings }):ease("backout")
 end
 
 function Menu:update(dt)
@@ -127,6 +146,7 @@ function Menu:textinput(t)
 end
 
 function Menu:exit()
+	bgm:clear()
 	if self.instance then self.instance:clear() end
 end
 

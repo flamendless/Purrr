@@ -12,6 +12,7 @@ local peachy = require("modules.peachy.peachy")
 local vec2 = require("modules.hump.vector")
 local timer = require("modules.hump.timer")
 
+local bgm = require("src.bgm")
 local data = require("src.data")
 local transition = require("src.transition")
 local screen = require("src.screen")
@@ -31,7 +32,7 @@ function Intro:enter(previous, ...)
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
-	self.sources.bgm_intro:play()
+	bgm:start(self.sources.bgm_intro)
 end
 
 function Intro:setupSystems()
@@ -115,7 +116,7 @@ function Intro:draw()
 end
 
 function Intro:exit()
-	self.sources.bgm_intro:stop()
+	bgm:clear()
 	if self.instance then self.instance:clear() end
 end
 

@@ -35,6 +35,7 @@ local screen = require("src.screen")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local touch = require("src.touch")
+local bgm = require("src.bgm")
 
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 log.info(("Device: %s x %s"):format(love.graphics.getDimensions()))
@@ -71,6 +72,7 @@ function love.update(dt)
 	flux.update(dt)
 	time:update(dt)
 	touch:update(dt)
+	bgm:update(dt)
 	gamestate:update(dt)
 end
 

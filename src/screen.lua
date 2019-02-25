@@ -4,6 +4,7 @@ local log = require("modules.log.log")
 local Screen = {
 	-- size = vec2(love.graphics.getWidth(), love.graphics.getHeight()),
 	size = vec2(480, 800),
+	pad = 32,
 }
 
 local mt = { __index = Screen.size }
