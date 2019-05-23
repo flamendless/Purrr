@@ -5,7 +5,6 @@ local req = function(id)
 end
 
 local States = {
-	base = req("base"),
 	splash = req("splash"),
 	menu = req("menu"),
 	lobby = req("lobby"),

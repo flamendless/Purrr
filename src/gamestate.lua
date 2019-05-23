@@ -1,5 +1,6 @@
 local Gamestate = {
 	__current,
+	__current_id,
 	__previous,
 	__preloading,
 	__args = {},
@@ -33,6 +34,7 @@ end
 function Gamestate:start(state)
 	assert(state, "A state must be passed")
 	self.__current = state
+	self.__current_id = state:getID()
 	self:preload()
 end
 
@@ -41,6 +43,7 @@ function Gamestate:switch(state, ...)
 	self:exit()
 	self.__previous = self.__current
 	self.__current = state
+	self.__current_id = state:getID()
 	self.__args = { ... }
 	self:preload()
 end
@@ -145,5 +148,6 @@ function Gamestate:exit()
 end
 
 function Gamestate:getCurrent() return self.__current end
+function Gamestate:getCurrentID() return self.__current_id end
 
 return Gamestate

@@ -28,7 +28,7 @@ if __debug then
 end
 
 local assets = require("src.assets")
-local data = require("src.data")
+local config = require("src.config")
 local time = require("src.time")
 local gamestate = require("src.gamestate")
 local screen = require("src.screen")
@@ -36,6 +36,7 @@ local preload = require("src.preload")
 local transition = require("src.transition")
 local touch = require("src.touch")
 local bgm = require("src.bgm")
+local states = require("states")
 
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 log.info(("Device: %s x %s"):format(love.graphics.getDimensions()))
@@ -52,18 +53,15 @@ function love.load(args)
 	end
 	math.randomseed(os.time())
 	touch:init()
-	data:init()
+	config:init()
 	transition:init()
 	preload:init()
 
-	__next_state = "menu"
-	gamestate:start( require("states").base )
-	-- gamestate:start( require("states").splash )
-	-- gamestate:start( require("states").intro )
-	-- gamestate:start( require("states").menu )
-	-- gamestate:start( require("states").customization )
-	-- gamestate:start( require("states").lobby )
-	-- gamestate:start( require("states").map )
+	--TODO: uncomment when releasing
+	-- local init_state = states.splash
+
+	local init_state = states.menu
+	gamestate:start(init_state)
 end
 
 function love.update(dt)
@@ -147,7 +145,7 @@ love.errhand = require("src.errorhandler").errhand
 
 function love.quit()
 	log.trace("Love Quit")
-	data:save()
+	config:save()
 	lily.quit()
 	if __debug and debugging.quit then debugging:quit() end
 end

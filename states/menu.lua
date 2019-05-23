@@ -12,7 +12,7 @@ local C = require("ecs.components")
 local S = require("ecs.systems")
 
 local bgm = require("src.bgm")
-local data = require("src.data")
+local config = require("src.config")
 local transition = require("src.transition")
 local colors = require("src.colors")
 local screen = require("src.screen")
@@ -20,6 +20,8 @@ local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local assets = require("src.assets")
 local pos = require("src.positions")
+
+local next_state
 
 function Menu:enter(previous, ...)
 	self.images = resourceManager:getAll("images")
@@ -30,7 +32,7 @@ function Menu:enter(previous, ...)
 	self:setupEntities()
 	self:start()
 
-	bgm:start(self.sources.bgm_menu)
+	bgm:start(self.sources.bgm_menu, "Menu")
 end
 
 function Menu:setupSystems()
@@ -40,13 +42,18 @@ function Menu:setupSystems()
 		collider = S.collider(),
 		gui = S.gui(),
 	}
-	if __isDesktop then self.instance:addSystem(self.systems.collider, "mousepressed")
-	elseif __isMobile then self.instance:addSystem(self.systems.collider, "touchpressed")
+
+	if __isDesktop then
+		self.instance:addSystem(self.systems.collider, "mousepressed")
+		self.instance:addSystem(self.systems.gui, "mousepressed")
+	elseif __isMobile then
+		self.instance:addSystem(self.systems.collider, "touchpressed")
+		self.instance:addSystem(self.systems.gui, "touchpressed")
 	end
+
 	self.instance:addSystem(self.systems.renderer_bg, "draw")
 	self.instance:addSystem(self.systems.renderer_sprite, "draw")
 	self.instance:addSystem(self.systems.gui, "update")
-	self.instance:addSystem(self.systems.gui, "mousepressed")
 
 	if __debug then
 		self.instance:addSystem(self.systems.collider, "draw")
@@ -69,8 +76,12 @@ function Menu:setupEntities()
 		:give(C.color)
 		:give(C.gui_button)
 		:give(C.gui_onClick, function()
-				--TODO replace splash
-				gamestate:switch( require("states").splash )
+				if config.data.flags.customization_done then
+					next_state = require("states").customization
+				else
+					next_state = require("states").lobby
+				end
+				gamestate:switch(next_state)
 			end)
 		:give(C.onHoveredSprite, self.images.btn_start_hovered)
 		:give(C.sprite, self.images.btn_start)

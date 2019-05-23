@@ -42,4 +42,6 @@ function GUI:mousepressed(mx, my, mb)
 	end
 end
 
+--TODO: add touchpressed
+
 return GUI

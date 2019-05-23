@@ -22,7 +22,7 @@ local resourceManager = require("src.resource_manager")
 local assets = require("src.assets")
 local touch = require("src.touch")
 
-local next_state = require("states.intro")
+local next_state
 local delay = 0.5
 local dur = 0.75
 
@@ -79,6 +79,7 @@ function Splash:enter(previous, ...)
 			flux.to(self.entities.love_logo[C.transform].pos, dur, { x = screen.x * 1.5 }):ease("backin"):delay(delay)
 			flux.to(self.entities.love_text[C.transform].pos, dur, { y = -screen.y/2 }):ease("backin"):delay(delay)
 				:oncomplete(function()
+					next_state = require("states").menu
 					transition:start(next_state)
 				end)
 		end)

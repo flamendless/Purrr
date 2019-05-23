@@ -3,12 +3,16 @@ local BGM = {
 	data = {},
 }
 
-function BGM:start(source)
+function BGM:start(source, title)
 	assert(source:type() == "Source", "BGM must be a source")
 	self.current = source
+	if title then
+		self.data.title = "BGM " .. title
+	else
+		self.data.title = "?BGM"
+	end
 	self.data.duration = source:getDuration("seconds")
 	self.data.pos = source:tell("seconds")
-	self.data.text = ("%.2f"):format(tostring(source:getDuration("seconds")))
 	source:play()
 end
 

@@ -13,15 +13,13 @@ local vec2 = require("modules.hump.vector")
 local timer = require("modules.hump.timer")
 
 local bgm = require("src.bgm")
-local data = require("src.data")
+local config = require("src.config")
 local transition = require("src.transition")
 local screen = require("src.screen")
 local colors = require("src.colors")
 local resourceManager = require("src.resource_manager")
-local next_state = require("states.menu")
 
-function Intro:init()
-end
+local next_state
 
 function Intro:enter(previous, ...)
 	self.images = {
@@ -32,7 +30,7 @@ function Intro:enter(previous, ...)
 	self.instance = ecs.instance()
 	self:setupSystems()
 	self:setupEntities()
-	bgm:start(self.sources.bgm_intro)
+	bgm:start(self.sources.bgm_intro, "Intro")
 end
 
 function Intro:setupSystems()
@@ -64,6 +62,7 @@ function Intro:setupEntities()
 	obj_anim:onLoop(function()
 		obj_anim:stop(true)
 		timer.after(1, function()
+			next_state = require("states").lobby
 			transition:start(next_state)
 		end)
 	end)
@@ -80,6 +79,7 @@ function Intro:setupEntities()
 		:apply()
 
 	self.entities.text = ecs.entity()
+		:give(C.tag, "Button Skip")
 		:give(C.color, {1, 0, 0, 1})
 		:give(C.text, str_skip)
 		:give(C.font, self.font)

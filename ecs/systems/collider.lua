@@ -61,4 +61,6 @@ function Collider:mousepressed(mx, my, mb)
 	end
 end
 
+--TODO: add touchpressed
+
 return Collider

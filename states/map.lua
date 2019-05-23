@@ -13,7 +13,7 @@ local flux = require("modules.flux.flux")
 local timer = require("modules.hump.timer")
 
 local colors = require("src.colors")
-local data = require("src.data")
+local config = require("src.config")
 local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local transition = require("src.transition")
@@ -79,8 +79,8 @@ function Map:setupSystems()
 end
 
 function Map:setupEntities()
-	local current_world = data.data.world
-	local current_level = data.data.level
+	local current_world = config.data.world
+	local current_level = config.data.level
 	local img_map = self.images["map_" .. current_world]
 	local sx = screen.x/img_map:getWidth()
 	local sy = screen.y/img_map:getHeight()
@@ -190,7 +190,7 @@ function Map:setupEntities()
 			:apply()
 	end
 
-	if data.data.locked[current_world] then
+	if config.data.locked[current_world] then
 		self.entities.lock = ecs.entity()
 			:give(C.color, colors("white"))
 			:give(C.pos, vec2(screen.x/2, screen.y/2))
@@ -254,9 +254,9 @@ end
 
 function Map:forward()
 	transition:start(function()
-		if data.data.world == "mars" then data.data.world = "underground"
-		elseif data.data.world == "underground" then data.data.world = "space"
-		elseif data.data.world == "space" then data.data.world = "earth"
+		if config.data.world == "mars" then config.data.world = "underground"
+		elseif config.data.world == "underground" then config.data.world = "space"
+		elseif config.data.world == "space" then config.data.world = "earth"
 		end
 		current_view = current_view + 1
 		gamestate:switch(self)
@@ -265,9 +265,9 @@ end
 
 function Map:back()
 	transition:start(function()
-		if data.data.world == "earth" then data.data.world = "space"
-		elseif data.data.world == "space" then data.data.world = "underground"
-		elseif data.data.world == "underground" then data.data.world = "mars"
+		if config.data.world == "earth" then config.data.world = "space"
+		elseif config.data.world == "space" then config.data.world = "underground"
+		elseif config.data.world == "underground" then config.data.world = "mars"
 		end
 		current_view = current_view - 1
 		gamestate:switch(self)
