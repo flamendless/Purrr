@@ -1,5 +1,8 @@
 local Assets = {}
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 
 local states = {}
 
@@ -365,7 +368,9 @@ function Assets:load(state)
 	if states[str] then
 		return states[string.lower(state)]()
 	else
+		!if _LOGGING then
 		log.warn(("%s does not exist!"):format(str))
+		!end
 	end
 end
 

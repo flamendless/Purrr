@@ -1,6 +1,9 @@
 local Transition = {}
 
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 local flux = require("modules.flux.flux")
 
 local screen = require("src.screen")
@@ -29,7 +32,9 @@ function Transition:start(next_state, d)
 		self.pos_x = -screen.x
 		flux.to(self, d or self.duration, { pos_x = 0 })
 			:oncomplete(function()
+					!if _LOGGING then
 					log.trace("State Changed!")
+					!end
 					if type(next_state) == "function" then
 						next_state()
 					else
@@ -38,7 +43,9 @@ function Transition:start(next_state, d)
 			end)
 				:after(self, d or self.duration * 2, { pos_x = screen.x })
 				:oncomplete(function()
+					!if _LOGGING then
 					log.trace("Transition Finished!")
+					!end
 					self.isActive = false
 					-- gamestate:switch(next_state)
 				end)
@@ -47,7 +54,9 @@ function Transition:start(next_state, d)
 		flux.to(self, d or self.duration, { scale = 0 })
 			:ease("backout")
 			:oncomplete(function()
+					!if _LOGGING then
 					log.trace("State Changed!")
+					!end
 					if type(next_state) == "function" then
 						next_state()
 					else
@@ -57,7 +66,9 @@ function Transition:start(next_state, d)
 			end)
 				:after(self, d or self.duration, { scale = self.max_scale })
 				:oncomplete(function()
+					!if _LOGGING then
 					log.trace("Transition Finished!")
+					!end
 					self.isActive = false
 					-- gamestate:switch(next_state)
 				end)

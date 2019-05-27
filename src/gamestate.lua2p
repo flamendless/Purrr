@@ -6,19 +6,26 @@ local Gamestate = {
 	__args = {},
 }
 
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 local preload = require("src.preload")
 local assets = require("src.assets")
 local resourceManager = require("src.resource_manager")
 
 function Gamestate:enablePreloading()
+	!if _LOGGING then
 	log.info("Preloading enabled!")
+	!end
 	self.__preloading = require("ecs.instances.loading")
 	self.__preloading:load()
 end
 
 function Gamestate:disablePreloading()
+	!if _LOGGING then
 	log.info("Preloading disabled!")
+	!end
 	if self.__preloading and self.__preloading.exit then
 		self.__preloading:exit()
 	end
@@ -26,9 +33,13 @@ function Gamestate:disablePreloading()
 end
 
 function Gamestate:restartCurrent()
+	!if _LOGGING then
 	log.info("Restarting current state...")
+	!end
 	self:preload()
+	!if _LOGGING then
 	log.info("Restarted current state!")
+	!end
 end
 
 function Gamestate:start(state)
@@ -39,7 +50,9 @@ function Gamestate:start(state)
 end
 
 function Gamestate:switch(state, ...)
+	!if _LOGGING then
 	log.info("Switching to " .. state.__id)
+	!end
 	self:exit()
 	self.__previous = self.__current
 	self.__current = state
@@ -49,23 +62,33 @@ function Gamestate:switch(state, ...)
 end
 
 function Gamestate:reload()
+	!if _LOGGING then
 	log.info("Reloading .." .. self.__current.__id)
+	!end
 	self:switch(self.__current)
+	!if _LOGGING then
 	log.info("Reloaded .." .. self.__current.__id)
+	!end
 end
 
 function Gamestate:preload()
+	!if _LOGGING then
 	log.info("Preload checking...")
+	!end
 	local a = assets:load(self.__current.__id)
 	if a then
+		!if _LOGGING then
 		log.info("Preload started")
+		!end
 		preload:check(a, self.__current.__id)
 		self.isPreloading = true
 	end
 end
 
 function Gamestate:enter(previous, ...)
+	!if _LOGGING then
 	log.info(("State %s Entered!"):format(self.__current.__id))
+	!end
 	self.__current:enter(previous, ...)
 	self.__current.isReady = true
 end
@@ -140,9 +163,13 @@ end
 
 function Gamestate:exit()
 	if self.__current and self.__current.exit then
+		!if _LOGGING then
 		log.info("Exiting...")
+		!end
 		self.__current:exit()
+		!if _LOGGING then
 		log.info("Exited!")
+		!end
 	end
 	resourceManager:flush()
 end

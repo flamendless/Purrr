@@ -35,3 +35,6 @@
 [submodule "modules/log"]
 	path = modules/log
 	url = git@github.com:flamendless/log.lua.git
+[submodule "modules/luapreprocess"]
+	path = modules/luapreprocess
+	url = https://github.com/ReFreezed/LuaPreprocess

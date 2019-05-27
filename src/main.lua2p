@@ -2,19 +2,19 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
 __filter = "nearest"
 __scale = 1
-
+!if _PLATFORM == "desktop" then
 __desktop_width, __desktop_height = love.window.getDesktopDimensions()
-
+!end
 __version = require("modules.semver.semver")(0, 1, 4)
 
 --MODULES
 local log
-
+!if _LOGGING then
 log = require("modules.log.log")
 log.outfile = "log.log"
 log.level = "trace"
 log.lovesave = true
-
+!end
 local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
@@ -22,11 +22,11 @@ local ecs = require("modules.concord.lib").init({ useEvents = false })
 
 --DEBUGGING and LOGGING
 local debugging
-
+!if _DEBUG then
 require("imgui")
 io.stdout:setvbuf("no")
 debugging = require("src.debug")
-
+!end
 
 --SOURCE FILES
 local assets = require("src.assets")
@@ -42,21 +42,21 @@ local states = require("states")
 
 --INITIALIZATION
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
-
+!if _LOGGING then
 log.info(("Device: %s x %s"):format(love.graphics.getDimensions()))
 log.info(("Game: %s x %s"):format(screen.x, screen.y))
 log.info("Scale: " .. __scale)
-
+!end
 
 function love.load(args)
-	
+	!if _LOGGING then
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
-	
-	
+	!end
+	!if _PLATFORM == "desktop" and _DEBUG then
 	love.window.setMode(__desktop_width - 64, love.graphics.getHeight())
 	debugging:init()
-	
+	!end
 	math.randomseed(os.time())
 	touch:init()
 	config:init()
@@ -71,9 +71,9 @@ function love.load(args)
 end
 
 function love.update(dt)
-	
+	!if _DEBUG then
 	debugging:update(dt)
-	
+	!end
 	timer.update(dt)
 	flux.update(dt)
 	time:update(dt)
@@ -89,52 +89,52 @@ function love.draw()
 	gamestate:draw()
 	transition:draw()
 	touch:draw()
-	
+	!if _DEBUG then
 	debugging:draw()
-	
+	!end
 	love.graphics.pop()
 end
 
 function love.keypressed(key)
 	gamestate:keypressed(key)
-	
+	!if _DEBUG then
 	debugging:keypressed(key)
-	
+	!end
 end
 
 function love.keyreleased(key)
 	gamestate:keyreleased(key)
-	
+	!if _DEBUG then
 	debugging:keyreleased(key)
-	
+	!end
 end
 
 function love.mousepressed(mx, my, mb, istouch, count)
 	gamestate:mousepressed(mx, my, mb, istouch, count)
 	touch:simulateTouchPressed(mx, my)
-	
+	!if _DEBUG then
 	debugging:mousepressed(mx, my, mb, istouch, count)
-	
+	!end
 end
 
 function love.mousereleased(mx, my, mb, istouch, count)
 	gamestate:mousereleased(mx, my, mb, istouch, count)
 	touch:simulateTouchReleased(mx, my)
-	
+	!if _DEBUG then
 	debugging:mousereleased(mx, my, mb, istouch, count)
-	
+	!end
 end
 
 function love.wheelmoved(wx, wy)
-	
+	!if _DEBUG then
 	debugging:wheelmoved(wx, wy)
-	
+	!end
 end
 
 function love.mousemoved(mx, my)
-	
+	!if _DEBUG then
 	debugging:mousemoved(mx, my)
-	
+	!end
 end
 
 function love.touchpressed(id, tx, ty, dx, dy, pressure)
@@ -160,20 +160,20 @@ end
 
 function love.textinput(t)
 	gamestate:textinput(t)
-	
+	!if _DEBUG then
 	debugging:textinput(t)
-	
+	!end
 end
 
 love.errhand = require("src.errorhandler").errhand
 
 function love.quit()
-	
+	!if _LOGGING then
 	log.trace("Love Quit")
-	
+	!end
 	config:save()
 	lily.quit()
-	
+	!if _DEBUG then
 	debugging:quit()
-	
+	!end
 end

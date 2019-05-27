@@ -5,7 +5,10 @@ local ecs = {
 	entity = require("modules.concord.lib.entity"),
 }
 local lily = require("modules.lily.lily")
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 local inspect = require("modules.inspect.inspect")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
@@ -40,7 +43,9 @@ function Preload:check(t_assets, current_state)
 				self:add(kind, v)
 				self.current_state = current_state
 			else
+				!if _LOG then
 				log.trace(("%s - already loaded!"):format(v.id))
+				!end
 			end
 		end
 	end
@@ -94,7 +99,9 @@ function Preload:start()
 				else
 					kind = data:type()
 				end
+				!if _LOG then
 				log.trace(("Loaded: %s - %s"):format(kind, id[i]))
+				!end
 				resourceManager:add(kind, id[i], data, self.current_state)
 			end
 		end)
@@ -111,7 +118,9 @@ end
 
 function Preload:complete()
 	resourceManager:setFilter()
+	!if _LOG then
 	log.trace("ASSETS:")
+	!end
 	flux.to(self.colors.text, 1, { [4] = 0 })
 	timer.after(dur, function()
 		self.isActive = false

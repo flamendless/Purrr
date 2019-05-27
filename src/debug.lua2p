@@ -1,6 +1,13 @@
+!if not _DEBUG then
+local Debug = {}
+return Debug
+!else
 local lurker = require("modules.lurker.lurker")
 local flux = require("modules.flux.flux")
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 local semver = require("modules.semver.semver")
 local screen = require("src.screen")
 local time = require("src.time")
@@ -40,7 +47,9 @@ lurker.preswap = function(filename)
 end
 
 lurker.postswap = function(filename)
+	!if _LOGGING then
 	log.trace("Swapped: " .. filename)
+	!end
 	gamestate:reload()
 end
 
@@ -248,3 +257,4 @@ function Debug:onEntitySelect(e)
 end
 
 return Debug
+!end

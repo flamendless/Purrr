@@ -3,7 +3,10 @@ local Config = {
 	path = love.filesystem.getSaveDirectory() .. "/"
 }
 local serialize = require("modules.knife.knife.serialize")
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 
 local stripExtension = function(str)
 	return str:match("(.+)%..+")
@@ -24,7 +27,9 @@ function Config:init()
 	self.data.dev = {}
 	if love.filesystem.getInfo(self.filename) then
 		self.data = require(stripExtension(self.filename))
+		!if _LOGGING then
 		log.trace("File Loaded!")
+		!end
 	else
 		self.data.flags.new_game = true
 		self.data.flags.customization_done = false
@@ -47,7 +52,9 @@ function Config:check()
 	local game_version = convert(__version)
 	self.data.game.version = data_version
 
+	!if _LOGGING then
 	log.trace(("Game Version: %s : Save Version: %s"):format(game_version, data_version))
+	!end
 	if not (data_version == game_version) then
 		local success = love.filesystem.remove(self.filename)
 		self.data.game.version = __version
@@ -58,7 +65,9 @@ end
 function Config:save()
 	local save = serialize(self.data)
 	love.filesystem.write(self.filename, save)
+	!if _LOGGING then
 	log.trace("File Saved!")
+	!end
 end
 
 function Config:erase()

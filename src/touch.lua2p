@@ -5,7 +5,10 @@ local Touch = {
 }
 
 local flux = require("modules.flux.flux")
-local log = require("modules.log.log")
+local log
+!if _LOGGING then
+log = require("modules.log.log")
+!end
 local screen = require("src.screen")
 local colors = require("src.colors")
 
@@ -13,9 +16,13 @@ local rad = math.rad
 
 function Touch:init()
 	if not (love.system.getOS() == "Android") then
+		!if _LOGGING then
 		log.info("Touch initialized... using mouse simulation")
+		!end
 	else
+		!if _LOGGING then
 		log.info("Touch initialized... using real touch")
+		!end
 	end
 end
 
@@ -111,13 +118,17 @@ function Touch:createObject(mx, my)
 				local current = self.list[i]
 				if obj == current then
 					table.remove(self.list, i)
+					!if _LOGGING then
 					log.trace("Touch Objects Count: " .. #self.list)
+					!end
 					break
 				end
 			end
 		end)
 	table.insert(self.list, obj)
+	!if _LOGGING then
 	log.trace("Touch Objects Count: " .. #self.list)
+	!end
 	if self.ps then self.ps:emit(8) end
 end
 
