@@ -10,12 +10,12 @@ APK_NAME = ${NAME}.apk
 PACKAGE_NAME = com.${NAME}.flamendless
 TEST_APK_NAME = ${OUTPUT_DIR}/${NAME}-unaligned.apk
 KS_FILE = ${BUILD_DIR}/am2018.keystore
-EXCLUDE = *.git* *.gitmodules* *.gitignore* *.md* *.txt* *.rst* *docs/* *.ase* *.aseprite* *.swp* *spec/* *test/* *rockspec* *.mak* *.yml* *ctags* *Makefile* *build/* *backup/* *res/* *examples/* *LICENSE* *.vscode* *icons/* *.luacheckrc* *test* *.out* *.travis* *ase*;
-VERSION = 0-1-3
+EXCLUDE = *.git* *.gitmodules* *.gitignore* *.md* *.txt* *.rst* *docs/* *.ase* *.aseprite* *.swp* *spec/* *test/* *rockspec* *.mak* *.yml* *ctags* *Makefile* *build/* *backup/* *res/* *examples/* *LICENSE* *.vscode* *icons/* *.luacheckrc* *test* *.out* *.travis* *ase* *imgui.so*;
+VERSION = 0-1-4
 PASSWORD :=
 
 test:
-	echo "Testing"
+	@echo "Testing"
 	love .
 
 build-android: build-love apk-compile apk-sign apk-install
@@ -25,29 +25,29 @@ apk-release: build-love apk-compile apk-sign
 	notify-send "FINISHED"
 
 build-love:
-	echo "making .love file..."
+	@echo "making .love file..."
 	noglob zip -9rv ${OUTPUT_DIR}/${LOVE_NAME} ${ROOT_DIR} -x ${EXCLUDE}
-	echo "made .love file!"
+	@echo "made .love file!"
 	notify-send "LOVE BUILT!"
 
 apk-compile:
-	echo "copying .love to build"
+	@echo "copying .love to build"
 	cp ${OUTPUT_DIR}/${LOVE_NAME} ${BUILD_DIR}/decoded/assets/
-	echo "copied!"
-	echo "compiling apk..."
+	@echo "copied!"
+	@echo "compiling apk..."
 	apktool b -o ${OUTPUT_DIR}/${APK_NAME} ${BUILD_DIR}/decoded;
-	echo "compiled apk!"
+	@echo "compiled apk!"
 	notify-send "APK COMPILED!"
 
 apk-sign:
-	echo "signing apk..."
+	@echo "signing apk..."
 	apk-signer -f ${OUTPUT_DIR}/${APK_NAME} -a flamendless -k ${KS_FILE} -s ${PASSWORD};
-	echo "signed apk!"
+	@echo "signed apk!"
 	notify-send "APK SIGNED!"
 
 apk-install:
-	echo "adb installing..."
+	@echo "adb installing..."
 	adb uninstall ${PACKAGE_NAME}
 	adb install ${TEST_APK_NAME}
-	echo "adb installed"
+	@echo "adb installed"
 	notify-send "APK INSTALLED!"

@@ -1,11 +1,9 @@
 local lurker = require("modules.lurker.lurker")
 local flux = require("modules.flux.flux")
 local log = require("modules.log.log")
-local inspect = require("modules.inspect.inspect")
 local semver = require("modules.semver.semver")
 local screen = require("src.screen")
 local time = require("src.time")
-local colors = require("src.colors")
 local preload = require("src.preload")
 local transition = require("src.transition")
 local gamestate = require("src.gamestate")
@@ -21,13 +19,11 @@ local Debug = {
 	selected = nil,
 	showAll = false,
 	show_demo = false,
-	colors = {},
 	font = love.graphics.newFont(12),
 	windows = {
 		info = true,
 		collisions = true,
 		config = true,
-		lines = true,
 		selected = false,
 		components = false,
 	},
@@ -35,7 +31,6 @@ local Debug = {
 
 local stats = {}
 local flags = {"ImGuiWindowFlags_AlwaysAutoResize"}
-local flags_tree = {"ImGuiTreeNodeFlags_DefaultOpen"}
 local flag_mute = false
 local temp_flag_mute = flag_mute
 local master_volume = 1
@@ -50,7 +45,6 @@ lurker.postswap = function(filename)
 end
 
 function Debug:init()
-	self.colors.line = colors(1, 0, 0, 0.5)
 	self.showAll = true
 end
 
@@ -63,6 +57,7 @@ function Debug:update(dt)
 end
 
 function Debug:draw()
+	love.graphics.setColor(1, 1, 1, 1)
 	if not self.showAll then
 		return
 	end
@@ -72,15 +67,6 @@ function Debug:draw()
 	if self.windows.components then self:drawComponents() end
 	if self.windows.config then self:drawConfig() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
-	if self.windows.lines then
-		self.colors.line:set()
-		love.graphics.line(0, screen.y/2, screen.x, screen.y/2) --middle-horizontal
-		love.graphics.line(screen.x/2, 0, screen.x/2, screen.y) --middle-vertical
-		love.graphics.line(0, screen.pad, screen.x, screen.pad) --top
-		love.graphics.line(0, screen.y - screen.pad, screen.x, screen.y - screen.pad) --bottom
-		love.graphics.line(screen.pad, 0, screen.pad, screen.y) --left
-		love.graphics.line(screen.x - screen.pad, 0, screen.x - screen.pad, screen.y) --right
-	end
 	self:drawMedia()
 	love.graphics.setColor(1, 1, 1, 1)
 	imgui.Render()
@@ -98,7 +84,6 @@ function Debug:drawMenuBar()
 			self.windows.info = imgui.Checkbox("Info", self.windows.info)
 			self.windows.config = imgui.Checkbox("Config", self.windows.config)
 			self.windows.collisions = imgui.Checkbox("Collisions", self.windows.collisions)
-			self.windows.lines = imgui.Checkbox("Lines", self.windows.lines)
 			imgui.EndMenu()
 		end
 		if imgui.BeginMenu("Help") then
@@ -141,7 +126,7 @@ function Debug:drawInfo()
 	imgui.Text("GAMESTATE: " .. gamestate:getCurrentID())
 	imgui.Text("FPS:" .. love.timer.getFPS())
 	if stats.drawcalls then
-		if imgui.TreeNodeEx("more", flags_tree) then
+		if imgui.TreeNodeEx("more") then
 			imgui.Text("CANVASES: " .. stats.canvases)
 			imgui.Text("CANVAS SWITCHES: " .. stats.canvasswitches)
 			imgui.Text("DRAW CALLS: " .. stats.drawcalls)

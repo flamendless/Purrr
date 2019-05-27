@@ -1,32 +1,32 @@
+--GLOBAL VARIABLES
 __love = "LÖVE" --because I can't type the O with Umlaut
 __debug = true
 __filter = "nearest"
-__window = 1
 __scale = 1
+__desktop_width, __desktop_height = love.window.getDesktopDimensions()
 __version = require("modules.semver.semver")(0, 1, 4)
 __isDesktop = love.system.getOS() == "Windows" or love.system.getOS() == "Linux"
 __isMobile = love.system.getOS() == "Android"
 
+--MODULES
 local log = require("modules.log.log")
 local lily = require("modules.lily.lily")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
-local inspect = require("modules.inspect.inspect")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
-local font = love.graphics.newFont(16)
 
-local debugging
+--DEBUGGING and LOGGING
 log.outfile = "log.log"
 log.level = "trace"
 log.lovesave = true
+local debugging
 if __debug then
 	require("imgui")
 	io.stdout:setvbuf("no")
 	debugging = require("src.debug")
-	__inspect = require("modules.inspect.inspect")
-	__flags_tree = {}
 end
 
+--SOURCE FILES
 local assets = require("src.assets")
 local config = require("src.config")
 local time = require("src.time")
@@ -38,6 +38,7 @@ local touch = require("src.touch")
 local bgm = require("src.bgm")
 local states = require("states")
 
+--INITIALIZATION
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 log.info(("Device: %s x %s"):format(love.graphics.getDimensions()))
 log.info(("Game: %s x %s"):format(screen.x, screen.y))
@@ -47,8 +48,7 @@ function love.load(args)
 	log.trace("Love Load")
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	if __debug and __isDesktop then
-		love.window.setMode(960, love.graphics.getHeight())
-		love.window.setPosition(1280 - love.graphics.getWidth(), 0)
+		love.window.setMode(__desktop_width - 64, love.graphics.getHeight())
 		debugging:init()
 	end
 	math.randomseed(os.time())
