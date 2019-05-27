@@ -1,11 +1,12 @@
 *.aseprite
 *.ase
 *.svg
-*.md
+u*.md
 *.txt
 *.zip
 *.love
 assets/palettes/main.lua
+assets/anim/backup
 .vscode
 bin
 dist
