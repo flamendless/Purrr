@@ -21,27 +21,27 @@ local all_paths = {
 	{
 		dir = getLuaFilesInDirectory("src"),
 		dir_in = "^src/",
-		dir_out = "bin/src/"
+		dir_out = "output/src/"
 	},
 	{
 		dir = getLuaFilesInDirectory("states"),
 		dir_in = "^states/",
-		dir_out = "bin/states/"
+		dir_out = "output/states/"
 	},
 	{
 		dir = getLuaFilesInDirectory("ecs/components"),
 		dir_in = "^ecs/components/",
-		dir_out = "bin/ecs/components/"
+		dir_out = "output/ecs/components/"
 	},
 	{
 		dir = getLuaFilesInDirectory("ecs/systems"),
 		dir_in = "^ecs/systems/",
-		dir_out = "bin/ecs/systems/"
+		dir_out = "output/ecs/systems/"
 	},
 	{
 		dir = getLuaFilesInDirectory("ecs/entities"),
 		dir_in = "^ecs/entities/",
-		dir_out = "bin/ecs/entities/"
+		dir_out = "output/ecs/entities/"
 	},
 }
 
@@ -50,10 +50,10 @@ for _, t in ipairs(all_paths) do
 		local pathOut = filename
 		pathOut = pathOut:gsub(t.dir_in, t.dir_out)
 		pathOut = pathOut:gsub("%.lua2p$", ".lua")
-		if pathOut == "bin/src/main.lua" then
-			pathOut = "bin/main.lua"
-		elseif pathOut == "bin/src/conf.lua" then
-			pathOut = "bin/conf.lua"
+		if pathOut == "output/src/main.lua" then
+			pathOut = "output/main.lua"
+		elseif pathOut == "output/src/conf.lua" then
+			pathOut = "output/conf.lua"
 		end
 		local info, err = pp.processFile({pathIn = filename, pathOut = pathOut})
 		if not info then  os.exit(1)  end

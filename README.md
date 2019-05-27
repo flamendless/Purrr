@@ -1,6 +1,13 @@
 # PURRR
 Made with [löve](https://love2d.org)
 
+# TO RUN
+
+```
+make init
+make
+```
+
 ## Libraries Used:
 * [Classic](https://github.com/rxi/classic) - For Class
 * [Concord](https://github.com/Tjakka5/Concord) - For ECS

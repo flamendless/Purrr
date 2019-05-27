@@ -8,7 +8,7 @@ u*.md
 assets/palettes/main.lua
 assets/anim/backup
 .vscode
-bin
+output
 dist
 _Makefile
 main.lua

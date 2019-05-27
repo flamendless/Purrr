@@ -1,44 +1,40 @@
 run:
 	lua build.lua
-	love bin
+	love output
 
 init:
-	@if [ ! -d bin/modules ]; then \
-		cp -rf modules bin/; \
+	@if [ ! -d output/modules ]; then \
+		cp -rf modules output/; \
 	else \
 		echo "modules already exists"; \
 	fi
-	@if [ ! -d bin/assets ]; then \
-		cp -rf assets bin/; \
+	@if [ ! -d output/assets ]; then \
+		cp -rf assets output/; \
 	else \
 		echo "assets already exists"; \
 	fi
-	@if [ ! -d bin/shaders ]; then \
-		cp -rf shaders bin/; \
+	@if [ ! -d output/shaders ]; then \
+		cp -rf shaders output/; \
 	else \
 		echo "shaders already exists"; \
 	fi
-	@if [ ! -d bin/src ]; then \
-		mkdir bin/src; \
+	@if [ ! -d output/src ]; then \
+		mkdir output/src; \
 	else \
 		echo "src already exists"; \
 	fi
-	@if [ ! -d bin/states ]; then \
-		mkdir bin/states; \
+	@if [ ! -d output/states ]; then \
+		mkdir output/states; \
 	else \
 		echo "states already exists"; \
 	fi
-	@if [ ! -d bin/ecs ]; then \
-		mkdir -p bin/ecs/components; \
-		mkdir -p bin/ecs/systems; \
-		mkdir -p bin/ecs/entities; \
+	@if [ ! -d output/ecs ]; then \
+		mkdir -p output/ecs/components; \
+		mkdir -p output/ecs/systems; \
+		mkdir -p output/ecs/entities; \
 	else \
 		echo "ecs already exists"; \
 	fi
 
 clean:
-	@if [ -f bin/main.lua ]; then rm bin/main.lua; else echo "main.lua does not exist"; fi
-	@if [ -f bin/conf.lua ]; then rm bin/conf.lua; else echo "conf.lua does not exist"; fi
-	@if [ -d bin/src ]; then rm -rf bin/src; else echo "src does not exist"; fi
-	@if [ -d bin/states ]; then rm -rf bin/states; else echo "states does not exist"; fi
-	@if [ -d bin/ecs ]; then rm -rf bin/ecs; else echo "ecs does not exist"; fi
+	@if [ -d output ]; then rm -rfi output; else echo "folder output does not exist"; fi
