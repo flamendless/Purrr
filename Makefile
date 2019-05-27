@@ -3,11 +3,6 @@ run:
 	love bin
 
 init:
-	@if [ ! -f bin/conf.lua ]; then \
-		cp conf.lua bin/; \
-	else \
-		echo "conf.lua already exists"; \
-	fi
 	@if [ ! -d bin/modules ]; then \
 		cp -rf modules bin/; \
 	else \

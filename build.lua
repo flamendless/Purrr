@@ -52,6 +52,8 @@ for _, t in ipairs(all_paths) do
 		pathOut = pathOut:gsub("%.lua2p$", ".lua")
 		if pathOut == "bin/src/main.lua" then
 			pathOut = "bin/main.lua"
+		elseif pathOut == "bin/src/conf.lua" then
+			pathOut = "bin/conf.lua"
 		end
 		local info, err = pp.processFile({pathIn = filename, pathOut = pathOut})
 		if not info then  os.exit(1)  end
