@@ -3,6 +3,7 @@ local pp = require("modules.luapreprocess.preprocess")
 pp.metaEnvironment._DEBUG = true
 pp.metaEnvironment._LOGGING = true
 pp.metaEnvironment._PLATFORM = "desktop"
+pp.metaEnvironment._GAME_VERSION = { 0, 0, 4 }
 
 local getLuaFilesInDirectory = function(str)
 	local f = io.popen("ls " .. str)

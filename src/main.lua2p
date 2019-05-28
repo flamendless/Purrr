@@ -5,7 +5,7 @@ __scale = 1
 !if _PLATFORM == "desktop" then
 __desktop_width, __desktop_height = love.window.getDesktopDimensions()
 !end
-__version = require("modules.semver.semver")(0, 1, 4)
+__version = require("modules.semver.semver")(unpack(!(_GAME_VERSION)))
 
 --MODULES
 local log
