@@ -4,7 +4,8 @@ PROJECT_NAME = purrr
 LOVE_NAME = game.love
 ROOT_DIR = .
 OUTPUT_DIR = output
-DIRECTORIES = modules assets shaders src states ecs
+DIRECTORIES = modules assets shaders src states ecs/components ecs/systems ecs/entities
+DIRECTORIES_TO_COPY = modules assets shaders src states
 
 run:
 	lua build.lua
@@ -18,10 +19,13 @@ init:
 	fi
 	@for x (${DIRECTORIES}); do \
 		if [ ! -d ${OUTPUT_DIR}/$$x ]; then \
-			cp -rf $$x ${OUTPUT_DIR}/; \
+			mkdir -p ${OUTPUT_DIR}/$$x; \
 		else \
-			@echo "$$x already exists"; \
+			echo "$$x already exists"; \
 		fi; \
+	done
+	@for x (${DIRECTORIES_TO_COPY}); do \
+		rsync -avP --exclude="*.lua2p" $$x ${OUTPUT_DIR}/; \
 	done
 
 clean:
