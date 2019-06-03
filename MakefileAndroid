@@ -1,0 +1,41 @@
+SHELL := /bin/zsh
+ANDROID = PATH:/opt/android-sdk/build-tools/28.0.2
+PROJECT_NAME = purrr
+LOVE_NAME = game.love
+ROOT_DIR = .
+DIST_DIR = dist
+APK_NAME = ${PROJECT_NAME}.apk
+PACKAGE_NAME = com.${NAME}.flamendless
+TEST_APK_NAME = ${DIST_DIR}/${NAME}-unaligned.apk
+EXCLUDE = *.git* *.gitmodules* *.gitignore* *.md* *.txt* *.rst* *docs/* *.ase* *.aseprite* *.swp* *spec/* *test/* *rockspec* *.mak* *.yml* *ctags* *Makefile* *build/* *backup/* *res/* *examples/* *LICENSE* *.vscode* *icons/* *.luacheckrc* *test* *.out* *.travis* *ase* *imgui.so* *dist/*;
+KS_FILE = ${DIST_DIR}/am2018.keystore
+PASSWORD :=
+
+build-android: build-love apk-compile apk-sign apk-install
+
+build-love:
+	@echo "building ${LOVE_NAME}"
+	noglob zip -9rv ${DIST_DIR}/output/${LOVE_NAME} ${ROOT_DIR} -x ${EXCLUDE}
+	@echo "${LOVE_NAME} built at ${DIST_DIR}/output/${LOVE_NAME}"
+	@notify-send "${LOVE_NAME} built at ${DIST_DIR}/output/${LOVE_NAME}"
+
+apk-compile:
+	@echo "copying ${LOVE_NAME} to ${DIST_DIR}/decoded/assets"
+	cp ${DIST_DIR}/output/${LOVE_NAME} ${DIST_DIR}/decoded/assets/
+	@echo "compiling ${APK_NAME}"
+	apktool b -o ${DIST_DIR}/output/${APK_NAME} ${DIST_DIR}/decoded;
+	@echo "compiled ${APK_NAME}!"
+	@notify-send "compiled ${APK_NAME}!"
+
+apk-sign:
+	@echo "signing ${APK_NAME}"
+	apk-signer -f ${DIST_DIR}/output/${APK_NAME} -a flamendless -k ${KS_FILE} -s ${PASSWORD};
+	@echo "signed ${APK_NAME}"
+	@notify-send "signed ${APK_NAME}"
+
+apk-install:
+	@echo "adb installing..."
+	adb uninstall ${PACKAGE_NAME}
+	adb install ${TEST_APK_NAME}
+	@echo "adb apk installed"
+	@notify-send "adb apk installed"

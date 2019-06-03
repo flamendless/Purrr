@@ -1,7 +1,7 @@
 *.aseprite
 *.ase
 *.svg
-u*.md
+*.md
 *.txt
 *.zip
 *.love
@@ -10,8 +10,6 @@ assets/anim/backup
 .vscode
 output
 dist
-_Makefile
-main.lua
 
 !README.md
 !LICENSE.txt

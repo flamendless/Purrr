@@ -1,40 +1,28 @@
+SHELL := /bin/zsh
+ANDROID = PATH:/opt/android-sdk/build-tools/28.0.2
+PROJECT_NAME = purrr
+LOVE_NAME = game.love
+ROOT_DIR = .
+OUTPUT_DIR = output
+DIRECTORIES = modules assets shaders src states ecs
+
 run:
 	lua build.lua
-	love output
+	love ${OUTPUT_DIR}
 
 init:
-	@if [ ! -d output/modules ]; then \
-		cp -rf modules output/; \
+	@if [ ! -d ${OUTPUT_DIR} ]; then \
+		mkdir ${OUTPUT_DIR}; \
 	else \
-		echo "modules already exists"; \
+		@echo "${OUTPUT_DIR} already exists"; \
 	fi
-	@if [ ! -d output/assets ]; then \
-		cp -rf assets output/; \
-	else \
-		echo "assets already exists"; \
-	fi
-	@if [ ! -d output/shaders ]; then \
-		cp -rf shaders output/; \
-	else \
-		echo "shaders already exists"; \
-	fi
-	@if [ ! -d output/src ]; then \
-		mkdir output/src; \
-	else \
-		echo "src already exists"; \
-	fi
-	@if [ ! -d output/states ]; then \
-		mkdir output/states; \
-	else \
-		echo "states already exists"; \
-	fi
-	@if [ ! -d output/ecs ]; then \
-		mkdir -p output/ecs/components; \
-		mkdir -p output/ecs/systems; \
-		mkdir -p output/ecs/entities; \
-	else \
-		echo "ecs already exists"; \
-	fi
+	@for x (${DIRECTORIES}); do \
+		if [ ! -d ${OUTPUT_DIR}/$$x ]; then \
+			cp -rf $$x ${OUTPUT_DIR}/; \
+		else \
+			@echo "$$x already exists"; \
+		fi; \
+	done
 
 clean:
-	@if [ -d output ]; then rm -rfi output; else echo "folder output does not exist"; fi
+	@if [ -d ${OUTPUT_DIR} ]; then rm -rf ${OUTPUT_DIR}; else echo "${OUTPUT_DIR} does not exist"; fi
