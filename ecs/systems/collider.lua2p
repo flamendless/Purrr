@@ -2,8 +2,10 @@ local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
 local utils = require("src.utils")
 
-local debugger = require("src.debug")
 local vec2 = require("modules.hump.vector")
+!if _DEBUG then
+local debugger = require("src.debug")
+!end
 
 local Collider = System({
 		C.collider_rect,
@@ -43,20 +45,36 @@ end
 
 function Collider:mousepressed(mx, my, mb)
 	for _, e in ipairs(self.sprite) do
-		local onMouseEnter = utils:checkOnMouseEnter(e)
+		local c_sprite = e[C.sprite].sprite
+		local c_transform = e[C.transform]
+		local x = c_transform.pos.x - c_transform.ox * c_transform.sx
+		local y = c_transform.pos.y - c_transform.oy * c_transform.sy
+		local w = c_sprite:getWidth() * c_transform.sx
+		local h = c_sprite:getHeight() * c_transform.sy
+		local onMouseEnter = utils:pointToRectCheck(mx, my, x, y, w, h)
 		if onMouseEnter then
-			if mb == 2 and __debug then
+			!if _DEBUG then
+			if mb == 2 then
 				debugger:onEntitySelect(e)
 			end
+			!end
 		end
 	end
 
 	for _, e in ipairs(self.rect) do
-		local onMouseEnter = utils:checkOnMouseEnter(e)
+		local c_rect_coll = e[C.collider_rect]
+		local c_transform = e[C.transform]
+		local x = c_transform.pos.x - c_transform.ox * c_transform.sx
+		local y = c_transform.pos.y - c_transform.oy * c_transform.sy
+		local w = c_rect_coll.size.x
+		local h = c_rect_coll.size.y
+		local onMouseEnter = utils:pointToRectCheck(mx, my, x, y, w, h)
 		if onMouseEnter then
+			!if _DEBUG then
 			if mb == 2 and __debug then
 				debugger:onEntitySelect(e)
 			end
+			!end
 		end
 	end
 end

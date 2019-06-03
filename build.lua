@@ -2,6 +2,7 @@ local pp = require("modules.luapreprocess.preprocess")
 
 pp.metaEnvironment._DEBUG = true
 pp.metaEnvironment._LOGGING = true
+pp.metaEnvironment._RELEASE = false
 pp.metaEnvironment._PLATFORM = "desktop"
 pp.metaEnvironment._GAME_VERSION = { 0, 0, 4 }
 

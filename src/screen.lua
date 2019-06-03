@@ -1,8 +1,7 @@
 local vec2 = require("modules.hump.vector")
 
 local Screen = {
-	-- size = vec2(love.graphics.getWidth(), love.graphics.getHeight()),
-	size = vec2(480, 800),
+	size = vec2(love.graphics.getWidth(), love.graphics.getHeight()),
 	pad = 32,
 }
 

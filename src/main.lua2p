@@ -2,14 +2,11 @@
 __love = "LÖVE" --because I can't type the O with Umlaut
 __filter = "nearest"
 __scale = 1
-!if _PLATFORM == "desktop" then
-__desktop_width, __desktop_height = love.window.getDesktopDimensions()
-!end
 __version = require("modules.semver.semver")(unpack(!(_GAME_VERSION)))
 
 --MODULES
-local log
 !if _LOGGING then
+local log
 log = require("modules.log.log")
 log.outfile = "log.log"
 log.level = "trace"
@@ -21,8 +18,8 @@ local flux = require("modules.flux.flux")
 local ecs = require("modules.concord.lib").init({ useEvents = false })
 
 --DEBUGGING and LOGGING
-local debugging
 !if _DEBUG then
+local debugging
 require("imgui")
 io.stdout:setvbuf("no")
 debugging = require("src.debug")
@@ -36,9 +33,9 @@ local gamestate = require("src.gamestate")
 local screen = require("src.screen")
 local preload = require("src.preload")
 local transition = require("src.transition")
-local touch = require("src.touch")
 local bgm = require("src.bgm")
 local states = require("states")
+local touch = require("src.touch")
 
 --INITIALIZATION
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
@@ -54,20 +51,25 @@ function love.load(args)
 	log.trace(("Screen Size: %ix%i"):format(screen.x, screen.y))
 	!end
 	!if _PLATFORM == "desktop" and _DEBUG then
+	local __desktop_width, __desktop_height = love.window.getDesktopDimensions()
 	love.window.setMode(__desktop_width - 64, love.graphics.getHeight())
 	debugging:init()
 	!end
 	math.randomseed(os.time())
+	!if _PLATFORM == "mobile" then
 	touch:init()
+	!end
 	config:init()
 	transition:init()
 	preload:init()
 
-	--TODO: uncomment when releasing
-	-- local init_state = states.splash
-
-	local init_state = states.menu
-	gamestate:start(init_state)
+	!if _RELEASE then
+		local init_state = states.splash
+		gamestate:start(init_state)
+	!else
+		local init_state = states.menu
+		gamestate:start(init_state)
+	!end
 end
 
 function love.update(dt)
@@ -77,7 +79,9 @@ function love.update(dt)
 	timer.update(dt)
 	flux.update(dt)
 	time:update(dt)
+	!if _PLATFORM == "mobile" then
 	touch:update(dt)
+	!end
 	bgm:update(dt)
 	gamestate:update(dt)
 end
@@ -88,7 +92,9 @@ function love.draw()
 	preload:draw()
 	gamestate:draw()
 	transition:draw()
+	!if _PLATFORM == "mobile" then
 	touch:draw()
+	!end
 	!if _DEBUG then
 	debugging:draw()
 	!end
@@ -111,7 +117,9 @@ end
 
 function love.mousepressed(mx, my, mb, istouch, count)
 	gamestate:mousepressed(mx, my, mb, istouch, count)
+	!if _PLATFORM == "desktop" then
 	touch:simulateTouchPressed(mx, my)
+	!end
 	!if _DEBUG then
 	debugging:mousepressed(mx, my, mb, istouch, count)
 	!end
@@ -119,7 +127,9 @@ end
 
 function love.mousereleased(mx, my, mb, istouch, count)
 	gamestate:mousereleased(mx, my, mb, istouch, count)
+	!if _PLATFORM == "desktop" then
 	touch:simulateTouchReleased(mx, my)
+	!end
 	!if _DEBUG then
 	debugging:mousereleased(mx, my, mb, istouch, count)
 	!end
@@ -137,6 +147,7 @@ function love.mousemoved(mx, my)
 	!end
 end
 
+!if _PLATFORM == "mobile" then
 function love.touchpressed(id, tx, ty, dx, dy, pressure)
 	local tx = tx/__scale
 	local ty = ty/__scale
@@ -157,6 +168,7 @@ function love.touchmoved(id, tx, ty, dx, dy, pressure)
 	touch:touchmoved(id, tx, ty, dx, dy, pressure)
 	gamestate:touchmoved(id, tx, ty, dx, dy, pressure)
 end
+!end
 
 function love.textinput(t)
 	gamestate:textinput(t)

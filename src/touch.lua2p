@@ -5,8 +5,8 @@ local Touch = {
 }
 
 local flux = require("modules.flux.flux")
-local log
 !if _LOGGING then
+local log
 log = require("modules.log.log")
 !end
 local screen = require("src.screen")
@@ -118,17 +118,11 @@ function Touch:createObject(mx, my)
 				local current = self.list[i]
 				if obj == current then
 					table.remove(self.list, i)
-					!if _LOGGING then
-					log.trace("Touch Objects Count: " .. #self.list)
-					!end
 					break
 				end
 			end
 		end)
 	table.insert(self.list, obj)
-	!if _LOGGING then
-	log.trace("Touch Objects Count: " .. #self.list)
-	!end
 	if self.ps then self.ps:emit(8) end
 end
 

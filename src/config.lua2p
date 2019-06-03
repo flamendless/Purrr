@@ -3,8 +3,8 @@ local Config = {
 	path = love.filesystem.getSaveDirectory() .. "/"
 }
 local serialize = require("modules.knife.knife.serialize")
-local log
 !if _LOGGING then
+local log
 log = require("modules.log.log")
 !end
 

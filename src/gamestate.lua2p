@@ -6,8 +6,8 @@ local Gamestate = {
 	__args = {},
 }
 
-local log
 !if _LOGGING then
+local log
 log = require("modules.log.log")
 !end
 local preload = require("src.preload")

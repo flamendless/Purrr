@@ -1,9 +1,13 @@
 local BaseState = require("states.base_state")
 local Splash = BaseState("Splash")
 
+!if _LOGGING then
+local log
+log = require("modules.log.log")
+!end
+
 local lume = require("modules.lume.lume")
 local flux = require("modules.flux.flux")
-local log = require("modules.log.log")
 local vec2 = require("modules.hump.vector")
 local timer = require("modules.hump.timer")
 local ecs = {

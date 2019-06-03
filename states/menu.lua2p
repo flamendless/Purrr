@@ -19,7 +19,6 @@ local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local assets = require("src.assets")
-local pos = require("src.positions")
 
 local next_state
 
@@ -43,21 +42,21 @@ function Menu:setupSystems()
 		gui = S.gui(),
 	}
 
-	if __isDesktop then
+	!if _PLATFORM == "desktop" then
 		self.instance:addSystem(self.systems.collider, "mousepressed")
 		self.instance:addSystem(self.systems.gui, "mousepressed")
-	elseif __isMobile then
+	!else
 		self.instance:addSystem(self.systems.collider, "touchpressed")
 		self.instance:addSystem(self.systems.gui, "touchpressed")
-	end
+	!end
 
 	self.instance:addSystem(self.systems.renderer_bg, "draw")
 	self.instance:addSystem(self.systems.renderer_sprite, "draw")
 	self.instance:addSystem(self.systems.gui, "update")
 
-	if __debug then
+	!if _DEBUG then
 		self.instance:addSystem(self.systems.collider, "draw")
-	end
+	!end
 end
 
 function Menu:setupEntities()
@@ -148,9 +147,11 @@ function Menu:mousepressed(mx, my, mb)
 	self.instance:emit("mousepressed", mx, my, mb)
 end
 
+!if _PLATFORM == "mobile" then
 function Menu:touchpressed(id, tx, ty, dx, dy, pressure)
 	self.instance:emit("touchpressed", id, tx, ty, dx, dy, pressure)
 end
+!end
 
 function Menu:textinput(t)
 	self.instance:emit("textinput", t)

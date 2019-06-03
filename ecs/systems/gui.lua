@@ -15,7 +15,23 @@ function GUI:update(dt)
 		local c_transform = e[C.transform]
 		local c_sprite = e[C.sprite].sprite
 		local c_onHoveredSprite = e[C.onHoveredSprite]
-		local onMouseEnter = utils:checkOnMouseEnter(e)
+
+		local x = c_transform.pos.x - c_transform.ox * c_transform.sx
+		local y = c_transform.pos.y - c_transform.oy * c_transform.sy
+		local w, h
+
+		local c_sprite_coll = e[C.collider_sprite]
+		local c_rect_coll = e[C.collider_rect]
+		if c_sprite_coll then
+			w = c_sprite:getWidth() * c_transform.sx
+			h = c_sprite:getHeight() * c_transform.sy
+		elseif c_rect_coll then
+			w = c_rect_coll.size.x
+			h = c_rect_coll.size.y
+		end
+
+		local mx, my = love.mouse.getPosition()
+		local onMouseEnter = utils:pointToRectCheck(mx, my, x, y, w, h)
 		if onMouseEnter then
 			if not c_button.state.isEntered then
 				c_button.state.isEntered = true

@@ -1,6 +1,11 @@
 local BaseState = require("states.base_state")
 local Customization = BaseState("Customization")
 
+!if _LOGGING then
+local log
+log = require("modules.log.log")
+!end
+
 local ecs = {
 	instance = require("modules.concord.lib.instance"),
 	entity = require("modules.concord.lib.entity"),
@@ -10,7 +15,6 @@ local C = require("ecs.components")
 local S = require("ecs.systems")
 local vec2 = require("modules.hump.vector")
 local flux = require("modules.flux.flux")
-local log = require("modules.log.log")
 local timer = require("modules.hump.timer")
 local lume = require("modules.lume.lume")
 

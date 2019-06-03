@@ -5,8 +5,8 @@ local ecs = {
 	entity = require("modules.concord.lib.entity"),
 }
 local lily = require("modules.lily.lily")
-local log
 !if _LOGGING then
+local log
 log = require("modules.log.log")
 !end
 local inspect = require("modules.inspect.inspect")
