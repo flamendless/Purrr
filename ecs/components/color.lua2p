@@ -4,6 +4,7 @@ local Color = Component(function(e, color)
 	e.color = color or {1, 1, 1, 1}
 end)
 
+!if _DEBUG then
 function Color:debug()
 	if imgui.TreeNodeEx("Color", __flags_tree) then
 		local r, g, b, a = unpack(self.color)
@@ -18,5 +19,6 @@ function Color:debug()
 		imgui.TreePop()
 	end
 end
+!end
 
 return Color

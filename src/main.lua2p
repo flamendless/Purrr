@@ -36,6 +36,7 @@ local transition = require("src.transition")
 local bgm = require("src.bgm")
 local states = require("states")
 local touch = require("src.touch")
+local gui_manager = require("src.gui_manager")
 
 --INITIALIZATION
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
@@ -84,6 +85,7 @@ function love.update(dt)
 	!end
 	bgm:update(dt)
 	gamestate:update(dt)
+	gui_manager:update(dt)
 end
 
 function love.draw()
@@ -92,6 +94,9 @@ function love.draw()
 	preload:draw()
 	gamestate:draw()
 	transition:draw()
+
+	love.graphics.setColor(1, 1, 1, 1)
+	gui_manager:draw()
 	!if _PLATFORM == "mobile" then
 	touch:draw()
 	!end
@@ -117,6 +122,7 @@ end
 
 function love.mousepressed(mx, my, mb, istouch, count)
 	gamestate:mousepressed(mx, my, mb, istouch, count)
+	gui_manager:mousepressed(mx, my, mb)
 	!if _PLATFORM == "desktop" then
 	touch:simulateTouchPressed(mx, my)
 	!end

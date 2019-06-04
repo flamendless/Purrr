@@ -1,7 +1,5 @@
 local System = require("modules.concord.lib.system")
-
 local C = require("ecs.components")
-
 local flux = require("modules.flux.flux")
 
 local AlphaFade = System({

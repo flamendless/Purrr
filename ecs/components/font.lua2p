@@ -6,6 +6,7 @@ local Font = Component(function(e, font, path)
 	e.path = path
 end)
 
+!if _DEBUG then
 function Font:debug()
 	if imgui.TreeNodeEx("Font", __flags_tree) then
 		if self.path then
@@ -14,5 +15,6 @@ function Font:debug()
 		imgui.TreePop()
 	end
 end
+!end
 
 return Font

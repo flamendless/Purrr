@@ -31,6 +31,11 @@ local all_paths = {
 		dir_out = "output/states/"
 	},
 	{
+		dir = getLuaFilesInDirectory("base"),
+		dir_in = "^base/",
+		dir_out = "output/base/"
+	},
+	{
 		dir = getLuaFilesInDirectory("ecs/components"),
 		dir_in = "^ecs/components/",
 		dir_out = "output/ecs/components/"

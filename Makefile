@@ -4,8 +4,8 @@ PROJECT_NAME = purrr
 LOVE_NAME = game.love
 ROOT_DIR = .
 OUTPUT_DIR = output
-DIRECTORIES = modules assets shaders src states ecs/components ecs/systems ecs/entities
-DIRECTORIES_TO_COPY = modules assets shaders src states
+DIRECTORIES = modules assets shaders src states base ecs/components ecs/systems ecs/entities
+DIRECTORIES_TO_COPY = modules assets shaders src states base
 
 run:
 	lua build.lua

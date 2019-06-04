@@ -31,6 +31,7 @@ function Collider:draw()
 			c_sprite:getHeight() * c_transform.sy)
 	end
 
+	!if _DEBUG then
 	for _, e in ipairs(self.rect) do
 		local c_collider_rect = e[C.collider_rect]
 		local c_transform = e[C.transform]
@@ -41,6 +42,7 @@ function Collider:draw()
 			c_collider_rect.size.x * c_transform.sx,
 			c_collider_rect.size.y * c_transform.sy)
 	end
+	!end
 end
 
 function Collider:mousepressed(mx, my, mb)

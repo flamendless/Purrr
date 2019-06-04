@@ -7,6 +7,7 @@ local Sprite = Component(function(e, sprite)
 	e.original_height = sprite:getHeight()
 end)
 
+!if _DEBUG then
 local show_image = false
 local window_id = (show_image == false) and "Show Image Viewer" or "Hide Image Viewer"
 
@@ -31,5 +32,6 @@ function Sprite:image_viewer()
 	imgui.Text("Size: " .. ("%ix%i"):format(self.original_width, self.original_height))
 	imgui.End()
 end
+!end
 
 return Sprite

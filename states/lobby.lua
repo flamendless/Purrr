@@ -1,4 +1,4 @@
-local BaseState = require("states.base_state")
+local BaseState = require("base.base_state")
 local Lobby = BaseState("Lobby")
 
 local ecs = {
@@ -18,7 +18,6 @@ local screen = require("src.screen")
 local config = require("src.config")
 local transition = require("src.transition")
 local assets = require("src.assets")
-local pos = require("src.positions")
 
 local window_width, window_height
 

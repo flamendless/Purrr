@@ -5,8 +5,10 @@ local Tag = Component(function(e, tag)
 	e.tag = tag
 end)
 
+!if _DEBUG then
 function Tag:debug()
 	imgui.Text("Tag: " .. self.tag)
 end
+!end
 
 return Tag

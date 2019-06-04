@@ -1,4 +1,4 @@
-local BaseState = require("states.base_state")
+local BaseState = require("base.base_state")
 local Menu = BaseState("Menu")
 
 local flux = require("modules.flux.flux")
@@ -19,6 +19,10 @@ local screen = require("src.screen")
 local resourceManager = require("src.resource_manager")
 local gamestate = require("src.gamestate")
 local assets = require("src.assets")
+local utils = require("src.utils")
+local gui_manager = require("src.gui_manager")
+
+local base_gui_button = require("base.gui_button")
 
 local next_state
 
@@ -27,108 +31,109 @@ function Menu:enter(previous, ...)
 	self.sources = resourceManager:getAll("sources")
 	self.fonts = resourceManager:getAll("fonts")
 	self.instance = Instance()
+	self:setBackground(self.images.bg)
 	self:setupSystems()
 	self:setupEntities()
+	self:setupGUI()
 	self:start()
 
 	bgm:start(self.sources.bgm_menu, "Menu")
 end
 
+function Menu:setupGUI()
+	local btn_start = base_gui_button("btn_start")
+	btn_start:setTexture(self.images.btn_start)
+	btn_start:setTextureOnHover(self.images.btn_start_hovered)
+	btn_start:setPosition(screen.x/2, screen.y * 1.5)
+	btn_start:setScale(3, 3)
+	btn_start:setOffset(self.images.btn_start:getWidth()/2, self.images.btn_start:getHeight()/2)
+	btn_start:setOnClick(function(mx, my, mb)
+		if config.data.flags.customization_done then
+			next_state = require("states").customization
+		else
+			next_state = require("states").lobby
+		end
+		gamestate:switch(next_state)
+	end)
+	btn_start:calculate()
+
+	local btn_leave = base_gui_button("btn_leave")
+	btn_leave:setTexture(self.images.btn_leave)
+	btn_leave:setTextureOnHover(self.images.btn_leave_hovered)
+	btn_leave:setPosition(screen.x/2, screen.y * 1.5)
+	btn_leave:setScale(2, 2)
+	btn_leave:setOffset(self.images.btn_leave:getWidth()/2, self.images.btn_leave:getHeight()/2)
+	btn_leave:setOnClick(function(mx, my, mb)
+		!if _PLATFORM == "desktop" then
+		!if _DEBUG then
+		love.event.quit()
+		!else --ELSE DEBUG
+		local title = "Confirm"
+		local message = "Are you sure you want to close the game?"
+		local buttons = { "Yes", "No", escapebutton = 2 }
+		local w = love.window.showMessageBox(title, message, buttons)
+		if w == 1 then
+			love.event.quit()
+		elseif w == 2 then
+		end
+		!end --END DEBUG
+		!else --ELSE PLATFORM
+		!end --END PLATFORM
+	end)
+	btn_leave:calculate()
+
+	local btn_settings = base_gui_button("btn_settings")
+	btn_settings:setTexture(self.images.btn_settings)
+	btn_settings:setTextureOnHover(self.images.btn_settings_hovered)
+	btn_settings:setPosition(screen.x - 32, screen.y * 1.5)
+	btn_settings:setScale(2, 2)
+	btn_settings:setOffset(self.images.btn_settings:getWidth(), self.images.btn_settings:getHeight())
+	btn_settings:setOnClick(function(mx, my, mb)
+	end)
+	btn_settings:calculate()
+
+	gui_manager:addButton(btn_start)
+	gui_manager:addButton(btn_leave)
+	gui_manager:addButton(btn_settings)
+end
+
 function Menu:setupSystems()
 	self.systems = {
-		renderer_bg = S.renderer.bg(),
 		renderer_sprite = S.renderer.sprite(),
-		collider = S.collider(),
-		gui = S.gui(),
 	}
 
-	!if _PLATFORM == "desktop" then
-		self.instance:addSystem(self.systems.collider, "mousepressed")
-		self.instance:addSystem(self.systems.gui, "mousepressed")
-	!else
-		self.instance:addSystem(self.systems.collider, "touchpressed")
-		self.instance:addSystem(self.systems.gui, "touchpressed")
-	!end
-
-	self.instance:addSystem(self.systems.renderer_bg, "draw")
 	self.instance:addSystem(self.systems.renderer_sprite, "draw")
-	self.instance:addSystem(self.systems.gui, "update")
-
-	!if _DEBUG then
-		self.instance:addSystem(self.systems.collider, "draw")
-	!end
 end
 
 function Menu:setupEntities()
 	self.entities = {}
-	self.entities.bg = Entity():give(C.background, self.images.bg):apply()
 	self.entities.title = Entity()
 		:give(C.tag, "title")
 		:give(C.color)
 		:give(C.sprite, self.images.title)
 		:give(C.transform, vec2(screen.x/2, -screen.y/2), 0, 1, 1, self.images.title:getWidth()/2, self.images.title:getHeight()/2)
+		!if _DEBUG then
 		:give(C.collider_sprite)
+		!end
 		:apply()
-
-	self.entities.btn_start = Entity()
-		:give(C.tag, "btn_start")
-		:give(C.color)
-		:give(C.gui_button)
-		:give(C.gui_onClick, function()
-				if config.data.flags.customization_done then
-					next_state = require("states").customization
-				else
-					next_state = require("states").lobby
-				end
-				gamestate:switch(next_state)
-			end)
-		:give(C.onHoveredSprite, self.images.btn_start_hovered)
-		:give(C.sprite, self.images.btn_start)
-		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 3, 3, self.images.btn_start:getWidth()/2, self.images.btn_start:getHeight()/2)
-		:give(C.collider_sprite)
-		:apply()
-
-	self.entities.btn_leave = Entity()
-		:give(C.tag, "btn_leave")
-		:give(C.color)
-		:give(C.gui_button)
-		:give(C.gui_onClick, function()
-				love.event.quit()
-			end)
-		:give(C.onHoveredSprite, self.images.btn_leave_hovered)
-		:give(C.sprite, self.images.btn_leave)
-		:give(C.transform, vec2(screen.x/2, screen.y * 1.5), 0, 2, 2, self.images.btn_leave:getWidth()/2, self.images.btn_leave:getHeight()/2)
-		:give(C.collider_sprite)
-		:apply()
-
-	self.entities.btn_settings = Entity()
-		:give(C.tag, "btn_settings")
-		:give(C.color)
-		:give(C.gui_button)
-		:give(C.gui_onClick, function()
-			end)
-		:give(C.onHoveredSprite, self.images.btn_settings_hovered)
-		:give(C.sprite, self.images.btn_settings)
-		:give(C.transform, vec2(screen.x - 32, screen.y * 1.5), 0, 2, 2, self.images.btn_settings:getWidth(), self.images.btn_settings:getHeight())
-		:give(C.collider_sprite)
-		:apply()
-
-	self.instance:addEntity(self.entities.bg)
 	self.instance:addEntity(self.entities.title)
-	self.instance:addEntity(self.entities.btn_start)
-	self.instance:addEntity(self.entities.btn_leave)
-	self.instance:addEntity(self.entities.btn_settings)
 end
 
 function Menu:start()
 	local title_y = self.entities.title[C.transform].oy + 32
-	local btn_start_y = self.entities.btn_start[C.transform].oy + 455
-	local btn_leave = self.entities.btn_leave[C.transform].oy + 620
-	local btn_settings = screen.y - screen.pad
 	flux.to(self.entities.title[C.transform].pos, 1, { y = title_y }):ease("backout")
-	flux.to(self.entities.btn_start[C.transform].pos, 1, { y = btn_start_y }):ease("backout")
-	flux.to(self.entities.btn_leave[C.transform].pos, 1, { y = btn_leave }):ease("backout")
-	flux.to(self.entities.btn_settings[C.transform].pos, 1, { y = btn_settings }):ease("backout")
+
+	local btn_start = gui_manager:getButton("btn_start")
+	local btn_leave = gui_manager:getButton("btn_leave")
+	local btn_settings = gui_manager:getButton("btn_settings")
+
+	local btn_start_y = btn_start:getOffset().y + 455
+	local btn_leave_y = btn_leave:getOffset().y + 620
+	local btn_settings_y = screen.y - screen.pad
+
+	flux.to(btn_start:getPosition(), 1, { y = btn_start_y }):ease("backout")
+	flux.to(btn_leave:getPosition(), 1, { y = btn_leave_y }):ease("backout")
+	flux.to(btn_settings:getPosition(), 1, { y = btn_settings_y }):ease("backout")
 end
 
 function Menu:update(dt)
@@ -136,6 +141,7 @@ function Menu:update(dt)
 end
 
 function Menu:draw()
+	self:drawBackground()
 	self.instance:emit("draw")
 end
 
@@ -160,6 +166,7 @@ end
 function Menu:exit()
 	bgm:clear()
 	if self.instance then self.instance:clear() end
+	gui_manager:flushButtons()
 end
 
 return Menu

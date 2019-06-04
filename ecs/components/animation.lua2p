@@ -4,6 +4,7 @@ local Animation = Component(function(e, obj)
 	e.obj = obj
 end)
 
+!if _DEBUG then
 local show_image = false
 local window_id = (show_image == false) and "Show Animation Viewer" or "Hide Animation Viewer"
 
@@ -32,5 +33,6 @@ function Animation:image_viewer()
 	imgui.Text("Sheet Size: " .. ("%ix%i"):format(sheet_width, sheet_height))
 	imgui.End()
 end
+!end
 
 return Animation

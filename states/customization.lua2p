@@ -1,4 +1,4 @@
-local BaseState = require("states.base_state")
+local BaseState = require("base.base_state")
 local Customization = BaseState("Customization")
 
 !if _LOGGING then
@@ -25,7 +25,6 @@ local gamestate = require("src.gamestate")
 local config = require("src.config")
 local transition = require("src.transition")
 local assets = require("src.assets")
-local pos = require("src.positions")
 
 local next_state
 local level = 1

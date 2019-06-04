@@ -1,6 +1,5 @@
 local System = require("modules.concord.lib.system")
 local C = require("ecs.components")
-
 local screen = require("src.screen")
 
 local Sprite = System({
@@ -18,15 +17,10 @@ local Text = System({
 		C.transform,
 	})
 
-local BG = System({
-		C.background,
-	})
-
 function Sprite:draw()
 	for _, e in ipairs(self.pool) do
-		if e:has(C.color) then
-			love.graphics.setColor(e[C.color].color)
-		end
+		local c_color = e[C.color]
+		if c_color then love.graphics.setColor(c_color.color) end
 		local c_sprite = e[C.sprite]
 		local c_onHoveredSprite = e[C.onHoveredSprite]
 		local c_transform = e[C.transform]
@@ -64,17 +58,8 @@ function Text:draw()
 	end
 end
 
-function BG:draw()
-	for _, e in ipairs(self.pool) do
-		local c_bg = e[C.background].bg
-		if e:has(C.color) then love.graphics.setColor(e[C.color].color) end
-		love.graphics.draw(c_bg, 0, 0, 0, screen.x/c_bg:getWidth(), screen.y/c_bg:getHeight())
-	end
-end
-
 return {
 	sprite = Sprite,
 	animation = Animation,
 	text = Text,
-	bg = BG,
 }

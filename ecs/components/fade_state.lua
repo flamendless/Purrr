@@ -8,12 +8,4 @@ local FadeState = Component(function(e, state, duration)
 	e.duration = duration
 end)
 
-function FadeState:debug()
-	if imgui.TreeNodeEx("Fade State", __flags_tree) then
-		imgui.Text("State: " .. self.state)
-		imgui.Text("Duration: " .. self.duration)
-		imgui.TreePop()
-	end
-end
-
 return FadeState

@@ -14,6 +14,7 @@ local Transform = Component(function(e, pos, rotation, sx, sy, ox, oy, kx, ky)
 	e.ky = ky or 0
 end)
 
+!if _DEBUG then
 local rad = math.rad
 local rad_360 = rad(360)
 
@@ -43,5 +44,6 @@ function Transform:debug()
 		imgui.TreePop()
 	end
 end
+!end
 
 return Transform
