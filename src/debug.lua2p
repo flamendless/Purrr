@@ -18,8 +18,10 @@ local resourceManager = require("src.resource_manager")
 local config = require("src.config")
 local bgm = require("src.bgm")
 local utils = require("src.utils")
+local gui_manager = require("src.gui_manager")
 
 local C = require("ecs.components")
+local Type = require("modules.concord.lib.type")
 
 local Debug = {
 	components = nil,
@@ -245,14 +247,17 @@ function Debug:wheelmoved(x, y) imgui.WheelMoved(y) end
 function Debug:quit() imgui.ShutDown() end
 
 function Debug:onEntitySelect(e)
-	self.selected = e
-	self.windows.selected = true
-	self.windows.components = true
-	self.components = {}
-	for c_id, component in pairs(C) do
-		if e:has(component) then
-			table.insert(self.components, c_id)
+	if Type.isEntity(e) then
+		self.selected = e
+		self.windows.selected = true
+		self.windows.components = true
+		self.components = {}
+		for c_id, component in pairs(C) do
+			if e:has(component) then
+				table.insert(self.components, c_id)
+			end
 		end
+	elseif gui_manager:isButton(e) then
 	end
 end
 
