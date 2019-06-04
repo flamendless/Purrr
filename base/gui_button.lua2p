@@ -1,0 +1,160 @@
+local class = require("modules.classic.classic")
+local BaseGUIButton = class:extend()
+local vec2 = require("modules.hump.vector")
+local utils = require("src.utils")
+
+!if _LOGGING then
+local log = require("modules.log.log")
+!end
+
+function BaseGUIButton:new(id)
+	self.__id = id or "?gui_button"
+	self.__visible = true
+	self.__isClicked = false
+	self.__isHovered = false
+	self.__onClick = nil
+	self.__onHover = nil
+	self.__img = nil
+	self.__hover_img = nil
+	self.__pos = nil
+	self.__rot = 0
+	self.__size = vec2()
+	self.__offset = vec2()
+	self.__scale = vec2(1, 1)
+	self.__orig_size = nil
+
+	!if _LOGGING then
+	log.info("created GUI Button: " .. self.__id)
+	!end
+end
+
+function BaseGUIButton:setPosition(x, y)
+	self.__pos = vec2(x or 0, y or 0)
+end
+
+function BaseGUIButton:setRotation(rot)
+	self.__rot = rot or 0
+end
+
+function BaseGUIButton:setScale(sx, sy)
+	self.__scale = vec2(sx or 1, sy or 1)
+end
+
+function BaseGUIButton:setOffset(ox, oy)
+	self.__offset = vec2(ox or 0, oy or 0)
+end
+
+function BaseGUIButton:setTexture(img)
+	assert(img:type() == "Image", "arg1 must be an image")
+	self.__img = img
+	self.__orig_size = vec2(img:getWidth(), img:getHeight())
+end
+
+function BaseGUIButton:setTextureOnHover(img)
+	assert(img:type() == "Image", "arg1 must be an image")
+	self.__hover_img = img
+end
+
+function BaseGUIButton:setOnHover(fn)
+	assert(type(fn) == "function", "arg1 must be a function")
+	self.__onHover = fn
+end
+
+function BaseGUIButton:setOnClick(fn)
+	assert(type(fn) == "function", "arg1 must be a function")
+	self.__onClick = fn
+end
+
+function BaseGUIButton:setVisible(bool)
+	self.__visible = bool
+end
+
+function BaseGUIButton:toggleVisibility()
+	self.__visible = not self.__visible
+end
+
+function BaseGUIButton:getID()
+	return self.__id
+end
+
+function BaseGUIButton:getPosition()
+	return self.__pos
+end
+
+function BaseGUIButton:getScale()
+	return self.__scale
+end
+
+function BaseGUIButton:getOffset()
+	return self.__offset
+end
+
+function BaseGUIButton:getSize()
+	return self.__size
+end
+
+function BaseGUIButton:getOriginalSize()
+	return self.__orig_size
+end
+
+function BaseGUIButton:getVisible()
+	return self.__visible
+end
+
+function BaseGUIButton:calculate()
+	self.__size.x = self.__img:getWidth() * self.__scale.x
+	self.__size.y = self.__img:getHeight() * self.__scale.y
+end
+
+function BaseGUIButton:checkOnMouseCollision()
+	local x = self.__pos.x - self.__offset.x * self.__scale.x
+	local y = self.__pos.y - self.__offset.y * self.__scale.y
+	local w = self.__orig_size.x * self.__scale.x
+	local h = self.__orig_size.y * self.__scale.y
+	local mx, my = love.mouse.getPosition()
+	local check = utils:pointToRectCheck(mx, my, x, y, w, h)
+	if check then
+		self.__isHovered = true
+		if self.__onHover then
+			self.__onHover()
+		end
+	else
+		self.__isHovered = false
+	end
+end
+
+function BaseGUIButton:mousepressed(mx, my, mb)
+	if self.__onClick and self.__isHovered then
+		self.__onClick(mx, my, mb)
+	end
+end
+
+function BaseGUIButton:draw()
+	if self.__visible == false then
+		return
+	end
+	local img = self.__img
+	if self.__isHovered then
+		img = self.__hover_img
+	end
+
+	local x = self.__pos.x
+	local y = self.__pos.y
+	local rot = self.__rot
+	local sx = self.__scale.x
+	local sy = self.__scale.y
+	local ox = self.__offset.x
+	local oy = self.__offset.y
+	love.graphics.draw(img, x, y, rot, sx, sy, ox, oy)
+	!if _DEBUG then
+	local x = self.__pos.x - self.__offset.x * self.__scale.x
+	local y = self.__pos.y - self.__offset.y * self.__scale.y
+	local w = self.__orig_size.x * self.__scale.x
+	local h = self.__orig_size.y * self.__scale.y
+	love.graphics.setColor(1, 0, 0, 1)
+	love.graphics.rectangle("line", x, y, w, h)
+	love.graphics.setColor(1, 1, 1, 1)
+	!end
+end
+
+return BaseGUIButton
