@@ -1,0 +1,40 @@
+local Utils = {}
+
+function Utils:pointToRectCheck(px, py, x, y, w, h)
+	return px > x and px < x + w and py > y and py < y + h
+end
+
+function Utils:random_suffix(base_word, opt)
+	assert(type(base_word) == "string", "arg1 must be a string")
+	assert(type(opt) == "table", "arg2 must be a table")
+	local r = math.random(1, #opt)
+	return base_word .. opt[r]
+end
+
+function Utils:emptyTable_ipairs(t, fn)
+	for i = #t, 1, -1 do
+		if fn then
+			local obj = t[i]
+			fn(obj)
+		end
+		table.remove(t, i)
+	end
+end
+
+!if _PLATFORM == "desktop" then
+function Utils:emptyTable_pairs(t, fn)
+	for k, v in pairs(t) do
+		if fn then
+			fn(v)
+		end
+		t[k] = nil
+	end
+end
+!else
+function Utils:emptyTable_pairs(t)
+	local clear = require("table.clear")
+	clear(t)
+end
+!end
+
+return Utils
