@@ -1,0 +1,57 @@
+local GUIManager = {
+	__buttons = {},
+}
+
+local utils = require("src.utils")
+
+!if _LOGGING then
+local log = require("modules.log.log")
+!end
+
+function GUIManager:addButton(btn)
+	table.insert(self.__buttons, btn)
+	!if _LOGGING then
+	log.info(btn:getID() .. " added to GUIManager Buttons")
+	!end
+end
+
+function GUIManager:isButton(btn)
+	return btn.__isGUIButton
+end
+
+function GUIManager:getButton(id)
+	for i, btn in ipairs(self.__buttons) do
+		local btn_id = btn:getID()
+		if id == btn_id then
+			return btn
+		end
+	end
+end
+
+function GUIManager:update(dt)
+	for i, btn in ipairs(self.__buttons) do
+		btn:checkOnMouseCollision()
+	end
+end
+
+function GUIManager:mousepressed(mx, my, mb)
+	for i, btn in ipairs(self.__buttons) do
+		btn:mousepressed(mx, my, mb)
+	end
+end
+
+function GUIManager:draw()
+	for i, btn in ipairs(self.__buttons) do
+		btn:draw()
+	end
+end
+
+function GUIManager:flushButtons()
+	utils:emptyTable_ipairs(self.__buttons, function(btn)
+		!if _LOGGING then
+		log.info(btn:getID() .. " flushed from GUIManager Buttons")
+		!end
+	end)
+end
+
+return GUIManager
