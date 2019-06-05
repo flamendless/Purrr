@@ -23,11 +23,22 @@ function BaseGUIButton:new(id)
 	self.__size = vec2()
 	self.__offset = vec2()
 	self.__scale = vec2(1, 1)
+	self.__orig_pos = nil
+	self.__orig_rot = 0
+	self.__orig_scale = vec2(1, 1)
+	self.__orig_offset = vec2()
 	self.__orig_size = nil
 
 	!if _LOGGING then
 	log.info("created GUI Button: " .. self.__id)
 	!end
+end
+
+function BaseGUIButton:saveTransformation()
+	self.__orig_pos = self.__pos:clone()
+	self.__orig_rot = self.__rot
+	self.__orig_scale = self.__scale:clone()
+	self.__orig_offset = self.__offset:clone()
 end
 
 function BaseGUIButton:setPosition(x, y)
@@ -165,5 +176,47 @@ function BaseGUIButton:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	!end
 end
+
+!if _DEBUG then
+local rad = math.rad
+local rad_360 = rad(360)
+function BaseGUIButton:debug()
+	if imgui.TreeNodeEx("ID: " .. self.__id) then
+		local x, status_x = imgui.SliderInt("x", self.__pos.x, 0, love.graphics.getWidth())
+		local y, status_y = imgui.SliderInt("y", self.__pos.y, 0, love.graphics.getHeight())
+		local rotation, status_rotation = imgui.SliderInt("rotation", self.__rot, 0, rad_360)
+		local sx, status_sx = imgui.SliderInt("sx", self.__scale.x, 0, 10)
+		local sy, status_sy = imgui.SliderInt("sy", self.__scale.y, 0, 10)
+		imgui.Text("Offset X: " .. self.__offset.x)
+		imgui.Text("Offset Y: " .. self.__offset.y)
+		if imgui.TreeNode("Original") then
+			imgui.Text("Position X: " .. self.__orig.pos.x)
+			imgui.Text("Position Y: " .. self.__orig.pos.y)
+			imgui.Text("Rotation: " .. self.__orig_rot)
+			imgui.Text("Scale X: " .. self.__orig_scale.x)
+			imgui.Text("Scale Y: " .. self.__orig_scale.y)
+			imgui.Text("Offset X: " .. self.__orig_offset.x)
+			imgui.Text("Offset Y: " .. self.__orig_offset.y)
+			if imgui.Button("Reset") then
+				self.__pos = self.__orig_pos:clone()
+				self.__rot = self.__orig_rot
+				self.__scale = self.__orig_scale:clone()
+				self.__offset = self.__orig_offset:clone()
+			end
+			imgui.TreePop()
+		end
+		if status_x or status_y then
+			self.__pos.x = x
+			self.__pos.y = y
+		end
+		if status_rotation then self.__rot = rotation end
+		if status_sx or status_sy then
+			self.__scale.x = sx
+			self.__scale.y = sy
+		end
+		imgui.TreePop()
+	end
+end
+!end
 
 return BaseGUIButton

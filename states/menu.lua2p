@@ -101,8 +101,12 @@ function Menu:setupSystems()
 	self.systems = {
 		renderer_sprite = S.renderer.sprite(),
 	}
-
 	self.instance:addSystem(self.systems.renderer_sprite, "draw")
+	!if _DEBUG then
+	self.systems.collider = S.collider()
+	self.instance:addSystem(self.systems.collider, "draw")
+	self.instance:addSystem(self.systems.collider, "mousepressed")
+	!end
 end
 
 function Menu:setupEntities()

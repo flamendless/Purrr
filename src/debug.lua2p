@@ -1,7 +1,3 @@
-!if not _DEBUG then
-local Debug = {}
-return Debug
-!else
 local lurker = require("modules.lurker.lurker")
 local flux = require("modules.flux.flux")
 !if _LOGGING then
@@ -25,7 +21,8 @@ local Type = require("modules.concord.lib.type")
 
 local Debug = {
 	components = nil,
-	selected = nil,
+	selected_entity = nil,
+	selected_button = nil,
 	showAll = false,
 	show_demo = false,
 	font = love.graphics.newFont(12),
@@ -35,6 +32,7 @@ local Debug = {
 		config = true,
 		selected = false,
 		components = false,
+		button = false,
 	},
 }
 
@@ -77,6 +75,7 @@ function Debug:draw()
 	if self.windows.selected then self:drawSelected() end
 	if self.windows.components then self:drawComponents() end
 	if self.windows.config then self:drawConfig() end
+	if self.windows.button then self:drawButton() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	self:drawMedia()
 	love.graphics.setColor(1, 1, 1, 1)
@@ -154,8 +153,8 @@ end
 
 function Debug:drawComponents()
 	imgui.Begin("Components", nil, flags)
-	if self.selected:has(C.tag) then
-		local c_tag = self.selected[C.tag]
+	if self.selected_entity:has(C.tag) then
+		local c_tag = self.selected_entity[C.tag]
 		c_tag:debug()
 		imgui.Separator()
 	end
@@ -167,22 +166,26 @@ end
 
 function Debug:drawSelected()
 	imgui.Begin("Entity", nil, flags)
-
 	--TAG
-	if self.selected:has(C.tag) then
-		local c_tag = self.selected[C.tag]
+	if self.selected_entity:has(C.tag) then
+		local c_tag = self.selected_entity[C.tag]
 		c_tag:debug()
 		imgui.Separator()
 	end
 	for _, c_id in ipairs(self.components) do
 		if not (c_id == "tag") then
-			if self.selected:has(C[c_id]) then
-				local c = self.selected[C[c_id]]
+			if self.selected_entity:has(C[c_id]) then
+				local c = self.selected_entity[C[c_id]]
 				if c.debug then c:debug() end
 			end
 		end
 	end
+	imgui.End()
+end
 
+function Debug:drawButton()
+	imgui.Begin("GUI Button", nil, flags)
+	self.selected_button:debug()
 	imgui.End()
 end
 
@@ -248,7 +251,10 @@ function Debug:quit() imgui.ShutDown() end
 
 function Debug:onEntitySelect(e)
 	if Type.isEntity(e) then
-		self.selected = e
+		if e:has(C.transform) and e[C.transform].saveTransformation then
+			e[C.transform]:saveTransformation()
+		end
+		self.selected_entity = e
 		self.windows.selected = true
 		self.windows.components = true
 		self.components = {}
@@ -258,8 +264,10 @@ function Debug:onEntitySelect(e)
 			end
 		end
 	elseif gui_manager:isButton(e) then
+		e:saveTransformation()
+		self.selected_button = e
+		self.windows.button = true
 	end
 end
 
 return Debug
-!end

@@ -6,7 +6,7 @@ end)
 
 !if _DEBUG then
 function AlphaFade:debug()
-	if imgui.TreeNodeEx("Alpha Fade", __flags_tree) then
+	if imgui.TreeNodeEx("Alpha Fade") then
 		imgui.Text("Loop: " .. tostring(self.loop))
 		imgui.TreePop()
 	end

@@ -7,7 +7,7 @@ end)
 
 !if _DEBUG then
 function Text:debug()
-	if imgui.TreeNodeEx("Text", __flags_tree) then
+	if imgui.TreeNodeEx("Text") then
 		imgui.InputText("", self.text, #self.text)
 		imgui.TreePop()
 	end

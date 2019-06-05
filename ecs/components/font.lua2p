@@ -8,7 +8,7 @@ end)
 
 !if _DEBUG then
 function Font:debug()
-	if imgui.TreeNodeEx("Font", __flags_tree) then
+	if imgui.TreeNodeEx("Font") then
 		if self.path then
 			imgui.Text("Path: " .. self.path)
 		end

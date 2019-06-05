@@ -6,7 +6,7 @@ end)
 
 !if _DEBUG then
 function Color:debug()
-	if imgui.TreeNodeEx("Color", __flags_tree) then
+	if imgui.TreeNodeEx("Color") then
 		local r, g, b, a = unpack(self.color)
 		local slider_r, slider_status_r = imgui.SliderFloat("R", r, 0, 1)
 		local slider_g, slider_status_g = imgui.SliderFloat("G", g, 0, 1)

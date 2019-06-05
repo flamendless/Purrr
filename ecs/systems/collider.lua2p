@@ -3,9 +3,7 @@ local C = require("ecs.components")
 local utils = require("src.utils")
 
 local vec2 = require("modules.hump.vector")
-!if _DEBUG then
 local debugger = require("src.debug")
-!end
 
 local Collider = System({
 		C.collider_rect,
@@ -18,6 +16,7 @@ local Collider = System({
 		"sprite"
 	})
 
+!if _DEBUG then
 function Collider:draw()
 	for _, e in ipairs(self.sprite) do
 		local c_collider_sprite = e[C.collider_sprite]
@@ -31,7 +30,6 @@ function Collider:draw()
 			c_sprite:getHeight() * c_transform.sy)
 	end
 
-	!if _DEBUG then
 	for _, e in ipairs(self.rect) do
 		local c_collider_rect = e[C.collider_rect]
 		local c_transform = e[C.transform]
@@ -42,8 +40,8 @@ function Collider:draw()
 			c_collider_rect.size.x * c_transform.sx,
 			c_collider_rect.size.y * c_transform.sy)
 	end
-	!end
 end
+!end
 
 function Collider:mousepressed(mx, my, mb)
 	for _, e in ipairs(self.sprite) do

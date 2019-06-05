@@ -9,7 +9,6 @@ local Systems = {
 	animation = req("animation"),
 	collider = req("collider"),
 	renderer = req("renderer"),
-	gui = req("gui"),
 }
 
 return Systems

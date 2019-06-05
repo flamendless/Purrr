@@ -18,8 +18,17 @@ end)
 local rad = math.rad
 local rad_360 = rad(360)
 
+function Transform:saveTransformation()
+	self.orig_pos = self.pos:clone()
+	self.orig_rot = self.rot
+	self.orig_sx = self.sx
+	self.orig_sy = self.sy
+	self.orig_ox = self.ox
+	self.orig_oy = self.oy
+end
+
 function Transform:debug()
-	if imgui.TreeNodeEx("Transform", __flags_tree) then
+	if imgui.TreeNodeEx("Transform") then
 		local x, status_x = imgui.SliderInt("x", self.pos.x, 0, love.graphics.getWidth())
 		local y, status_y = imgui.SliderInt("y", self.pos.y, 0, love.graphics.getHeight())
 		local rotation, status_rotation = imgui.SliderInt("rotation", self.rotation, 0, rad_360)
@@ -28,8 +37,21 @@ function Transform:debug()
 		imgui.Text("Offset X: " .. self.ox)
 		imgui.Text("Offset Y: " .. self.oy)
 		if imgui.TreeNode("Original") then
-			imgui.Text("Position X: " .. self.pos.x - self.ox)
-			imgui.Text("Position Y: " .. self.pos.y - self.oy)
+			imgui.Text("Position X: " .. self.orig_pos.x)
+			imgui.Text("Position Y: " .. self.orig_pos.y)
+			imgui.Text("Rotation: " .. self.orig_rot)
+			imgui.Text("Scale X: " .. self.orig_sx)
+			imgui.Text("Scale Y: " .. self.orig_sy)
+			imgui.Text("Offset X: " .. self.orig_ox)
+			imgui.Text("Offset Y: " .. self.orig_oy)
+			if imgui.Button("Reset") then
+				self.pos = self.orig_pos:clone()
+				self.rot = self.orig_rot
+				self.sx = self.orig_sx
+				self.sy = self.orig_sy
+				self.ox = self.orig_ox
+				self.oy = self.orig_oy
+			end
 			imgui.TreePop()
 		end
 		if status_x or status_y then
