@@ -22,6 +22,8 @@ local ecs = require("modules.concord.lib").init({ useEvents = false })
 local debugging = require("src.debug")
 require("imgui")
 io.stdout:setvbuf("no")
+log.intercept_fn = debugging.addLog
+log.intercept_caller = debugging
 !end
 
 --SOURCE FILES
@@ -185,12 +187,13 @@ end
 love.errhand = require("src.errorhandler").errhand
 
 function love.quit()
-	!if _LOGGING then
-	log.trace("Love Quit")
-	!end
 	config:save()
 	lily.quit()
 	!if _DEBUG then
 	debugging:quit()
+	!end
+	!if _LOGGING then
+	log.trace("Love Quit")
+	love.filesystem.remove("log.log")
 	!end
 end

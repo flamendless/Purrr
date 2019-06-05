@@ -4,6 +4,9 @@ local GUIManager = {
 
 local utils = require("src.utils")
 
+!if _DEBUG then
+local debugger = require("src.debug")
+!end
 !if _LOGGING then
 local log = require("modules.log.log")
 !end
@@ -13,10 +16,6 @@ function GUIManager:addButton(btn)
 	!if _LOGGING then
 	log.info(btn:getID() .. " added to GUIManager Buttons")
 	!end
-end
-
-function GUIManager:isButton(btn)
-	return btn.__isGUIButton
 end
 
 function GUIManager:getButton(id)
@@ -36,7 +35,12 @@ end
 
 function GUIManager:mousepressed(mx, my, mb)
 	for i, btn in ipairs(self.__buttons) do
-		btn:mousepressed(mx, my, mb)
+		local res = btn:mousepressed(mx, my, mb)
+		!if _DEBUG then
+		if mb == 2 and res then
+			debugger:onEntitySelect(btn)
+		end
+		!end
 	end
 end
 

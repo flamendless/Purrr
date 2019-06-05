@@ -2,7 +2,6 @@ local class = require("modules.classic.classic")
 local BaseGUIButton = class:extend()
 local vec2 = require("modules.hump.vector")
 local utils = require("src.utils")
-local debugger = require("src.debug")
 
 !if _LOGGING then
 local log = require("modules.log.log")
@@ -141,12 +140,9 @@ function BaseGUIButton:mousepressed(mx, my, mb)
 		if mb == 1 then
 			self.__onClick(mx, my, mb)
 		end
-		!if _DEBUG then
-		if mb == 2 then
-			debugger:onEntitySelect(self)
-		end
-		!end
+		return true
 	end
+	return false
 end
 
 function BaseGUIButton:draw()

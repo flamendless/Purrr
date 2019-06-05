@@ -14,10 +14,9 @@ local resourceManager = require("src.resource_manager")
 local config = require("src.config")
 local bgm = require("src.bgm")
 local utils = require("src.utils")
-local gui_manager = require("src.gui_manager")
+local types = require("src.types")
 
 local C = require("ecs.components")
-local Type = require("modules.concord.lib.type")
 
 local Debug = {
 	components = nil,
@@ -32,8 +31,10 @@ local Debug = {
 		config = true,
 		selected = false,
 		components = false,
+		log = true,
 		button = false,
 	},
+	buffer = {},
 }
 
 local stats = {}
@@ -76,6 +77,7 @@ function Debug:draw()
 	if self.windows.components then self:drawComponents() end
 	if self.windows.config then self:drawConfig() end
 	if self.windows.button then self:drawButton() end
+	if self.windows.log then self:drawLogs() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	self:drawMedia()
 	love.graphics.setColor(1, 1, 1, 1)
@@ -94,6 +96,7 @@ function Debug:drawMenuBar()
 			self.windows.info = imgui.Checkbox("Info", self.windows.info)
 			self.windows.config = imgui.Checkbox("Config", self.windows.config)
 			self.windows.collisions = imgui.Checkbox("Collisions", self.windows.collisions)
+			self.windows.logs = imgui.Checkbox("Logs", self.windows.logs)
 			imgui.EndMenu()
 		end
 		if imgui.BeginMenu("Help") then
@@ -250,7 +253,7 @@ function Debug:wheelmoved(x, y) imgui.WheelMoved(y) end
 function Debug:quit() imgui.ShutDown() end
 
 function Debug:onEntitySelect(e)
-	if Type.isEntity(e) then
+	if types.isEntity(e) then
 		if e:has(C.transform) and e[C.transform].saveTransformation then
 			e[C.transform]:saveTransformation()
 		end
@@ -263,11 +266,38 @@ function Debug:onEntitySelect(e)
 				table.insert(self.components, c_id)
 			end
 		end
-	elseif gui_manager:isButton(e) then
+		!if _LOGGING then
+		local id = ""
+		if e:has(C.tag) then
+			id = e[C.tag].tag
+		end
+		log.info("Clicked on Entity: " .. id)
+		!end
+	elseif types.isGUIButton(e) then
 		e:saveTransformation()
 		self.selected_button = e
 		self.windows.button = true
+		!if _LOGGING then
+		log.info("Clicked on GUI Button: " .. e:getID())
+		!end
 	end
+end
+
+function Debug:drawLogs()
+	imgui.Begin("Logs", nil, ImGuiWindowFlags_AlwaysAutoResize)
+	imgui.BeginChild("scrolling", 0, 0, false, ImGuiWindowFlags_HorizontalScrollbar)
+	if #self.buffer > 0 then
+		for i, txt in ipairs(self.buffer) do
+			imgui.TextUnformatted(txt)
+		end
+	end
+	imgui.EndChild()
+	imgui.End()
+end
+
+function Debug:addLog(str)
+	local old_size = #self.buffer
+	table.insert(self.buffer, str)
 end
 
 return Debug
