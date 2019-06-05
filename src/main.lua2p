@@ -24,6 +24,12 @@ require("imgui")
 io.stdout:setvbuf("no")
 log.intercept_fn = debugging.addLog
 log.intercept_caller = debugging
+!if _LOGGING then
+function Log(...)
+	print(...)
+	debugging:addLog(...)
+end
+!end
 !end
 
 --SOURCE FILES
