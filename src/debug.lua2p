@@ -35,7 +35,7 @@ local Debug = {
 		config = true,
 		selected = false,
 		components = false,
-		log = true,
+		logs = true,
 		button = false,
 	},
 	buffer = {},
@@ -81,7 +81,7 @@ function Debug:draw()
 	if self.windows.components then self:drawComponents() end
 	if self.windows.config then self:drawConfig() end
 	if self.windows.button then self:drawButton() end
-	if self.windows.log then self:drawLogs() end
+	if self.windows.logs then self:drawLogs() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	self:drawMedia()
 	love.graphics.setColor(1, 1, 1, 1)
@@ -139,7 +139,8 @@ end
 function Debug:drawInfo()
 	imgui.Begin("Info", nil, flags)
 	imgui.Text("GAME TITLE: " .. love.window.getTitle())
-	imgui.Text("GAME SIZE: " .. ("%ix%i"):format(love.graphics.getDimensions()))
+	imgui.Text("GAME SIZE: " .. ("%ix%i"):format(screen.x, screen.y))
+	imgui.Text("WINDOW SIZE: " .. ("%ix%i"):format(love.graphics.getDimensions()))
 	imgui.Text("GAMESTATE: " .. gamestate:getCurrentID())
 	imgui.Text("FPS:" .. love.timer.getFPS())
 	if stats.drawcalls then
@@ -201,12 +202,15 @@ function Debug:drawMedia()
 	local title = ""
 	local pos = 0
 	local duration = 0
+	local vol = love.audio.getVolume()
 	if bgm.data.title then title = bgm.data.title end
 	if bgm.data.pos then pos = bgm.data.pos end
 	if bgm.data.duration then duration = bgm.data.duration end
 	imgui.Text(title)
-	local v, status = imgui.SliderFloat("##slider", pos, 0, duration)
+	local v, status = imgui.SliderFloat("Duration", pos, 0, duration)
 	imgui.Text(string.format("%.2f : %.2f", pos, duration))
+	local vol, status_vol = imgui.SliderFloat("Volume", vol, 0, 1.0)
+	if status_vol then love.audio.setVolume(vol) end
 	if status then
 		if bgm.current then bgm.current:seek(v, "seconds") end
 	end

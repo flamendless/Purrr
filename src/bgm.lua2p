@@ -13,7 +13,10 @@ function BGM:start(source, title)
 	end
 	self.data.duration = source:getDuration("seconds")
 	self.data.pos = source:tell("seconds")
+
+	!if not _DEBUG then
 	source:play()
+	!end
 end
 
 function BGM:update(dt)

@@ -36,23 +36,13 @@ function Transform:debug()
 		local sy, status_sy = imgui.SliderInt("sy", self.sy, 0, 10)
 		imgui.Text("Offset X: " .. self.ox)
 		imgui.Text("Offset Y: " .. self.oy)
-		if imgui.TreeNode("Original") then
-			imgui.Text("Position X: " .. self.orig_pos.x)
-			imgui.Text("Position Y: " .. self.orig_pos.y)
-			imgui.Text("Rotation: " .. self.orig_rot)
-			imgui.Text("Scale X: " .. self.orig_sx)
-			imgui.Text("Scale Y: " .. self.orig_sy)
-			imgui.Text("Offset X: " .. self.orig_ox)
-			imgui.Text("Offset Y: " .. self.orig_oy)
-			if imgui.Button("Reset") then
-				self.pos = self.orig_pos:clone()
-				self.rot = self.orig_rot
-				self.sx = self.orig_sx
-				self.sy = self.orig_sy
-				self.ox = self.orig_ox
-				self.oy = self.orig_oy
-			end
-			imgui.TreePop()
+		if imgui.Button("Reset") then
+			self.pos = self.orig_pos:clone()
+			self.rot = self.orig_rot
+			self.sx = self.orig_sx
+			self.sy = self.orig_sy
+			self.ox = self.orig_ox
+			self.oy = self.orig_oy
 		end
 		if status_x or status_y then
 			self.pos.x = x

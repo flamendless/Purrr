@@ -177,7 +177,7 @@ end
 local rad = math.rad
 local rad_360 = rad(360)
 function BaseGUIButton:debug()
-	if imgui.TreeNodeEx("ID: " .. self.__id) then
+	if imgui.TreeNode("ID: " .. self.__id) then
 		local x, status_x = imgui.SliderInt("x", self.__pos.x, 0, love.graphics.getWidth())
 		local y, status_y = imgui.SliderInt("y", self.__pos.y, 0, love.graphics.getHeight())
 		local rotation, status_rotation = imgui.SliderInt("rotation", self.__rot, 0, rad_360)
@@ -185,21 +185,11 @@ function BaseGUIButton:debug()
 		local sy, status_sy = imgui.SliderInt("sy", self.__scale.y, 0, 10)
 		imgui.Text("Offset X: " .. self.__offset.x)
 		imgui.Text("Offset Y: " .. self.__offset.y)
-		if imgui.TreeNode("Original") then
-			imgui.Text("Position X: " .. self.__orig.pos.x)
-			imgui.Text("Position Y: " .. self.__orig.pos.y)
-			imgui.Text("Rotation: " .. self.__orig_rot)
-			imgui.Text("Scale X: " .. self.__orig_scale.x)
-			imgui.Text("Scale Y: " .. self.__orig_scale.y)
-			imgui.Text("Offset X: " .. self.__orig_offset.x)
-			imgui.Text("Offset Y: " .. self.__orig_offset.y)
-			if imgui.Button("Reset") then
-				self.__pos = self.__orig_pos:clone()
-				self.__rot = self.__orig_rot
-				self.__scale = self.__orig_scale:clone()
-				self.__offset = self.__orig_offset:clone()
-			end
-			imgui.TreePop()
+		if imgui.Button("Reset") then
+			self.__pos = self.__orig_pos:clone()
+			self.__rot = self.__orig_rot
+			self.__scale = self.__orig_scale:clone()
+			self.__offset = self.__orig_offset:clone()
 		end
 		if status_x or status_y then
 			self.__pos.x = x
