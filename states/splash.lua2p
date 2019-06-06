@@ -2,8 +2,7 @@ local BaseState = require("base.base_state")
 local Splash = BaseState("Splash")
 
 !if _LOGGING then
-local log
-log = require("modules.log.log")
+local log = require("modules.log.log")
 !end
 
 local lume = require("modules.lume.lume")

@@ -6,8 +6,7 @@ local ecs = {
 }
 local lily = require("modules.lily.lily")
 !if _LOGGING then
-local log
-log = require("modules.log.log")
+local log = require("modules.log.log")
 !end
 local inspect = require("modules.inspect.inspect")
 local timer = require("modules.hump.timer")

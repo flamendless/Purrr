@@ -6,8 +6,7 @@ __version = require("modules.semver.semver")(unpack(!(_GAME_VERSION)))
 
 --MODULES
 !if _LOGGING then
-local log
-log = require("modules.log.log")
+local log = require("modules.log.log")
 log.outfile = "log.log"
 log.level = "trace"
 log.lovesave = true

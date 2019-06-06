@@ -1,8 +1,7 @@
 local lurker = require("modules.lurker.lurker")
 local flux = require("modules.flux.flux")
 !if _LOGGING then
-local log
-log = require("modules.log.log")
+local log = require("modules.log.log")
 !end
 local semver = require("modules.semver.semver")
 local screen = require("src.screen")

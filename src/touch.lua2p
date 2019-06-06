@@ -6,8 +6,7 @@ local Touch = {
 
 local flux = require("modules.flux.flux")
 !if _LOGGING then
-local log
-log = require("modules.log.log")
+local log = require("modules.log.log")
 !end
 local screen = require("src.screen")
 local colors = require("src.colors")
