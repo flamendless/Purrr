@@ -37,4 +37,13 @@ function Utils:emptyTable_pairs(t)
 end
 !end
 
+function Utils:stripExtension(str)
+	return str:match("(.+)%..+")
+end
+
+function Utils:convertSemVer(t)
+	assert(t ~= nil, "arg1 is semver data type")
+	return ("%s.%s.%s"):format(t.major, t.minor, t.patch)
+end
+
 return Utils

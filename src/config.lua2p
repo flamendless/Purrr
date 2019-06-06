@@ -7,17 +7,7 @@ local serialize = require("modules.knife.knife.serialize")
 local log = require("modules.log.log")
 !end
 
-local stripExtension = function(str)
-	return str:match("(.+)%..+")
-end
-
-local convert = function(t)
-	if t then
-		return ("%s.%s.%s"):format(t.major, t.minor, t.patch)
-	else
-		return "Version not found!"
-	end
-end
+local utils = require("src.utils")
 
 function Config:init()
 	self.data = {}
@@ -25,7 +15,7 @@ function Config:init()
 	self.data.game = {}
 	self.data.dev = {}
 	if love.filesystem.getInfo(self.filename) then
-		self.data = require(stripExtension(self.filename))
+		self.data = require(utils:stripExtension(self.filename))
 		!if _LOGGING then
 		log.trace("File Loaded!")
 		!end
@@ -47,12 +37,9 @@ function Config:init()
 end
 
 function Config:check()
-	local data_version = convert(self.data.game.version)
-	local game_version = convert(__version)
-	self.data.game.version = data_version
-
+	local game_version = utils:convertSemVer(__version)
 	!if _LOGGING then
-	log.trace(("Game Version: %s : Save Version: %s"):format(game_version, data_version))
+	log.trace(("Game Version: %s"):format(game_version))
 	!end
 	if not (data_version == game_version) then
 		local success = love.filesystem.remove(self.filename)

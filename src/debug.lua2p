@@ -105,6 +105,7 @@ function Debug:drawMenuBar()
 		if imgui.BeginMenu("Help") then
 			imgui.Text("Press F5 to toggle debug view")
 			imgui.Text("Press F6 to toggle demo view")
+			imgui.Text("Press F7 to toggle logs view")
 			imgui.EndMenu()
 		end
 		imgui.EndMainMenuBar()
@@ -124,8 +125,8 @@ function Debug:drawConfig()
 		end
 	end
 	if imgui.TreeNode("more") then
-		imgui.Text("Path: " .. config.filename)
-		imgui.Text("Filename: " .. config.path)
+		imgui.Text("Path: " .. config.path)
+		imgui.Text("Filename: " .. config.filename)
 		imgui.TreePop()
 	end
 	imgui.Separator()
@@ -245,10 +246,13 @@ function Debug:keypressed(key)
 		self:toggleEditorView()
 	elseif key == "f6" then
 		self:toggleDemoView()
+	elseif key == "f7" then
+		self:toggleLogsView()
 	end
 	imgui.KeyPressed(key)
 end
 
+function Debug:toggleLogsView() self.windows.logs = not self.windows.logs end
 function Debug:toggleEditorView() self.showAll = not self.showAll end
 function Debug:toggleDemoView() self.show_demo = not self.show_demo end
 function Debug:keyreleased(key) imgui.KeyReleased(key) end
@@ -304,7 +308,12 @@ end
 
 function Debug:addLog(str)
 	local old_size = #self.buffer
-	table.insert(self.buffer, str)
+	if type(str) == "string" then
+		table.insert(self.buffer, str)
+	elseif type(str) == "table" then
+		local temp = utils:convertSemVer(str)
+		table.insert(self.buffer, temp)
+	end
 end
 
 return Debug
