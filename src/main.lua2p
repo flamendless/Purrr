@@ -20,7 +20,6 @@ local ecs = require("modules.concord.lib").init({ useEvents = false })
 --DEBUGGING and LOGGING
 !if _DEBUG then
 local debugging = require("src.debug")
-require("imgui")
 io.stdout:setvbuf("no")
 log.intercept_fn = debugging.addLog
 log.intercept_caller = debugging

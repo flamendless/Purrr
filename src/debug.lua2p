@@ -18,6 +18,10 @@ local types = require("src.types")
 
 local C = require("ecs.components")
 
+!if _DEBUG then
+imgui = require("imgui")
+!end
+
 local Debug = {
 	components = nil,
 	selected_entity = nil,
