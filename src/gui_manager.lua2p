@@ -1,8 +1,10 @@
 local GUIManager = {
 	__buttons = {},
+	__windows = {},
 }
 
 local utils = require("src.utils")
+local types = require("src.types")
 
 !if _DEBUG then
 local debugger = require("src.debug")
@@ -18,6 +20,41 @@ function GUIManager:addButton(btn)
 	!end
 end
 
+function GUIManager:addWindow(window)
+	table.insert(self.__windows, window)
+	window:setLayer(#self.__windows)
+	!if _LOGGING then
+	log.info(window:getID() .. " added to GUIManager Windows")
+	!end
+end
+
+function GUIManager:setActiveWindow(id_or_window)
+	local obj_index
+	if type(id_or_window) == "string" then
+		for i, window in ipairs(self.__windows) do
+			if window:getID() == id_or_window then
+				obj_index = i
+				break
+			end
+		end
+	elseif types.isGUIWindow(id_or_window) then
+		for i, window in ipairs(self.__windows) do
+			if id_or_window == window then
+				obj_index = i
+				break
+			end
+		end
+	end
+	self:sortWindowLayers(obj_index, 1)
+end
+
+function GUIManager:sortWindowLayers(from, to)
+	utils:swapElements(self.__windows, from, to)
+	for layer, window in ipairs(self.__windows) do
+		window:setLayer(layer)
+	end
+end
+
 function GUIManager:getButton(id)
 	for i, btn in ipairs(self.__buttons) do
 		local btn_id = btn:getID()
@@ -27,9 +64,21 @@ function GUIManager:getButton(id)
 	end
 end
 
+function GUIManager:flushButtons()
+	utils:emptyTable_ipairs(self.__buttons, function(btn)
+		!if _LOGGING then
+		log.info(btn:getID() .. " flushed from GUIManager Buttons")
+		!end
+	end)
+end
+
 function GUIManager:update(dt)
 	for i, btn in ipairs(self.__buttons) do
 		btn:checkOnMouseCollision()
+	end
+
+	for i, window in ipairs(self.__windows) do
+		window:checkOnMouseCollision()
 	end
 end
 
@@ -42,20 +91,73 @@ function GUIManager:mousepressed(mx, my, mb)
 		end
 		!end
 	end
+
+	for i, window in ipairs(self.__windows) do
+		local res = window:mousepressed(mx, my, mb)
+		!if _DEBUG then
+		if mb == 2 and res then
+			debugger:onEntitySelect(window)
+		end
+		!end
+	end
 end
 
 function GUIManager:draw()
 	for i, btn in ipairs(self.__buttons) do
 		btn:draw()
 	end
+
+	for i, window in ipairs(self.__windows) do
+		window:draw()
+	end
+
+	!if _DEBUG then
+	self:debugWindows()
+	!end
 end
 
-function GUIManager:flushButtons()
-	utils:emptyTable_ipairs(self.__buttons, function(btn)
-		!if _LOGGING then
-		log.info(btn:getID() .. " flushed from GUIManager Buttons")
-		!end
-	end)
+!if _DEBUG then
+function GUIManager:debugWindows()
+	imgui.Begin("GUI Manager", nil, ImGuiWindowFlags_AlwaysAutoResize)
+	if imgui.TreeNode("Windows") then
+		for i = 1, #self.__windows do
+			local current = self.__windows[i]
+			imgui.Text(tostring(i) .. ". ")
+			imgui.SameLine()
+			if imgui.SmallButton(current:getID()) then
+				debugger:onEntitySelect(current)
+			end
+			imgui.SameLine()
+			if imgui.SmallButton("+##1" .. i) then
+				local to = current:getLayer() + 1
+				if to > #self.__windows then to = 1 end
+				self:sortWindowLayers(current:getLayer(), to)
+			end
+			imgui.SameLine()
+			if imgui.SmallButton("-##2" .. i) then
+				local to = current:getLayer() - 1
+				if to < 1 then to = #self.__windows end
+				self:sortWindowLayers(current:getLayer(), to)
+			end
+		end
+		imgui.TreePop()
+	end
+
+	imgui.Separator()
+	if imgui.TreeNode("Buttons") then
+		for i = 1, #self.__buttons do
+			local current = self.__buttons[i]
+			imgui.Text(tostring(i) .. ". ")
+			imgui.SameLine()
+			if imgui.SmallButton(current:getID()) then
+				debugger:onEntitySelect(current)
+			end
+		end
+		imgui.TreePop()
+	end
+	imgui.End()
 end
+
+!end
 
 return GUIManager

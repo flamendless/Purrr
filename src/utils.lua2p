@@ -4,11 +4,23 @@ function Utils:pointToRectCheck(px, py, x, y, w, h)
 	return px > x and px < x + w and py > y and py < y + h
 end
 
-function Utils:random_suffix(base_word, opt)
+function Utils:randomSuffix(base_word, opt)
 	assert(type(base_word) == "string", "arg1 must be a string")
 	assert(type(opt) == "table", "arg2 must be a table")
 	local r = math.random(1, #opt)
 	return base_word .. opt[r]
+end
+
+function Utils:randomSuffixRange(base_word, min, max)
+	assert(type(base_word) == "string", "arg1 must be a string")
+	assert(type(min) == "number", "arg2 must be a number")
+	assert(type(max) == "number", "arg3 must be a number")
+	local r = math.random(min, max)
+	return base_word .. r
+end
+
+function Utils:swapElements(tbl, from, to)
+	tbl[from], tbl[to] = tbl[to], tbl[from]
 end
 
 function Utils:emptyTable_ipairs(t, fn)

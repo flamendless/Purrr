@@ -24,7 +24,7 @@ imgui = require("imgui")
 local Debug = {
 	components = nil,
 	selected_entity = nil,
-	selected_button = nil,
+	selected_gui = nil,
 	showAll = false,
 	show_demo = false,
 	font = love.graphics.newFont(12),
@@ -35,7 +35,8 @@ local Debug = {
 		selected = false,
 		components = false,
 		logs = true,
-		button = false,
+		gui = false,
+		entities = true,
 	},
 	buffer = {},
 }
@@ -59,27 +60,37 @@ end
 
 function Debug:init()
 	self.showAll = true
+	!if _LOGGING then
+	log.info("Debugging initialized")
+	!end
+end
+
+function Debug:addLog(str)
+	local old_size = #self.buffer
+	if type(str) == "string" then
+		table.insert(self.buffer, str)
+	elseif type(str) == "table" then
+		local temp = utils:convertSemVer(str)
+		table.insert(self.buffer, temp)
+	end
 end
 
 function Debug:update(dt)
 	if not (love.system.getOS() == "Android") then lurker.update(dt) end
-	if not self.showAll then
-		return
-	end
+	if not self.showAll then return end
 	imgui.NewFrame()
 end
 
 function Debug:draw()
 	love.graphics.setColor(1, 1, 1, 1)
-	if not self.showAll then
-		return
-	end
+	if not self.showAll then return end
 	self:drawMenuBar()
 	if self.windows.info then self:drawInfo() end
 	if self.windows.selected then self:drawSelected() end
 	if self.windows.components then self:drawComponents() end
 	if self.windows.config then self:drawConfig() end
-	if self.windows.button then self:drawButton() end
+	if self.windows.gui then self:drawGUI() end
+	if self.windows.entities then self:drawEntities() end
 	if self.windows.logs then self:drawLogs() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	self:drawMedia()
@@ -191,9 +202,9 @@ function Debug:drawSelected()
 	imgui.End()
 end
 
-function Debug:drawButton()
-	imgui.Begin("GUI Button", nil, flags)
-	self.selected_button:debug()
+function Debug:drawGUI()
+	imgui.Begin("GUI Element", nil, flags)
+	self.selected_gui:debug()
 	imgui.End()
 end
 
@@ -239,59 +250,27 @@ function Debug:drawMedia()
 	imgui.End()
 end
 
-function Debug:keypressed(key)
-	if key == "`" then
-		self.showAll = not self.showAll
-	elseif key == "f5" then
-		self:toggleEditorView()
-	elseif key == "f6" then
-		self:toggleDemoView()
-	elseif key == "f7" then
-		self:toggleLogsView()
-	end
-	imgui.KeyPressed(key)
-end
-
-function Debug:toggleLogsView() self.windows.logs = not self.windows.logs end
-function Debug:toggleEditorView() self.showAll = not self.showAll end
-function Debug:toggleDemoView() self.show_demo = not self.show_demo end
-function Debug:keyreleased(key) imgui.KeyReleased(key) end
-function Debug:textinput(t) imgui.TextInput(t) end
-function Debug:mousepressed(mx, my, mb) imgui.MousePressed(mb) end
-function Debug:mousereleased(mx, my, mb) imgui.MouseReleased(mb) end
-function Debug:mousemoved(mx, my) imgui.MouseMoved(mx, my) end
-function Debug:wheelmoved(x, y) imgui.WheelMoved(y) end
-function Debug:quit() imgui.ShutDown() end
-
-function Debug:onEntitySelect(e)
-	if types.isEntity(e) then
-		if e:has(C.transform) and e[C.transform].saveTransformation then
-			e[C.transform]:saveTransformation()
-		end
-		self.selected_entity = e
-		self.windows.selected = true
-		self.windows.components = true
-		self.components = {}
-		for c_id, component in pairs(C) do
-			if e:has(component) then
-				table.insert(self.components, c_id)
+function Debug:drawEntities()
+	local state = gamestate:getCurrent()
+	if not state.entities then return end
+	imgui.Begin("ECS", nil, ImGuiWindowFlags_AlwaysAutoResize)
+	if imgui.TreeNode("Entities") then
+		local i = 1
+		for k, entity in pairs(state.entities) do
+			imgui.Text(tostring(i) .. ". ")
+			imgui.SameLine()
+			local tag = "entity " .. i
+			if entity:has(C.tag) then
+				tag = entity[C.tag].tag
 			end
+			if imgui.SmallButton(tag) then
+				self:onEntitySelect(entity)
+			end
+			i = i + 1
 		end
-		!if _LOGGING then
-		local id = ""
-		if e:has(C.tag) then
-			id = e[C.tag].tag
-		end
-		log.info("Clicked on Entity: " .. id)
-		!end
-	elseif types.isGUIButton(e) then
-		e:saveTransformation()
-		self.selected_button = e
-		self.windows.button = true
-		!if _LOGGING then
-		log.info("Clicked on GUI Button: " .. e:getID())
-		!end
+		imgui.TreePop()
 	end
+	imgui.End()
 end
 
 function Debug:drawLogs()
@@ -306,14 +285,84 @@ function Debug:drawLogs()
 	imgui.End()
 end
 
-function Debug:addLog(str)
-	local old_size = #self.buffer
-	if type(str) == "string" then
-		table.insert(self.buffer, str)
-	elseif type(str) == "table" then
-		local temp = utils:convertSemVer(str)
-		table.insert(self.buffer, temp)
+function Debug:keypressed(key)
+	if key == "`" then
+		self.showAll = not self.showAll
+	elseif key == "f5" then
+		self:toggleEditorView()
+	elseif key == "f6" then
+		self:toggleDemoView()
+	elseif key == "f7" then
+		self:toggleLogsView()
+	end
+	imgui.KeyPressed(key)
+end
+
+function Debug:handleEntity(e)
+	if self.selected_entity and self.selected_entity == e then
+		self.selected_entity = nil
+		self.windows.selected = false
+		self.windows.components = false
+		!if _LOGGING then
+		local id = ""
+		if e:has(C.tag) then id = e[C.tag].tag end
+		log.info("Deselected entity: " .. id)
+		!end
+		return
+	end
+	if e:has(C.transform) and e[C.transform].saveTransformation then
+		e[C.transform]:saveTransformation()
+	end
+	self.selected_entity = e
+	self.windows.selected = true
+	self.windows.components = true
+	self.components = {}
+	for c_id, component in pairs(C) do
+		if e:has(component) then
+			table.insert(self.components, c_id)
+		end
+	end
+	!if _LOGGING then
+	local id = ""
+	if e:has(C.tag) then id = e[C.tag].tag end
+	log.info("Selected entity: " .. id)
+	!end
+end
+
+function Debug:handleGUI(e)
+	if self.selected_gui and self.selected_gui == e then
+		self.selected_gui = nil
+		self.windows.gui = false
+		!if _LOGGING then
+		log.info("Deselected GUI element: " .. e:getID())
+		!end
+		return
+	end
+	e:saveTransformation()
+	self.selected_gui = e
+	self.windows.gui = true
+	!if _LOGGING then
+	log.info("Selected GUI element: " .. e:getID())
+	!end
+end
+
+function Debug:onEntitySelect(e)
+	if types.isEntity(e) then
+		self:handleEntity(e)
+	elseif types.isGUIButton(e) or types.isGUIWindow(e) then
+		self:handleGUI(e)
 	end
 end
+
+function Debug:toggleLogsView() self.windows.logs = not self.windows.logs end
+function Debug:toggleEditorView() self.showAll = not self.showAll end
+function Debug:toggleDemoView() self.show_demo = not self.show_demo end
+function Debug:keyreleased(key) imgui.KeyReleased(key) end
+function Debug:textinput(t) imgui.TextInput(t) end
+function Debug:mousepressed(mx, my, mb) imgui.MousePressed(mb) end
+function Debug:mousereleased(mx, my, mb) imgui.MouseReleased(mb) end
+function Debug:mousemoved(mx, my) imgui.MouseMoved(mx, my) end
+function Debug:wheelmoved(x, y) imgui.WheelMoved(y) end
+function Debug:quit() imgui.ShutDown() end
 
 return Debug
