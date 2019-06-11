@@ -1,4 +1,4 @@
-local BaseState = require("base.base_state")
+local BaseState = require("base.state")
 local Lobby = BaseState("Lobby")
 
 local ecs = {

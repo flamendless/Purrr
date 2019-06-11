@@ -1,4 +1,4 @@
-local BaseState = require("base.base_state")
+local BaseState = require("base.state")
 local Menu = BaseState("Menu")
 
 local flux = require("modules.flux.flux")
