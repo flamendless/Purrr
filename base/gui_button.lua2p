@@ -1,4 +1,3 @@
-local class = require("modules.classic.classic")
 local vec2 = require("modules.hump.vector")
 local utils = require("src.utils")
 
@@ -6,55 +5,21 @@ local utils = require("src.utils")
 local log = require("modules.log.log")
 !end
 
-local BaseGUIButton = class:extend()
+local base = require("base.gui")
+local BaseGUIButton = base:extend()
 
 function BaseGUIButton:new(id)
-	self.__id = id or "?gui_button"
+	BaseGUIButton.super.new(self, id or "?gui_button")
 	self.__isGUIButton = true
-	self.__visible = true
 	self.__isClicked = false
 	self.__isHovered = false
 	self.__onClick = nil
 	self.__onHover = nil
 	self.__img = nil
 	self.__hover_img = nil
-	self.__pos = nil
-	self.__rot = 0
-	self.__size = vec2()
-	self.__offset = vec2()
-	self.__scale = vec2(1, 1)
-	self.__orig_pos = nil
-	self.__orig_rot = 0
-	self.__orig_scale = vec2(1, 1)
-	self.__orig_offset = vec2()
-	self.__orig_size = nil
-
 	!if _logging then
 	log.info("created gui button: " .. self.__id)
 	!end
-end
-
-function BaseGUIButton:saveTransformation()
-	self.__orig_pos = self.__pos:clone()
-	self.__orig_rot = self.__rot
-	self.__orig_scale = self.__scale:clone()
-	self.__orig_offset = self.__offset:clone()
-end
-
-function BaseGUIButton:setPosition(x, y)
-	self.__pos = vec2(x or 0, y or 0)
-end
-
-function BaseGUIButton:setRotation(rot)
-	self.__rot = rot or 0
-end
-
-function BaseGUIButton:setScale(sx, sy)
-	self.__scale = vec2(sx or 1, sy or 1)
-end
-
-function BaseGUIButton:setOffset(ox, oy)
-	self.__offset = vec2(ox or 0, oy or 0)
 end
 
 function BaseGUIButton:setTexture(img)
@@ -78,83 +43,13 @@ function BaseGUIButton:setOnClick(fn)
 	self.__onClick = fn
 end
 
-function BaseGUIButton:setVisible(bool)
-	self.__visible = bool
-end
-
-function BaseGUIButton:toggleVisibility()
-	self.__visible = not self.__visible
-end
-
-function BaseGUIButton:getID()
-	return self.__id
-end
-
-function BaseGUIButton:getPosition()
-	return self.__pos
-end
-
-function BaseGUIButton:getScale()
-	return self.__scale
-end
-
-function BaseGUIButton:getOffset()
-	return self.__offset
-end
-
-function BaseGUIButton:getSize()
-	return self.__size
-end
-
-function BaseGUIButton:getOriginalSize()
-	return self.__orig_size
-end
-
-function BaseGUIButton:getVisible()
-	return self.__visible
-end
-
-function BaseGUIButton:calculate()
-	self.__size.x = self.__img:getWidth() * self.__scale.x
-	self.__size.y = self.__img:getHeight() * self.__scale.y
-end
-
-function BaseGUIButton:checkOnMouseCollision()
-	local x = self.__pos.x - self.__offset.x * self.__scale.x
-	local y = self.__pos.y - self.__offset.y * self.__scale.y
-	local w = self.__orig_size.x * self.__scale.x
-	local h = self.__orig_size.y * self.__scale.y
-	local mx, my = love.mouse.getPosition()
-	local check = utils:pointToRectCheck(mx, my, x, y, w, h)
-	if check then
-		self.__isHovered = true
-		if self.__onHover then
-			self.__onHover()
-		end
-	else
-		self.__isHovered = false
-	end
-end
-
-function BaseGUIButton:mousepressed(mx, my, mb)
-	if self.__isHovered then
-		if mb == 1 and self.__onClick then
-			self.__onClick(mx, my, mb)
-		end
-		return true
-	end
-	return false
-end
-
 function BaseGUIButton:draw()
-	if self.__visible == false then
-		return
-	end
+	if self.__visible == false then return end
+
 	local img = self.__img
 	if self.__isHovered then
 		img = self.__hover_img
 	end
-
 	local x = self.__pos.x
 	local y = self.__pos.y
 	local rot = self.__rot
@@ -163,73 +58,10 @@ function BaseGUIButton:draw()
 	local ox = self.__offset.x
 	local oy = self.__offset.y
 	love.graphics.draw(img, x, y, rot, sx, sy, ox, oy)
+
 	!if _DEBUG then
-	local x = self.__pos.x - self.__offset.x * self.__scale.x
-	local y = self.__pos.y - self.__offset.y * self.__scale.y
-	local w = self.__orig_size.x * self.__scale.x
-	local h = self.__orig_size.y * self.__scale.y
-	love.graphics.setColor(1, 0, 0, 1)
-	love.graphics.rectangle("line", x, y, w, h)
-	love.graphics.setColor(1, 1, 1, 1)
+	BaseGUIButton.super.debugBounds(self)
 	!end
 end
-
-!if _DEBUG then
-local rad = math.rad
-local rad_360 = rad(360)
-function BaseGUIButton:debug()
-	imgui.SetNextTreeNodeOpen(true)
-	if imgui.TreeNode("ID: " .. self.__id) then
-		local x, status_x = imgui.SliderInt("x", self.__pos.x, 0, love.graphics.getWidth())
-		imgui.SameLine()
-		if imgui.SmallButton("copy##x") then love.system.setClipboardText(x) Log("copied to clipboard: " .. x) end
-
-		local y, status_y = imgui.SliderInt("y", self.__pos.y, 0, love.graphics.getHeight())
-		imgui.SameLine()
-		if imgui.SmallButton("copy##y") then love.system.setClipboardText(y) Log("copied to clipboard: " .. y) end
-
-		local rotation, status_rotation = imgui.SliderInt("rot", self.__rot, 0, rad_360)
-		imgui.SameLine()
-		if imgui.SmallButton("copy##rot") then love.system.setClipboardText(rot) Log("copied to clipboard: " .. rot) end
-
-		local sx, status_sx = imgui.SliderInt("sx", self.__scale.x, 0, 10)
-		imgui.SameLine()
-		if imgui.SmallButton("copy##sx") then love.system.setClipboardText(sx) Log("copied to clipboard: " .. sx) end
-
-		local sy, status_sy = imgui.SliderInt("sy", self.__scale.y, 0, 10)
-		imgui.SameLine()
-		if imgui.SmallButton("copy##sy") then love.system.setClipboardText(sy) Log("copied to clipboard: " .. sy) end
-
-		local ox, status_ox = imgui.SliderInt("ox", self.__offset.x, 0, self.__img:getWidth())
-		imgui.SameLine()
-		if imgui.SmallButton("copy##ox") then love.system.setClipboardText(ox) Log("copied to clipboard: " .. ox) end
-
-		local oy, status_oy = imgui.SliderInt("oy", self.__offset.y, 0, self.__img:getHeight())
-		imgui.SameLine()
-		if imgui.SmallButton("copy##oy") then love.system.setClipboardText(oy) Log("copied to clipboard: " .. oy) end
-
-		if imgui.Button("Reset") then
-			self.__pos = self.__orig_pos:clone()
-			self.__rot = self.__orig_rot
-			self.__scale = self.__orig_scale:clone()
-			self.__offset = self.__orig_offset:clone()
-		end
-		if status_x or status_y then
-			self.__pos.x = x
-			self.__pos.y = y
-		end
-		if status_rotation then self.__rot = rotation end
-		if status_sx or status_sy then
-			self.__scale.x = sx
-			self.__scale.y = sy
-		end
-		if status_ox or status_oy then
-			self.__offset.x = ox
-			self.__offset.y = oy
-		end
-		imgui.TreePop()
-	end
-end
-!end
 
 return BaseGUIButton
