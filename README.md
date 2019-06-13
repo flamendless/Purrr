@@ -25,3 +25,9 @@ make
 * [Peachy](https://github.com/flamendless/peachy) - For Animations (using [aseprite](https://www.aseprite.org/)) (fork of [josh perry's](https://github.com/josh-perry/peachy))
 * [LuaPreprocess](https://github.com/ReFreezed/LuaPreprocess/) - For Preprocessing
 * [Semver](https://github.com/kikito/semver.lua) - For Semantic Versioning
+
+## LICENSE
+
+Assets are under copyright license. See [LICENSE](https://github.com/flamendless/Purrr/blob/master/assets/LICENSE)
+
+For the source code. See [License](https://github.com/flamendless/Purrr/blob/master/LICENSE)
