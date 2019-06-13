@@ -87,13 +87,15 @@ function Debug:draw()
 	self:drawMenuBar()
 	if self.windows.info then self:drawInfo() end
 	if self.windows.selected then self:drawSelected() end
-	if self.windows.components then self:drawComponents() end
 	if self.windows.config then self:drawConfig() end
+	if self.windows.components then self:drawComponents() end
 	if self.windows.gui then self:drawGUI() end
 	if self.windows.entities then self:drawEntities() end
 	if self.windows.logs then self:drawLogs() end
 	if self.show_demo then imgui.ShowDemoWindow(self.show_demo) end
 	self:drawMedia()
+	love.graphics.setColor(1, 0, 0, 1)
+	love.graphics.rectangle("line", 0, 0, screen.x, screen.y)
 	love.graphics.setColor(1, 1, 1, 1)
 	imgui.Render()
 	stats = love.graphics.getStats(stats)
@@ -286,9 +288,7 @@ function Debug:drawLogs()
 end
 
 function Debug:keypressed(key)
-	if key == "`" then
-		self.showAll = not self.showAll
-	elseif key == "f5" then
+	if key == "f5" then
 		self:toggleEditorView()
 	elseif key == "f6" then
 		self:toggleDemoView()

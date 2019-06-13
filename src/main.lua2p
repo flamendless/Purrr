@@ -47,7 +47,7 @@ local gui_manager = require("src.gui_manager")
 --INITIALIZATION
 __scale = math.min((love.graphics.getWidth()/screen.x), (love.graphics.getHeight()/screen.y))
 !if _LOGGING then
-log.info(("Device: %s x %s"):format(love.graphics.getDimensions()))
+log.info(("Device: %s x %s"):format(love.window.getDesktopDimensions()))
 log.info(("Game: %s x %s"):format(screen.x, screen.y))
 log.info("Scale: " .. __scale)
 !end
@@ -59,7 +59,7 @@ function love.load(args)
 	!end
 	!if _PLATFORM == "desktop" and _DEBUG then
 	local __desktop_width, __desktop_height = love.window.getDesktopDimensions()
-	love.window.setMode(__desktop_width - 64, love.graphics.getHeight())
+	love.window.setMode(__desktop_width - 64, __desktop_height)
 	debugging:init()
 	!end
 	math.randomseed(os.time())

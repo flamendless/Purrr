@@ -1,7 +1,7 @@
 function love.conf(t)
 	t.window.title = "Purrr"
-	t.window.width = 480
-	t.window.height = 800
+	t.window.width = 640
+	t.window.height = 360
 	t.window.fullscreen = love._os == "Android" or love._os == "iOS"
 	t.window.fullscreentype = "desktop"
 	t.window.resizable = false

@@ -6,6 +6,7 @@
 *.zip
 *.love
 assets/palettes/main.lua
+assets/anim/ase
 assets/anim/backup
 .vscode
 output

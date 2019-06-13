@@ -118,6 +118,7 @@ end
 
 !if _DEBUG then
 function GUIManager:debugWindows()
+	if not debugger.showAll then return end
 	imgui.Begin("GUI Manager", nil, ImGuiWindowFlags_AlwaysAutoResize)
 	if imgui.TreeNode("Windows") then
 		for i = 1, #self.__windows do
