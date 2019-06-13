@@ -1,0 +1,65 @@
+local PreloadDraw = {}
+
+local peachy = require("modules.peachy.peachy")
+local vec2 = require("modules.hump.vector")
+local colors = require("src.colors")
+local resource_manager = require("src.resource_manager")
+local screen = require("src.screen")
+
+!if _LOGGING then
+local log = require("modules.log.log")
+!end
+
+local anim
+
+function PreloadDraw:init()
+	self.color = colors("random-flat")
+	self.image = love.graphics.newImage("assets/anim/preload.png")
+	self.image:setFilter("nearest", "nearest")
+	self.source = love.audio.newSource("assets/sounds/cat/deep_meow.ogg", "stream")
+	!if _LOGGING then
+	log.info("Preload Draw initialized")
+	!end
+end
+
+function PreloadDraw:start()
+	self.source:play()
+	anim = peachy.new("assets/anim/json/preload.json", self.image, "default")
+	self.pos = vec2(screen.x/2, screen.y/2)
+	self.rot = 0
+	self.scale = vec2(2, 2)
+	self.offset = vec2(anim:getWidth()/2, anim:getHeight()/2)
+	!if _LOGGING then
+	log.info("Preload Draw started")
+	!end
+end
+
+function PreloadDraw:stop()
+	self.source:stop()
+	!if _LOGGING then
+	log.info("Preload Draw stopped")
+	!end
+end
+
+function PreloadDraw:update(dt)
+	if anim then
+		anim:update(dt)
+	end
+end
+
+function PreloadDraw:draw()
+	if anim then
+		love.graphics.setColor(self.color)
+		local x = self.pos.x
+		local y = self.pos.y
+		local rot = self.rot
+		local sx = self.scale.x
+		local sy = self.scale.y
+		local ox = self.offset.x
+		local oy = self.offset.y
+		anim:draw(x, y, rot, sx, sy, ox, oy)
+		love.graphics.setColor(1, 1, 1, 1)
+	end
+end
+
+return PreloadDraw

@@ -5,17 +5,6 @@ local log = require("modules.log.log")
 
 local states = {}
 
-function states.base()
-	return {
-		images = {
-			{ id = "loading", path = "assets/anim/preload.png" },
-		},
-		sources = {
-			{ id = "sfx_transition", path = "assets/sounds/cat/deep_meow.ogg", kind = "stream" },
-		},
-	}
-end
-
 function states.splash()
 	return {
 		images = {

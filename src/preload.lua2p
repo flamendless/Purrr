@@ -1,9 +1,5 @@
 local Preload = {}
 
-local ecs = {
-	instance = require("modules.concord.lib.instance"),
-	entity = require("modules.concord.lib.entity"),
-}
 local lily = require("modules.lily.lily")
 !if _LOGGING then
 local log = require("modules.log.log")
@@ -14,12 +10,12 @@ local vec2 = require("modules.hump.vector")
 local lume = require("modules.lume.lume")
 local peachy = require("modules.peachy.peachy")
 
-local resourceManager = require("src.resource_manager")
+local resource_manager = require("src.resource_manager")
 local screen = require("src.screen")
 local colors = require("src.colors")
+local preload_draw = require("src.preload_draw")
 
 local dur = 1.5
-if __debug then dur = 0.25 end
 
 function Preload:init()
 	self.colors = {
@@ -37,7 +33,7 @@ end
 function Preload:check(t_assets, current_state)
 	for kind, t in pairs(t_assets) do
 		for i, v in pairs(t) do
-			if not resourceManager:check(kind, v.id) then
+			if not resource_manager:check(kind, v.id) then
 				self:add(kind, v)
 				self.current_state = current_state
 			else
@@ -100,7 +96,7 @@ function Preload:start()
 				!if _LOG then
 				log.trace(("Loaded: %s - %s"):format(kind, id[i]))
 				!end
-				resourceManager:add(kind, id[i], data, self.current_state)
+				resource_manager:add(kind, id[i], data, self.current_state)
 			end
 		end)
 		:onComplete(function()
@@ -115,7 +111,7 @@ function Preload:draw()
 end
 
 function Preload:complete()
-	resourceManager:setFilter()
+	resource_manager:setFilter()
 	!if _LOG then
 	log.trace("ASSETS:")
 	!end

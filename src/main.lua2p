@@ -37,6 +37,7 @@ local time = require("src.time")
 local gamestate = require("src.gamestate")
 local screen = require("src.screen")
 local preload = require("src.preload")
+local preload_draw = require("src.preload_draw")
 local transition = require("src.transition")
 local bgm = require("src.bgm")
 local states = require("states")
@@ -67,6 +68,7 @@ function love.load(args)
 	!end
 	config:init()
 	transition:init()
+	preload_draw:init()
 	preload:init()
 
 	!if _RELEASE then

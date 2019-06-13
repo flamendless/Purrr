@@ -1,13 +1,8 @@
 local ResourceManager = {
 	__assets = { images = {}, fonts = {}, ImageData = {}, sources = {} },
-	__persistent = {},
 	__font_cache = {},
 	__ref = {},
 }
-
-function ResourceManager:getPersistent(id)
-	return self.__persistent[id]
-end
 
 function ResourceManager:add(kind, id, data, container)
 	if kind == "fonts" then
@@ -16,11 +11,7 @@ function ResourceManager:add(kind, id, data, container)
 		self.__font_cache[str] = true
 	end
 
-	if container == "Base" then
-		self.__persistent[id] = data
-	else
-		self.__assets[kind][id] = data
-	end
+	self.__assets[kind][id] = data
 end
 
 function ResourceManager:flush()
