@@ -8,7 +8,6 @@ local lily = require("modules.lily.lily")
 !if _LOGGING then
 local log = require("modules.log.log")
 !end
-local inspect = require("modules.inspect.inspect")
 local timer = require("modules.hump.timer")
 local flux = require("modules.flux.flux")
 local vec2 = require("modules.hump.vector")
